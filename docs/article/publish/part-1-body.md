@@ -1,8 +1,10 @@
 < COVER IMAGE >
 
-# Physical AI on AWS DeepRacer: a rover that drives on natural language, judges every move, and answers to your voice
+# Strands Decider 2B on wheels: a calibrated guardrail for every move an AWS DeepRacer agent makes on Amazon Bedrock
 
 Vivek Raja, AWS AI Hero
+
+Physical AI on AWS DeepRacer: a rover that drives on natural language, judges every move, and answers to your voice.
 
 ## A rover that explains itself
 

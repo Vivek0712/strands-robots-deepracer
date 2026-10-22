@@ -5,7 +5,7 @@ reports each one as WARN until it is replaced.
 
 ## Title
 
-Physical AI on AWS DeepRacer: a rover that drives on natural language, judges every move, and answers to your voice
+Strands Decider 2B on wheels: a calibrated guardrail for every move an AWS DeepRacer agent makes on Amazon Bedrock
 
 ## Pitch
 
