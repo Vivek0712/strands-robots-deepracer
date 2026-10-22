@@ -5,7 +5,7 @@ reports each one as WARN until it is replaced.
 
 ## Title
 
-Strands Decider 2B on wheels: a calibrated guardrail for every move an AWS DeepRacer agent makes on Amazon Bedrock
+Physical AI with Strands Decider 2B: a calibrated decision guardrail for every move an AWS DeepRacer agent makes
 
 ## Pitch
 

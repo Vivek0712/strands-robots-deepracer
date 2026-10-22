@@ -14,7 +14,7 @@ benchmark, the limits and originality paragraphs.
 
 | Claim | Source |
 |---|---|
-| Title "Strands Decider 2B on wheels: a calibrated guardrail for every move an AWS DeepRacer agent makes on Amazon Bedrock" (114 characters); the earlier title "Physical AI on AWS DeepRacer: a rover that drives on natural language, judges every move, and answers to your voice" is the opening line of the body | author's instruction 2026-10-23: the hackathon theme is the Decider model |
+| Title "Physical AI with Strands Decider 2B: a calibrated decision guardrail for every move an AWS DeepRacer agent makes" (114 characters); the earlier title "Physical AI on AWS DeepRacer: a rover that drives on natural language, judges every move, and answers to your voice" is the opening line of the body | author's instruction 2026-10-23: the hackathon theme is the Decider model |
 | Description (471 characters, limit 512): the Strands pieces on one DeepRacer, the rule | brief; `docs/context/11-final-use-cases.md` lines 91-100 (the pillars). Trimmed 2026-10-22 from 509 characters by dropping "and gates and audits every motor command" |
 | Byline "Vivek Raja, AWS AI Hero" | brief; notes 01 line 50 (Builder Center profile: AI Hero) |
 | Series name "Strands on wheels", part 1 | **flag**: placeholder chosen by the writing team; the brief requires a series name and part number but does not give one |

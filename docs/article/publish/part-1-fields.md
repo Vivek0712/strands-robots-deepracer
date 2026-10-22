@@ -1,7 +1,7 @@
 # part-1: form fields
 
-Title (114 chars):
-Strands Decider 2B on wheels: a calibrated guardrail for every move an AWS DeepRacer agent makes on Amazon Bedrock
+Title (112 chars):
+Physical AI with Strands Decider 2B: a calibrated decision guardrail for every move an AWS DeepRacer agent makes
 
 Description (471 chars):
 A stock AWS DeepRacer becomes a Strands robot: strands-robots drives it over ROS 2. A Strands Agents loop on Amazon Bedrock turns spoken or typed instructions into bounded movements, a local Strands Decider 2B judges each command and the live camera frame before the wheels turn, Strands Bidi gives the rover a push-to-talk voice through Amazon Nova Sonic, and a Strands Harness race engineer services it under a Cedar policy. Physics stops the car; the decider explains.
