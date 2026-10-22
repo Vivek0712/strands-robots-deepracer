@@ -17,3 +17,6 @@ portal/frontend/node_modules/
 eventpics/
 
 .DS_Store
+docs/video/raw/
+docs/video/build/
+docs/video/*.mp4

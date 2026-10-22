@@ -1,0 +1,531 @@
+# Shot list for the hackathon demo video, transcribed from docs/video/SCRIPT.md v2
+# ("Shot list for the renderer") and docs/video/STORYBOARD.md v2. Shot numbers match the
+# script; shot 13 is two entries (13a, 13b) because its two stills hard-cut at +2.0.
+# Coordinates are 1920x1080 frame units; times are seconds from the shot's own start.
+# Render: .venv/bin/python -m docs.video.render build docs/video/shots.yaml --out docs/video/build/deepracer-decider-demo.mp4
+
+title: "This car can refuse an order"
+voice: Matthew
+engine: generative     # generative ignores <prosody rate>; sentences are synthesised one by one instead
+vo_sentences: true     # one Polly call per sentence, stitched with vo_gap_ms of silence; onsets measured
+vo_gap_ms: 600         # 600 ms of real silence between sentences (tails kept to 120 ms past -50 dBFS)
+# Reveal times may be anchors: "s3" = onset of the VO's third sentence, "s3%40" = 40 percent
+# into it (word position), "s3+0.4" = 0.4 s after it. Resolved from the measured onsets.
+auto_pad: 0.5          # picture = max(min, vo_offset + VO length + 0.5 s)
+fade_out: 0.5          # shot 14 fades to black over its last 0.5 s
+# No music bed: the round-3 QA measured it pumping at sentence ends and the loop licence for
+# Builder Center distribution is unconfirmed. The renderer adds nothing to the audio track.
+defaults:
+  transition: cut
+
+# Recurring elements (YAML anchors; the renderer ignores this top-level key).
+snippets:
+  badge_top_right: &badge_tr
+    kind: mono
+    text: "Agent: Amazon Nova Pro on Bedrock\nJudge: Strands Decider 2B, local"
+    size: 24
+    leading: 28
+    color: ink-dim
+    pos: [1360, 80]
+    plate: {box: [1344, 72, 1840, 140]}
+  safety_line: &safety "Physics stops the car. The decider explains."
+
+shots:
+  # ---------------------------------------------------------------- 1  HOOK A
+  - id: s01-hook-a
+    kind: clip
+    src: docs/results/portal/pitwall-sim.webm
+    start: 2.5
+    end: 3.2                       # then hold the 3.2 s frame (DENY, LED red)
+    crop: [0, 40, 910, 720]        # live view + verdict panel
+    place: [0, 0, 1447, 1080]      # 1.59x, anchored left; the right column is bg
+    mute: true
+    duration: auto
+    min: 4.0
+    vo_offset: 1.0
+    vo: "This car can refuse an order."
+    text:
+      - {kind: title, text: "This car", size: 56, pos: [1500, 120], in: 1.0, fade: 0.3}
+      - {kind: title, text: "can refuse", size: 56, pos: [1500, 190], in: 1.0, fade: 0.3}
+      - {kind: title, text: "an order.", size: 56, pos: [1500, 260], in: 1.0, fade: 0.3}
+      - {kind: mono, text: "SIM, FAKE DECIDER,", size: 28, color: ink-dim, pos: [1500, 940]}
+      - {kind: mono, text: "DRAWN FIGURE", size: 28, color: ink-dim, pos: [1500, 972]}
+    pointers:
+      # red pulse around the LED RED label, two pulses of 0.3 s
+      - {kind: highlight, from: [1310, 8], to: [1432, 48], color: red, fill: 0.2, in: 0.4, pulse: {count: 2, period: 0.3}}
+
+  # ---------------------------------------------------------------- 1b THE CAR (phase-3 recording, two parts, 4.0 s)
+  # Part a: the car's own camera feed under the phase-3 Nova vision planner with the boxed REPLAN line already
+  # logged (clips/phase3-replan-1080p.mp4 from 2.8 s, the scout's composition cropped to its content and placed
+  # 0.88x so the honesty label and the caption plate sit clear of it). Part b: hard cut to the real car steering
+  # left past the toy car (clips/phase3-thirdperson-1080p.mp4 4.6-7.0 s, the phone column over its blur fill as
+  # the scout cut it). Pre-decider footage: the label says so on both parts.
+  - id: s01b-feed
+    kind: clip
+    src: docs/video/build/clips/phase3-replan-1080p.mp4
+    start: 2.8
+    end: 4.4
+    crop: [391, 27, 1524, 1060]    # the feed image and its log plate
+    place: [600, 20, 1597, 929]    # 0.88x, right of the caption plate, above the honesty label
+    mute: true
+    duration: 1.6
+    vo_offset: 0.5
+    vo: "This is a stock AWS DeepRacer."
+    text:
+      - {kind: caption, text: "A stock AWS DeepRacer", size: 40, pos: [96, 72], in: 0.2, plate: {box: [80, 60, 585, 132]}}
+      - {kind: mono, text: "REAL CAR, PHASE-3 VISION PLANNER, PRE-DECIDER", size: 28, color: ink-dim, pos: [1824, 964], anchor: tr, plate: {pad: 16, y: [952, 1008]}}
+  - id: s01b-car
+    kind: clip
+    src: docs/video/build/clips/phase3-thirdperson-1080p.mp4
+    start: 4.6
+    end: 7.0
+    place: [0, 0, 1920, 1080]      # already the phone column fitted to 1080 over a darkened blur fill
+    mute: true
+    duration: 2.4
+    text:
+      - {kind: caption, text: "A stock AWS DeepRacer", size: 40, pos: [96, 72], plate: {box: [80, 60, 585, 132]}}
+      - {kind: mono, text: "REAL CAR, PHASE-3 VISION PLANNER, PRE-DECIDER", size: 28, color: ink-dim, pos: [1824, 964], anchor: tr, plate: {pad: 16, y: [952, 1008]}}
+
+  # ---------------------------------------------------------------- 2  HOOK B
+  - id: s02-hook-b
+    kind: still
+    src: docs/results/portal/pitwall-sim.webm
+    at: 3.2                        # the shot 1 freeze frame
+    crop: [0, 40, 910, 720]
+    place: [0, 0, 1447, 1080]
+    duration: auto
+    min: 5.5                       # Polly reads this in 3.7 s; 5.5 keeps `Here is why.` on screen 1.5 s
+    vo_offset: 0.3
+    vo: "A person in the frame. The hop was refused. Here is why."
+    black_out: 0.15                # the dip into shot 3
+    text:
+      - {kind: label, text: "Physics stops the car.", size: 26, color: ink-dim, pos: [1500, 840]}
+      - {kind: label, text: "The decider explains.", size: 26, color: ink-dim, pos: [1500, 872]}
+      - {kind: mono, text: "SIM, FAKE DECIDER,", size: 28, color: ink-dim, pos: [1500, 940]}
+      - {kind: mono, text: "DRAWN FIGURE", size: 28, color: ink-dim, pos: [1500, 972]}
+      - {kind: caption, text: "Here is why.", size: 40, pos: [1500, 120], in: 3.0}
+    pointers:
+      - {kind: circle, from: [215, 180], to: [595, 560], color: cyan, width: 4, in: 0.3}          # centre (405, 370) r 190
+      - {kind: highlight, from: [40, 545], to: [310, 625], color: cyan, in: 1.0}                  # FRAME CLASS chip
+      - {kind: highlight, from: [615, 545], to: [770, 625], color: cyan, in: 1.0}                 # PROBABILITY chip
+      - {kind: arrow, from: [557, 484], to: [685, 548], color: cyan, in: 1.0}
+      - {kind: highlight, from: [825, 135], to: [1107, 262], color: red, in: 2.5}                 # the DENY word
+
+  # ---------------------------------------------------------------- 3  WHAT IT IS (v3: callouts every 1.25 s, 26-word VO)
+  - id: s03-what-it-is
+    kind: still
+    src: docs/video/build/clips/layers/base.png     # fig-deepracer-strands.html, callouts hidden
+    crop: [0, 100, 1600, 900]      # below the baked title; the baked footer stays
+    place: [240, 190, 1680, 910]   # 0.9x
+    layers:                        # one PNG per callout (box, leader line, dot), from the same HTML
+      - {src: docs/video/build/clips/layers/callout1.png, at: 0.5, fade: 0.3}
+      - {src: docs/video/build/clips/layers/callout2.png, at: 1.75, fade: 0.3, settle_at: 9.5, settle_to: 0.7}
+      - {src: docs/video/build/clips/layers/callout3.png, at: 3.0, fade: 0.3, settle_at: 9.5, settle_to: 0.7}
+      - {src: docs/video/build/clips/layers/callout4.png, at: 4.25, fade: 0.3, settle_at: 9.5, settle_to: 0.7}
+      - {src: docs/video/build/clips/layers/callout5.png, at: 5.5, fade: 0.3, settle_at: 9.5, settle_to: 0.7}
+      - {src: docs/video/build/clips/layers/callout6.png, at: 6.75, fade: 0.3, settle_at: 9.5, settle_to: 0.7}
+      - {src: docs/video/build/clips/layers/callout7.png, at: 8.0, fade: 0.3, settle_at: 9.5, settle_to: 0.7}
+    duration: auto
+    min: 9.5
+    black_in: 0.3
+    vo_offset: 0.4
+    vo: "I am Vivek Raja. A Strands agent on Bedrock turns my words into hops; a local Decider two B judges each one before the wheels turn."
+    text:
+      - {kind: title, text: "Driven as a Strands robot", size: 64, pos: [96, 72], in: 0.4}
+      # callout label plates, 44 px tall at the box's top edge minus 24, text at plate x + 12
+      - {kind: label, font: sans_medium, size: 30, color: orange, text: "Decider on the camera", pos: [279, 187], in: 0.5, fade: 0.3, plate: {pad: 12, pad_y: 3, alpha: 1.0}}
+      - {kind: label, font: sans_medium, size: 30, text: "strands-robots on the drive", pos: [279, 349], in: 1.75, fade: 0.3, plate: {pad: 12, pad_y: 3, alpha: 1.0}}
+      - {kind: label, font: sans_medium, size: 30, text: "The deadman on the servos", pos: [279, 565], in: 3.0, fade: 0.3, plate: {pad: 12, pad_y: 3, alpha: 1.0}}
+      - {kind: label, font: sans_medium, size: 30, text: "Harness on the compute", pos: [1413, 178], in: 4.25, fade: 0.3, plate: {pad: 12, pad_y: 3, alpha: 1.0}}
+      - {kind: label, font: sans_medium, size: 30, text: "Agents as the loop", pos: [1413, 353], in: 5.5, fade: 0.3, plate: {pad: 12, pad_y: 3, alpha: 1.0}}
+      - {kind: label, font: sans_medium, size: 30, text: "Bidi as the voice", pos: [1413, 529], in: 6.75, fade: 0.3, plate: {pad: 12, pad_y: 3, alpha: 1.0}}
+      - {kind: label, font: sans_medium, size: 30, text: "Box around the process", pos: [1413, 691], in: 8.0, fade: 0.3, plate: {pad: 12, pad_y: 3, alpha: 1.0}}
+      - {kind: lower_third, text: "Vivek Raja, AWS AI Hero", in: 0.4}
+      - {kind: mono, text: "Agent: Amazon Nova Pro on Bedrock\nJudge: Strands Decider 2B, local", size: 24, leading: 30, color: ink-dim, pos: [1300, 936], in: 3.0, plate: {box: [1284, 926, 1840, 1008]}}
+
+  # ---------------------------------------------------------------- 4  ARCHITECTURE (v3: three groups keyed to the three sentences)
+  # VO sentences: s1 "Nova Pro proposes the move."  s2 "A Strands intervention handler asks the decider before
+  # the tool runs."  s3 "The on-car deadman needs none of it."  Group 1 is on screen from frame 0 (hard cut).
+  - id: s04-architecture
+    kind: still
+    src: docs/article/img/fig-architecture.png
+    place: [96, 200, 1376, 920]    # 0.8x
+    base_brightness: 0.35
+    regions:                       # lit to 100 percent over 0.4 s, earlier groups settle at 80
+      - {box: [128, 224, 752, 324], at: 0.0, settle_to: 0.8}     # R1 Bedrock
+      - {box: [160, 416, 384, 512], at: 0.0, settle_to: 0.8}     # R2 Strands Agents
+      - {box: [400, 416, 728, 512], at: "s2", settle_to: 0.8}    # R3 DeciderGate + Decider 2B
+      - {box: [160, 520, 728, 684], at: "s3", settle_to: 0.8}    # R4 strands-robots
+      - {box: [960, 360, 1344, 892], at: "s3", settle_to: 0.8}   # R5 DeepRacer (deadman sub-box inside)
+    duration: auto
+    min: 9.5
+    vo_offset: 0.3
+    vo: "Nova Pro proposes the move. A Strands intervention handler asks the decider before the tool runs. The on-car deadman needs none of it."
+    text:
+      - {kind: label, text: "1 Nova Pro proposes the move", color: orange, pos: [1392, 200], recolor: [{at: "s2", color: ink-dim}]}
+      - {kind: label, text: "2 Strands Agents runs the tools", color: orange, pos: [1392, 240], recolor: [{at: "s2", color: ink-dim}]}
+      - {kind: label, text: "3 Decider 2B judges,", color: orange, pos: [1392, 280], in: "s2", recolor: [{at: "s3", color: ink-dim}]}
+      - {kind: label, text: "  before the tool runs", color: orange, pos: [1392, 320], in: "s2", recolor: [{at: "s3", color: ink-dim}]}
+      - {kind: label, text: "4 strands-robots carries it", color: orange, pos: [1392, 360], in: "s3"}
+      - {kind: label, text: "  over rosbridge", color: orange, pos: [1392, 400], in: "s3"}
+      - {kind: label, text: "5 On-car deadman: stops", color: orange, pos: [1392, 440], in: "s3"}
+      - {kind: label, text: "  without the laptop", color: orange, pos: [1392, 480], in: "s3"}
+      - {kind: mono, text: "Agent: Amazon Nova Pro on Bedrock\nJudge: Strands Decider 2B, local", size: 24, leading: 28, color: ink-dim, pos: [1360, 548], plate: {box: [1344, 540, 1840, 608]}}
+      - {kind: lower_third, text: "Architecture"}
+    pointers:
+      - {kind: box, from: [128, 224], to: [752, 324], color: cyan, width: 3}
+      - {kind: box, from: [160, 416], to: [384, 512], color: cyan, width: 3}
+      - {kind: box, from: [400, 416], to: [728, 512], color: orange, width: 3, in: "s2"}
+      - {kind: box, from: [160, 520], to: [728, 684], color: cyan, width: 3, in: "s3"}
+      - {kind: box, from: [960, 360], to: [1344, 892], color: cyan, width: 3, in: "s3"}
+      - {kind: box, from: [976, 552], to: [1328, 676], color: red, width: 3, in: "s3"}            # deadman sub-box
+      - {kind: badge, from: [128, 224], color: orange, label: "1"}
+      - {kind: badge, from: [160, 416], color: orange, label: "2"}
+      - {kind: badge, from: [400, 416], color: orange, label: "3", in: "s2"}
+      - {kind: badge, from: [160, 520], color: orange, label: "4", in: "s3"}
+      - {kind: badge, from: [960, 360], color: orange, label: "5", in: "s3"}
+      - {kind: arrow, from: [752, 464], to: [960, 464], color: orange, in: "s2"}                   # along "commands 20 Hz"
+
+  # ---------------------------------------------------------------- 5  THE DECISION, part 1 (v3: one idea at a time, keyed to the voice)
+  # VO sentences: s1 "Five typed questions."  s2 "A noul is a yes or no, answered as a probability, so code can
+  # compare it to a number."  s3 "Three are about the words: inside the envelope, grounded in what the user
+  # said, and what was asked."  s4 "Two are about the frame: a person visible, and what is ahead."
+  # Percentages are word positions inside the sentence.
+  - id: s05-questions
+    kind: card
+    duration: auto
+    min: 18.6                      # the 600 ms sentence gaps: hold after the VO trimmed to 0.5 s
+    vo_offset: 1.0
+    vo: "Five typed questions. A noul is a yes or no, answered as a probability, so code can compare it to a number. Three are about the words: inside the envelope, grounded in what the user said, and what was asked. Two are about the frame: a person visible, and what is ahead."
+    text:
+      - {kind: title, text: "Five typed questions, two requests", size: 56, pos: [96, 72]}
+      - {kind: lower_third, text: "The five questions"}
+      - {kind: mono, text: "Agent: Amazon Nova Pro on Bedrock\nJudge: Strands Decider 2B, local", size: 24, leading: 30, color: ink-dim, pos: [1300, 936], plate: {box: [1284, 926, 1840, 1008]}}
+      # what a noul is, three lines with their clauses
+      - {kind: label, size: 36, text: "noul = a yes/no question", pos: [96, 160], in: "s2", anim: slide_left, fade: 0.3}
+      - {kind: label, size: 36, text: "answered as a probability, 0 to 1, not a sentence", pos: [96, 210], in: "s2%37", anim: slide_left, fade: 0.3}
+      - {kind: label, size: 36, text: "so code can compare it to a number", pos: [96, 260], in: "s2%58", anim: slide_left, fade: 0.3}
+      # request 1
+      - {kind: label, font: sans_medium, size: 32, color: ink-dim, text: "Request 1: the words", pos: [96, 340], in: "s3"}
+      - {kind: mono, size: 30, text: "inside_envelope", pos: [96, 390], in: "s3%28", anim: slide_left, fade: 0.3}
+      - {kind: label, size: 36, text: "Is the proposed movement inside the envelope the operator briefed?", pos: [520, 390], in: "s3%28", anim: slide_left, fade: 0.3}
+      - {kind: mono, size: 30, text: "args_grounded", pos: [96, 450], in: "s3%44", anim: slide_left, fade: 0.3}
+      - {kind: label, size: 36, text: "Are the tool's argument values grounded in what the user actually said?", pos: [520, 450], in: "s3%44", anim: slide_left, fade: 0.3}
+      - {kind: mono, size: 30, text: "intent", pos: [96, 510], in: "s3%78", anim: slide_left, fade: 0.3}
+      - {kind: mono, size: 26, color: ink-dim, text: "choice", pos: [96, 548], in: "s3%78", anim: slide_left, fade: 0.3}
+      - {kind: label, size: 36, text: "What did the user most recently ask the robot to do?", pos: [520, 510], in: "s3%78", anim: slide_left, fade: 0.3}
+      - {kind: mono, size: 26, color: ink-dim, text: "move_forward   turn   stop   question   unrelated", pos: [520, 556], in: "s3%78", anim: slide_left, fade: 0.3}
+      # request 2
+      - {kind: label, font: sans_medium, size: 32, color: ink-dim, text: "Request 2: the frame, 480x360 JPEG", pos: [96, 640], in: "s4"}
+      - {kind: mono, size: 30, text: "person", pos: [96, 690], in: "s4%42", anim: slide_left, fade: 0.3}
+      - {kind: label, size: 36, text: "Is a person visible in the frame?", pos: [520, 690], in: "s4%42", anim: slide_left, fade: 0.3}
+      - {kind: mono, size: 30, text: "frame", pos: [96, 750], in: "s4%67", anim: slide_left, fade: 0.3}
+      - {kind: mono, size: 26, color: ink-dim, text: "choice", pos: [96, 788], in: "s4%67", anim: slide_left, fade: 0.3}
+      - {kind: label, size: 36, text: "What is directly in front of the car in this camera frame?", pos: [520, 750], in: "s4%67", anim: slide_left, fade: 0.3}
+      - {kind: mono, size: 26, color: ink-dim, text: "clear   obstacle_near   person_in_frame   off_surface   unclear", pos: [520, 796], in: "s4%67", anim: slide_left, fade: 0.3}
+    pointers:                      # 2 px leading bars with their rows
+      - {kind: bar, from: [86, 386], to: [88, 426], color: cyan, in: "s3%28"}
+      - {kind: bar, from: [86, 446], to: [88, 486], color: orange, in: "s3%44"}
+      - {kind: bar, from: [86, 506], to: [88, 546], color: cyan, in: "s3%78"}
+      - {kind: bar, from: [86, 686], to: [88, 726], color: cyan, in: "s4%42"}
+      - {kind: bar, from: [86, 746], to: [88, 786], color: cyan, in: "s4%67"}
+
+  # ---------------------------------------------------------------- 6  THE DECISION, part 2 (v3: thresholds, then one example per action)
+  # VO sentences: s1 "Two thresholds make the action."  s2 "0.65 or above: a confident yes."  s3 "0.35 or below:
+  # a confident no."  s4 "Between them, the operator is asked."  s5 "A person in frame: Deny."  s6 "An invented
+  # distance: Guide, re-plan."  s7 "Unsure: Confirm."  s8 "Otherwise: Proceed."  s9 "A late or missing decider
+  # is a Deny: the gate never fails open."
+  - id: s06-rows
+    kind: card
+    duration: auto
+    min: 22.0
+    vo_offset: 0.3
+    vo: "Two thresholds make the action. Zero point six five or above: a confident yes. Zero point three five or below: a confident no. Between them, the operator is asked. A person in frame: Deny. An invented distance: Guide, re-plan. Unsure: Confirm. Otherwise: Proceed. A late or missing decider is a Deny: the gate never fails open."
+    text:
+      - {kind: title, text: "From a probability to an action", size: 56, pos: [96, 72]}
+      - {kind: lower_third, text: "Thresholds and actions"}
+      - *badge_tr
+      # the ruler
+      - {kind: panel, box: [299, 180, 302, 880], color: ink-dim, alpha: 1.0, radius: 0, in: "s1"}
+      - {kind: mono, text: "1.0", size: 26, color: ink-dim, pos: [250, 168], in: "s1"}
+      - {kind: mono, text: "0.0", size: 26, color: ink-dim, pos: [250, 868], in: "s1"}
+      - {kind: panel, box: [280, 423, 320, 427], color: green, alpha: 1.0, radius: 0, in: "s2"}
+      - {kind: panel, box: [280, 180, 320, 425], color: green, alpha: 0.15, radius: 0, in: "s2"}
+      - {kind: label, size: 36, text: "0.65 or above: confident yes", pos: [340, 405], in: "s2", anim: slide_left, fade: 0.3}
+      - {kind: panel, box: [280, 633, 320, 637], color: red, alpha: 1.0, radius: 0, in: "s3"}
+      - {kind: panel, box: [280, 635, 320, 880], color: red, alpha: 0.15, radius: 0, in: "s3"}
+      - {kind: label, size: 36, text: "0.35 or below: confident no", pos: [340, 615], in: "s3", anim: slide_left, fade: 0.3}
+      - {kind: panel, box: [280, 425, 320, 635], color: cyan, alpha: 0.2, radius: 0, in: "s4"}
+      - {kind: label, size: 36, text: "between: ask the operator", pos: [340, 510], in: "s4", anim: slide_left, fade: 0.3}
+      # one example per action
+      - {kind: label, size: 36, text: "a person in frame", pos: [1000, 300], in: "s5", anim: slide_left, fade: 0.3}
+      - {kind: chip, text: "DENY", bg: red, pos: [1560, 298], in: "s5", anim: slide_left, fade: 0.3}
+      - {kind: label, size: 36, text: "an invented distance", pos: [1000, 400], in: "s6", anim: slide_left, fade: 0.3}
+      - {kind: chip, text: "GUIDE", bg: amber, pos: [1560, 398], in: "s6", anim: slide_left, fade: 0.3}
+      - {kind: label, size: 28, color: ink-dim, text: "re-plan", pos: [1000, 444], in: "s6", anim: slide_left, fade: 0.3}
+      - {kind: label, size: 36, text: "unsure, in the band", pos: [1000, 500], in: "s7", anim: slide_left, fade: 0.3}
+      - {kind: chip, text: "CONFIRM", bg: cyan, pos: [1560, 498], in: "s7", anim: slide_left, fade: 0.3}
+      - {kind: label, size: 28, color: ink-dim, text: "ask the operator", pos: [1000, 544], in: "s7", anim: slide_left, fade: 0.3}
+      - {kind: label, size: 36, text: "otherwise", pos: [1000, 600], in: "s8", anim: slide_left, fade: 0.3}
+      - {kind: chip, text: "PROCEED", bg: green, pos: [1560, 598], in: "s8", anim: slide_left, fade: 0.3}
+      - {kind: label, size: 32, text: "a late or missing decider", pos: [1000, 720], in: "s9", anim: slide_left, fade: 0.3}
+      - {kind: chip, text: "DENY", bg: red, pos: [1560, 718], in: "s9", anim: slide_left, fade: 0.3}
+      - {kind: label, size: 32, color: ink-dim, text: "The gate never fails open.", pos: [1000, 790], in: "s9%62"}
+      - {kind: label, size: 26, leading: 34, color: ink-dim, text: "Row 7 on the car: Confirm (the marshal may approve\na bigger hop); in the library: Guide.", pos: [1000, 850], in: "s9%62"}
+
+  # ---------------------------------------------------------------- 7  THE DECISION, part 3 (v3: the real request read slowly)
+  # VO sentences: s1 "The user said twenty centimetres; the tool call says zero point two."  s2 "Grounded: 0.91."
+  # s3 "Inside the envelope: 0.95."  s4 "Intent: move forward."  s5 "A Proceed, in 583 ms."
+  # Request lines are Menlo 28 (Menlo 30 runs into the answer column); the answer column starts at x 1060.
+  - id: s07-one-request
+    kind: card
+    duration: auto
+    min: 13.0
+    vo_offset: 0.3
+    vo: "The user said twenty centimetres; the tool call says zero point two. Grounded: zero point nine one. Inside the envelope: zero point nine five. Intent: move forward. A Proceed, in five hundred eighty three milliseconds."
+    text:
+      - {kind: title, text: "One real request, one real answer", size: 56, pos: [96, 72]}
+      - *badge_tr
+      - {kind: mono, text: "RECORDED 2026-10-22, REAL DECIDER + NOVA PRO", size: 28, color: ink-dim, pos: [1824, 964], anchor: tr, plate: {pad: 16, y: [952, 1008]}}
+      - {kind: mono, text: "REQUEST (state)", size: 24, color: ink-dim, pos: [96, 196], in: "s1"}
+      - {kind: mono, size: 28, leading: 44, text: "\"conversation\": \"user: Move forward 20 centimetres.\"", pos: [96, 230], in: "s1", highlight: [{match: "20 centimetres.", color: cyan, at: "s1"}]}
+      - {kind: mono, size: 28, leading: 44, text: "\"command\": {\"tool\": \"move\",\n  \"arguments\": {\"heading_deg\": 0, \"distance_m\": 0.2}},", pos: [96, 274], in: "s1%42", highlight: [{match: "0.2", color: cyan, at: "s1%42"}]}
+      - {kind: mono, size: 28, leading: 44, text: "\"envelope\": \"distance_m <= 0.5 per call,\n  |heading_deg| <= 90\",\n\"deterministic_check\": \"ok\"", pos: [96, 362], in: "s3"}
+      - {kind: mono, text: "ANSWER", size: 24, color: ink-dim, pos: [1060, 196], in: "s2"}
+      - {kind: mono, text: "YES 0.65", size: 24, color: ink-dim, pos: [1540, 255], in: "s2"}
+      - {kind: mono, text: "args_grounded", size: 30, pos: [1060, 294], in: "s2"}
+      - {kind: mono, text: "0.907", size: 30, pos: [1716, 294], in: "s2%20+1.2"}
+      - {kind: mono, text: "inside_envelope", size: 30, pos: [1060, 394], in: "s3"}
+      - {kind: mono, text: "0.948", size: 30, pos: [1716, 394], in: "s3%43+1.2"}
+      - {kind: mono, text: "intent", size: 30, pos: [1060, 494], in: "s4"}
+      - {kind: mono, text: "move_forward", size: 24, color: ink-dim, pos: [1060, 540], in: "s4"}
+      - {kind: mono, text: "0.959", size: 30, pos: [1716, 494], in: "s4%33+1.2"}
+      - {kind: chip, text: "PROCEED", bg: green, pos: [1350, 600], in: "s5"}
+      - {kind: title, text: "583 ms", size: 48, pos: [1530, 592], in: "s5%38"}
+    pointers:
+      - {kind: dotted, from: [1571, 280], to: [1571, 560], color: cyan, width: 2, in: "s2"}
+      - {kind: bar, from: [1350, 290], to: [1658, 326], color: ink-dim, color_after: green, threshold_x: 1571, grow: 1.2, in: "s2%20"}
+      - {kind: bar, from: [1350, 390], to: [1672, 426], color: ink-dim, color_after: green, threshold_x: 1571, grow: 1.2, in: "s3%43"}
+      - {kind: bar, from: [1350, 490], to: [1676, 526], color: ink-dim, color_after: green, threshold_x: 1571, grow: 1.2, in: "s4%33"}
+      - {kind: arrow, from: [992, 352], to: [1346, 326], color: orange, in: "s2"}   # from the 0.2 highlight to the grounded bar
+
+  # ---------------------------------------------------------------- 8  THE RECORDED RUN (v3: each line with its clause)
+  # VO sentences: s1 "I type: Go."  s2 "Go carries no distance, so Nova Pro guesses two metres."  s3 "The arithmetic
+  # check fails, grounded reads 0.18: Guide, re-plan."  s4 "Nova Pro proposes half a metre."  s5 "Grounded reads
+  # 0.40, inside the unsure band: Confirm, the operator is asked."  s6 "The scripted operator says no."
+  # s7 "The car never moved on a guessed number."
+  # The OPERATOR line is the transcript's verbatim text (round-2 F4), not the v3 paraphrase.
+  - id: s08-recorded-run
+    kind: terminal
+    chrome: false
+    pos: [96, 150]
+    width: 975
+    size: 30
+    leading: 38
+    cps: 80                        # the five CONFIRM lines must finish before the OPERATOR sentence (2.3 s)
+    line_pause: 0.05
+    start: 0.3
+    cursor: false
+    schedule:                      # each line types from its clause; later lines wait for the earlier ones
+      - {line: 0, at: "s1%67"}
+      - {line: 1, at: "s2%40"}
+      - {line: 2, at: "s3"}
+      - {line: 3, at: "s3%33"}
+      - {line: 4, at: "s3%83"}
+      - {line: 5, at: "s4"}
+      - {line: 6, at: "s5"}
+      - {line: 7, at: "s5%67"}
+      - {line: 12, at: "s6"}
+      - {line: 13, at: "s7"}
+    lines:
+      - "USER : Go."
+      - '{"arguments": {"heading_deg": 0, "distance_m": 2},'
+      - ' "deterministic_check": "distance_m 2 > 0.5",'
+      - ' "args_grounded": 0.18, "verdict": "Guide",'
+      - ' "reason": "outside envelope: distance_m 2 > 0.5"}'
+      - '{"arguments": {"heading_deg": 0, "distance_m": 0.5},'
+      - ' "deterministic_check": "ok", "args_grounded": 0.404,'
+      - ' "verdict": "Confirm",'
+      - ' "reason": "unclear: inside=0.88 grounded=0.40"}'
+      - "CONFIRM (operator asked): The decider is unsure about"
+      - "  this move (inside envelope p=0.88, grounded p=0.40)."
+      - "  Allow it?"
+      - "OPERATOR: no (this cell auto-answers False)"
+      - "AGENT: (thinking omitted) The move could not be"
+      - "  completed because the decider is unsure about it,"
+      - "  despite it being within the allowed envelope."
+      - "  Please provide further instructions or"
+      - "  clarification."
+    highlight:                     # boxes placed by match string, 0.4 s after the line starts (once typed)
+      - {match: '"distance_m": 2', line: 1, color: orange, at: "s2%40+0.4"}
+      - {match: '"distance_m 2 > 0.5"', line: 2, color: orange, at: "s3+0.4"}
+      - {match: "0.18", color: amber, at: "s3%33+0.4"}
+      - {match: '"Guide"', color: amber, at: "s3%83"}
+      - {match: '"distance_m": 0.5', line: 5, color: orange, at: "s4+0.4"}
+      - {match: "0.404", color: cyan, at: "s5+0.4"}
+      - {match: '"Confirm"', color: cyan, at: "s5%67+0.4"}
+      - {match: "OPERATOR: no (this cell auto-answers False)", color: cyan, at: "s6+0.4"}
+    duration: auto
+    min: 26.5                      # the agent's reply (203 characters at 80 cps from s7) finishes at about +25.9
+    vo_offset: 0.3
+    vo: "I type: Go. Go carries no distance, so Nova Pro guesses two metres. The arithmetic check fails, grounded reads zero point one eight: Guide, re-plan. Nova Pro proposes half a metre. Grounded reads zero point four zero, inside the unsure band: Confirm, the operator is asked. The scripted operator says no. The car never moved on a guessed number."
+    text:
+      - {kind: label, size: 32, text: "\"Go.\" carries no distance", color: orange, pos: [1120, 150], in: "s2", recolor: [{at: "s2%40", color: ink-dim}]}
+      - {kind: label, size: 32, text: "Nova Pro guesses 2 m", color: orange, pos: [1120, 190], in: "s2%40", recolor: [{at: "s3", color: ink-dim}]}
+      - {kind: label, size: 32, text: "check fails: 2 > 0.5; grounded 0.18", color: orange, pos: [1120, 230], in: "s3", recolor: [{at: "s3%83", color: ink-dim}]}
+      - {kind: label, size: 32, text: "GUIDE: re-plan", color: orange, pos: [1120, 270], in: "s3%83", recolor: [{at: "s4", color: ink-dim}]}
+      - {kind: label, size: 32, text: "Nova Pro proposes 0.5 m", color: orange, pos: [1120, 310], in: "s4", recolor: [{at: "s5", color: ink-dim}]}
+      - {kind: label, size: 32, text: "grounded 0.40: the unsure band", color: orange, pos: [1120, 350], in: "s5", recolor: [{at: "s5%67", color: ink-dim}]}
+      - {kind: label, size: 32, text: "CONFIRM: the operator is asked", color: orange, pos: [1120, 390], in: "s5%67", recolor: [{at: "s6", color: ink-dim}]}
+      - {kind: label, size: 32, text: "scripted operator: no", color: orange, pos: [1120, 430], in: "s6"}
+      - {kind: caption, text: "A guessed distance moved nothing.", size: 36, pos: [1120, 520], in: "s7+0.7"}
+      - {kind: mono, text: "Agent: Amazon Nova Pro on Bedrock\nJudge: Strands Decider 2B, local", size: 24, leading: 28, color: ink-dim, pos: [1136, 588], plate: {box: [1120, 580, 1614, 648]}}
+      - {kind: lower_third, text: "Recorded run, 2026-10-22: the real decider judges Nova Pro"}
+      - {kind: mono, text: "RECORDED 2026-10-22, REAL DECIDER + NOVA PRO", size: 28, color: ink-dim, pos: [1824, 964], anchor: tr, plate: {pad: 16, y: [952, 1008]}}
+
+  # ---------------------------------------------------------------- 9  MEASURED ON THE CAR
+  - id: s09-on-the-car
+    kind: card
+    duration: auto
+    min: 9.5                       # lines anchored to the two sentences; hold after the VO trimmed
+    vo_offset: 0.3
+    vo: "On the car, the same gate denied a hop with a person in frame in four hundred fifty six milliseconds. The frames stay private; they show a person."
+    text:
+      - {kind: title, font: sans_medium, text: "Measured on the real car", size: 40, pos: [96, 72]}
+      - *badge_tr
+      - {kind: lower_third, text: "On the car, 2026-10-15"}
+      - {kind: mono, text: "MEASURED ON THE CAR 2026-10-15, REAL DECIDER\nFRAMES WITHHELD: THEY SHOW A PERSON", size: 28, leading: 34, color: ink-dim, align: right, pos: [1824, 932], anchor: tr, plate: {pad: 16, y: [924, 1008]}}
+      - {kind: title, text: "On the car: a person in frame was denied in 456 ms", size: 48, pos: [960, 330], anchor: tc, in: "s1"}
+      - {kind: mono, text: "person_in_frame   p = 0.9485", size: 40, pos: [960, 430], anchor: tc, in: "s1%45"}
+      - {kind: label, text: "whole gate 681 to 727 ms per hop; no motion event after the deny", size: 36, color: ink-dim, pos: [960, 520], anchor: tc, in: "s2"}
+      - {kind: label, text: "Source: docs/results/beats-car-2026-10-15-person-gate", size: 26, color: ink-dim, pos: [960, 600], anchor: tc, in: "s2+1.2"}
+
+  # ---------------------------------------------------------------- 10 THE DENY IN THE SIMULATOR
+  - id: s10-sim-deny
+    kind: still
+    src: docs/article/img/fig-portal-stage.png
+    place: [0, 0, 1920, 1080]      # native, no push-in
+    dim: {at: 7.5, to: 0.4, over: 0.4}
+    duration: auto
+    min: 10.0
+    vo_offset: 0.3
+    vo: "In the simulator, a figure in the frame is row three, a Deny, and the rover says why. Physics stops the car. The decider explains."
+    text:
+      - {kind: caption, text: "Row 3: person in frame -> Deny", size: 36, pos: [770, 18], in: 0.3, safe: false, plate: {box: [754, 8, 1313, 62]}}   # the header's empty stretch, above the safe margin on purpose
+      - {kind: caption, font: sans_medium_italic, size: 44, text: "\"Someone is in front of me. I stopped.\"", pos: [176, 314], in: 5.0, plate: {box: [150, 300, 1110, 376], bar: {color: orange, width: 4, x: 150}}}
+      - {kind: title, text: *safety, size: 72, pos: [960, 492], anchor: tc, in: 7.5, plate: {box: [0, 450, 1920, 610], radius: 0}}
+      - {kind: mono, text: "SIM, FAKE DECIDER, DRAWN FIGURE", size: 28, color: ink-dim, pos: [1824, 964], anchor: tr, plate: {pad: 16, y: [952, 1008]}}
+    pointers:
+      - {kind: arrow, from: [790, 440], to: [1232, 352], color: cyan, in: 1.0}
+      - {kind: highlight, from: [1234, 314], to: [1700, 388], color: cyan, in: 1.0}    # CLASS and PROBABILITY chips, not the fake LATENCY
+      - {kind: highlight, from: [1232, 158], to: [1540, 262], color: red, in: 2.5}     # the DENY word
+
+  # ---------------------------------------------------------------- 11 THE NUMBERS (v3: the four that matter)
+  # VO sentences: s1 "The local decider: 462 ms median, zero of seventy two over budget."  s2 "Nova Pro on
+  # Bedrock: thirty one of seventy two over budget, thirteen cents per thousand decisions."
+  - id: s11-numbers
+    kind: card
+    duration: auto
+    min: 10.0
+    vo_offset: 0.3
+    vo: "The local decider: four hundred sixty two milliseconds median, zero of seventy two over budget. Nova Pro on Bedrock: thirty one of seventy two over budget, thirteen cents per thousand decisions."
+    text:
+      - {kind: title, text: "Measured on the booth laptop: 72 timed calls", size: 56, pos: [96, 72]}
+      - *badge_tr
+      - {kind: lower_third, text: "The numbers"}
+      - {kind: mono, text: "MEASURED 2026-10-22", size: 28, color: ink-dim, pos: [1824, 964], anchor: tr, plate: {pad: 16, y: [952, 1008]}}
+      - {kind: panel, box: [96, 176, 116, 196], color: orange, alpha: 1.0, radius: 2, in: "s1"}
+      - {kind: label, font: sans_medium, size: 32, text: "Strands Decider 2B, local", pos: [128, 170], in: "s1"}
+      - {kind: panel, box: [984, 176, 1004, 196], color: ink-dim, alpha: 1.0, radius: 2, in: "s2"}
+      - {kind: label, font: sans_medium, size: 32, text: "Amazon Nova Pro on Bedrock", pos: [1016, 170], in: "s2"}
+      - {kind: counter, text: "{n} ms", size: 96, unit_size: 36, pos: [96, 240], in: "s1%19", count: {from: 0, to: 462, over: 0.5}}
+      - {kind: label, size: 32, color: ink-dim, text: "median, three questions in one request", pos: [96, 350], in: "s1%19"}
+      - {kind: counter, text: "{n} of 72", size: 96, unit_size: 36, pos: [96, 440], in: "s1%56", count: {from: 0, to: 0, over: 0.5}}
+      - {kind: label, size: 32, color: ink-dim, text: "over the 1.5 s budget", pos: [96, 550], in: "s1%56"}
+      - {kind: counter, text: "{n} of 72", size: 96, unit_size: 36, pos: [984, 440], in: "s2%27", count: {from: 0, to: 31, over: 0.5}}
+      - {kind: label, size: 32, color: ink-dim, text: "over the 1.5 s budget", pos: [984, 550], in: "s2%27"}
+      - {kind: counter, text: "{n} USD", size: 96, unit_size: 36, pos: [984, 640], in: "s2%73", count: {from: 0, to: 0.13, over: 0.5, decimals: 2}}
+      - {kind: label, size: 32, color: ink-dim, text: "per 1000 decisions", pos: [984, 750], in: "s2%73"}
+
+  # ---------------------------------------------------------------- 12 THE REUSABLE PATTERN
+  - id: s12-pattern
+    kind: terminal
+    chrome: false
+    src: docs/video/build/clips/pattern-demo.txt
+    line_range: [7, 9]             # the three gate-log rows of `make pattern-demo`, verbatim
+    wrap: 118
+    wrap_indent: "  "
+    pos: [96, 600]
+    width: 1728
+    size: 24
+    leading: 32
+    start: 4.5
+    cps: 560                       # about 1120 characters over 2.0 s
+    line_pause: 0
+    highlight:                     # boxes placed by match string (the row 1 reason wraps over two lines)
+      - {match: '"verdict": "Proceed"', color: green, at: 7.0}
+      - {match: '"verdict": "Guide"', color: amber, at: 7.0}
+      - {match: '"verdict": "Deny"', color: red, at: 7.0}
+      - {match: '"reason": "inside', color: orange, at: 7.0}
+      - {match: 'envelope p=0.95, grounded p=0.95"', color: orange, at: 7.0}
+      - {match: '"reason": "outside envelope: distance_m 2 > 0.5"', color: orange, at: 7.0}
+      - {match: '"reason": "decider unavailable: failing closed, no motion"', color: orange, at: 7.0}
+    duration: auto
+    min: 9.2                       # highlights land at +7.0; hold after the VO trimmed to 0.5 s
+    vo_offset: 0.3
+    vo: "The pattern is a drop-in. Three files with the upstream names, three lines of wiring, and make pattern demo runs it offline against a fake decider."
+    text:
+      - {kind: title, text: "Drop it into your own agent", size: 64, pos: [96, 72]}
+      - *badge_tr
+      - {kind: mono, text: "github.com/Vivek0712/strands-robots-deepracer/tree/main/patterns/strands", size: 26, pos: [112, 966], plate: {box: [80, 952, 1280, 1008], bar: {color: orange, width: 2, x: 96}}}
+      - {kind: mono, text: "FAKE DECIDER, STDOUT VERBATIM", size: 28, color: ink-dim, pos: [1824, 964], anchor: tr, plate: {pad: 16, y: [952, 1008]}}
+      # row 1, +0.3
+      - {kind: label, font: sans_medium, size: 28, color: ink-dim, text: "three files, upstream names", pos: [96, 170], in: 0.3}
+      - {kind: mono, size: 28, leading: 40, text: "patterns/strands/\n  _client.py\n  tool_call_intervention.py\n  frame_intervention.py\n  README.md", pos: [96, 220], in: 0.3}
+      - {kind: label, font: sans_medium, size: 28, color: ink-dim, text: "three lines of wiring", pos: [616, 170], in: 0.3}
+      - {kind: mono, size: 28, leading: 40, pos: [616, 220], in: 0.3, text: "decider = Decider(timeout=1.5)\nagent = Agent(\n    model=BedrockModel(model_id=\"us.amazon.nova-pro-v1:0\",\n                       region_name=\"us-east-1\"),\n    tools=[move],\n    interventions=[MotionGate(decider)],\n)", highlight: [{match: "timeout=1.5", color: cyan, at: 1.5}, {match: "interventions=[MotionGate(decider)]", color: orange, at: 2.5}]}
+      # row 2, +4.5
+      - {kind: label, size: 28, color: ink-dim, text: "make pattern-demo, against the fake decider (a script, not the model)", pos: [96, 566], in: 4.5}
+
+  # ---------------------------------------------------------------- 13 MUMBAI (two stills, hard cut at +2.0)
+  - id: s13a-mumbai-speaker
+    kind: still
+    src: docs/article/img/event-speaker-with-car.jpg
+    place: [555, 0, 1365, 1080]    # fitted to height
+    fill: blur
+    fill_blur: 24
+    fill_brightness: 0.35
+    duration: 2.0
+    vo_offset: 0.3
+    vo: "Shown at AWS Community Day Mumbai."
+    text:
+      - {kind: lower_third, text: "AWS Community Day Mumbai, 17 October 2026", anim: none}
+  - id: s13b-mumbai-hall
+    kind: still
+    src: docs/article/img/event-hall.jpg
+    place: [240, 0, 1680, 1080]
+    fill: blur
+    fill_blur: 24
+    fill_brightness: 0.35
+    duration: 2.0
+    black_out: 0.15                # the dip into shot 14
+    text:
+      - {kind: lower_third, text: "AWS Community Day Mumbai, 17 October 2026", anim: none}
+
+  # ---------------------------------------------------------------- 14 CLOSE
+  - id: s14-close
+    kind: still
+    src: docs/article/img/cover.png
+    place: [0, 0, 1920, 1080]
+    brightness: 0.4
+    duration: auto
+    min: 8.0
+    black_in: 0.3
+    vo_offset: 0.4
+    vo: "Repo and article below. Physics stops the car. The decider explains."
+    text:
+      - {kind: title, text: *safety, size: 56, pos: [960, 380], anchor: tc, in: 0.4, fade: 1.0}
+      - {kind: mono, text: "github.com/Vivek0712/strands-robots-deepracer", size: 48, color: cyan, pos: [960, 470], anchor: tc, in: 0.4, fade: 1.0}
+      - {kind: label, text: "Vivek Raja, AWS AI Hero  |  Article on AWS Builder Center", size: 34, color: ink, pos: [960, 560], anchor: tc, in: 0.4, fade: 1.0}
+      - {kind: mono, text: "#strands-decider-2b   #guardrails", size: 32, color: orange, pos: [960, 620], anchor: tc, in: 0.4, fade: 1.0}
+      - {kind: image, src: docs/talk/deck/assets/logos/strands-mark.svg, box: [1728, 912, 1824, 1008], glow: {color: violet, radius: 24, alpha: 0.3}, in: 0.4, fade: 1.0}

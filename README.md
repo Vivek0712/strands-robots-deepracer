@@ -19,10 +19,10 @@
 <p align="center"><a href="#quick-start"><b>Try it in 60 seconds</b></a> &nbsp;&middot;&nbsp; <a href="patterns/strands/README.md"><b>Copy the Decider pattern</b></a> &nbsp;&middot;&nbsp; <a href="docs/article/article.md"><b>Read the article</b></a> &nbsp;&middot;&nbsp; <a href="#hackathon-submission"><b>Watch the 3-minute demo (coming)</b></a></p>
 
 <p align="center">
-  <img src="docs/media/car-hop.gif" width="49%" alt="The real DeepRacer executing a bounded forward and backward hop on a tiled floor">
+  <img src="docs/media/phase3-deviation.gif" width="49%" alt="The DeepRacer camera sees a toy car ahead, the vision planner replans with turn left to avoid the car ahead, then the real car steers left past it">
   <img src="docs/media/pitwall.gif" width="49%" alt="The Pit Wall on the fake stack: a clear hop proceeds, a drawn stick figure is denied as person_in_frame 0.97, an out-of-envelope command waits for Confirm, STOP ALL ends a run">
 </p>
-<p align="center"><sub>Left: the car on the floor under a bounded hop (phase-1 HTTP hop, ungated, the same car). Right: the Pit Wall: Proceed, Deny on a drawn person, Confirm, STOP ALL (sim, fake decider).</sub></p>
+<p align="center"><sub>Left: the car's own camera sees a toy car, the planner replans, the real car steers left past it (phase-3 Nova vision planner, March 2026, before the Decider gate). Right: the Pit Wall: Proceed, Deny on a drawn person, Confirm, STOP ALL (sim, fake decider).</sub></p>
 
 A stock AWS DeepRacer becomes a Strands robot. Upstream
 [strands-labs/robots](https://github.com/strands-labs/robots) drives it over ROS 2 through
