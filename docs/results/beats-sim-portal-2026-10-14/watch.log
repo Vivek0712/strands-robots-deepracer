@@ -1,0 +1,35 @@
+~/strands-robots-deepracer/portal/evidence/capture.py:145: DeprecationWarning: connect() must be used as a context manager: with connect(...) as websocket: ...; alternatively, use websocket = connect(..., legacy=True) to connect directly
+  first = json.loads(self._ws.recv(timeout=10))
+portal.evidence shot 01-beats-marshal-deny.png (308 KB): Live beats run: the Marshal beat's deny (person in frame) as the real gate emitted it.
+portal.evidence shot 02-beats-apology.png (221 KB): Live beats run: the Apology beat, the rover's why_stopped answer in the Thought panel.
+portal.evidence shot 03-beats-final-audit.png (68 KB): Live beats run: the audit panel after all seven beats.
+portal.evidence shot 04-beats-final-main.png (262 KB): Live beats run: the whole Pit Wall after all seven beats.
+{
+  "out": "~/strands-robots-deepracer/docs/results/beats-sim-portal-2026-10-14",
+  "seen": {
+    "marshal": true,
+    "apology": true
+  },
+  "shots": [
+    {
+      "file": "01-beats-marshal-deny.png",
+      "caption": "Live beats run: the Marshal beat's deny (person in frame) as the real gate emitted it.",
+      "bytes": 315746
+    },
+    {
+      "file": "02-beats-apology.png",
+      "caption": "Live beats run: the Apology beat, the rover's why_stopped answer in the Thought panel.",
+      "bytes": 227096
+    },
+    {
+      "file": "03-beats-final-audit.png",
+      "caption": "Live beats run: the audit panel after all seven beats.",
+      "bytes": 70128
+    },
+    {
+      "file": "04-beats-final-main.png",
+      "caption": "Live beats run: the whole Pit Wall after all seven beats.",
+      "bytes": 268630
+    }
+  ]
+}

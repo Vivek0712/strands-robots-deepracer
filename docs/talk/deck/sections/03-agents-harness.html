@@ -1,0 +1,214 @@
+<!-- Section C: Strands Agents and the Harness SDK. Six slides. Classes from framework.css only, plus the
+     s03- scoped helpers below (pre blocks, the gate diagram, one reverse flow keyframe). -->
+<style>
+  .s03-code { background: var(--bg-2); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin: 0;
+    font-family: var(--mono); font-size: 17px; line-height: 1.45; color: var(--text); overflow: hidden; white-space: pre; }
+  .s03-code .k { color: var(--strand-3); } .s03-code .s { color: var(--strand-2); } .s03-code .c { color: var(--dim); }
+  .s03-code .d { color: var(--deny); } .s03-code .ok { color: var(--proceed); }
+  .s03-flowbar { height: 3px; background: linear-gradient(90deg, var(--strand-4), var(--strand-3)); border-radius: 2px; margin: 14px 0 6px; }
+  .s03-back .dot { animation-name: s03FlowBack; }
+  @keyframes s03FlowBack { 0% { left: 100%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { left: 0%; opacity: 0; } }
+  .s03-gate { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  .s03-gate .out { border-radius: 14px; padding: 14px 18px; border: 1px solid var(--line); background: var(--panel); font-size: 21px; display: flex; gap: 16px; align-items: baseline; margin-bottom: 12px; }
+  .s03-gate .out:last-child { margin-bottom: 0; }
+  .s03-gate .out b { font-family: var(--mono); font-size: 15px; letter-spacing: 0.1em; min-width: 110px; }
+  .s03-gate .proceed { border-color: var(--proceed); } .s03-gate .proceed b { color: var(--proceed); }
+  .s03-gate .guide { border-color: var(--guide); } .s03-gate .guide b { color: var(--guide); }
+  .s03-gate .confirm { border-color: var(--confirm); } .s03-gate .confirm b { color: var(--confirm); }
+  .s03-gate .deny { border-color: var(--deny); } .s03-gate .deny b { color: var(--deny); }
+  .s03-tight li { margin-bottom: 14px; font-size: 26px; } .s03-tight p { margin: 6px 0; }
+  .s03-fig img { object-fit: contain; background: var(--bg-2); padding: 10px; }
+  .s03-wordmark { height: 48px; width: auto; align-self: flex-start; margin-bottom: 18px; }
+  .s03-cards .card p { font-size: 22px; margin: 0; }
+</style>
+
+<!-- C1. Strands Agents in one slide -->
+<section class="slide">
+  <div class="kicker">Part 3 · Strands Agents</div>
+  <h2>Strands Agents: model-driven, one loop</h2>
+  <div class="grid c2" style="align-items: start;">
+    <ul class="s03-tight" style="margin: 0; padding-left: 26px;">
+      <li class="reveal">"A model-driven approach to building AI agents in just a few lines of code." The model decides; the SDK runs the loop.</li>
+      <li class="reveal">Each pass: the model decides, tools run, results return. It repeats until the model answers without a tool call.</li>
+      <li class="reveal">Any model: Amazon Bedrock by default; Anthropic, OpenAI, Gemini, Ollama swap in with one <code>model=</code>.</li>
+      <li class="reveal">Python 1.61.1 (15 Oct 2026), TypeScript 1.21.0 (14 Oct), Apache-2.0, one monorepo: <code>strands-agents/harness-sdk</code>.</li>
+    </ul>
+    <div>
+<pre class="s03-code"><span class="k">from</span> strands <span class="k">import</span> Agent, tool
+
+<span class="k">@tool</span>
+<span class="k">def</span> letter_counter(word: str, letter: str) -> int:
+    <span class="s">"""Count occurrences of a specific letter in a word."""</span>
+    <span class="k">return</span> word.lower().count(letter.lower())
+
+agent = Agent(tools=[letter_counter])
+agent(<span class="s">'How many letter R\'s are in the word "strawberry"?'</span>)</pre>
+      <div class="caption">condensed from the Python quickstart (strandsagents.com)</div>
+    </div>
+  </div>
+  <div style="margin-top: 26px;">
+    <div class="loop">
+      <div class="node"><b>REQUEST</b>prompt + history</div>
+      <div class="arrow">&rarr;</div>
+      <div class="node pulse" style="border-color: var(--strand-1);"><b>MODEL</b>decides next step</div>
+      <div class="arrow">&rarr;</div>
+      <div class="node"><b>TOOLS</b>execute tool calls</div>
+    </div>
+    <div class="flow s03-back"><div class="s03-flowbar"></div><div class="dot" style="top: -6px;"></div></div>
+    <div class="small" style="display: flex; justify-content: space-between;">
+      <span>&larr; results go back; every pass adds to the history</span>
+      <span>no tool calls &rarr; <b style="color: var(--strand-2);">RESPONSE</b></span>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Audience knows what an agent is; this is only the vocabulary we reuse for the rest of the talk. The loop labels (Request, Model decides next step, Tools execute tool calls, Response, "Every pass adds to the conversation history") are the labels of the official agent-loop diagram. Stop reasons exist (end_turn, tool_use, cancelled, limit_turns...) and <code>agent.cancel()</code> stops the loop from outside: that is the hook we use for "Pull the Plug" later.</p>
+    <p>Code: condensed from the Python quickstart's <code>letter_counter</code> example (docstring shortened, <code>file_editor</code> tool dropped). Versions re-checked 2026-10-17 on PyPI (strands-agents 1.61.1 uploaded 2026-10-15) and the GitHub releases page (typescript/v1.21.0 published 2026-10-14).</p>
+  </aside>
+</section>
+
+<!-- C2. What makes it fit robots -->
+<section class="slide">
+  <div class="kicker">Part 3 · Why it fits a robot</div>
+  <h2>Four things a robot needs, already in the SDK</h2>
+  <div class="grid c2" style="align-items: start;">
+    <ul class="s03-tight" style="margin: 0; padding-left: 26px;">
+      <li class="reveal"><b>Interventions.</b> Typed decisions before each tool call, evaluated in order.</li>
+      <li class="reveal"><b>Hooks.</b> <code>BeforeToolCallEvent</code>, <code>AfterToolCallEvent</code>, <code>BeforeModelCallEvent</code>: observe or change the loop at any point.</li>
+      <li class="reveal"><b>The command gate.</b> strands-robots' <code>_command_gate</code> owns approval for every motion topic: a human "yes", or an explicit <code>STRANDS_ROS2_COMMAND_ALLOW</code> for headless runs.</li>
+      <li class="reveal"><b>Bidi voice with barge-in.</b> <code>BidiAgent</code> keeps one connection to Nova Sonic; <code>BidiBargeInEvent</code> clears playback when the user talks over it.</li>
+    </ul>
+    <div class="s03-gate">
+      <div class="card" style="padding: 14px 18px;"><span class="pill on">tool call</span> <code>drive_deepracer(throttle=0.3, steer=-0.5)</code><div class="small" style="margin-top: 6px;">before_tool_call: every handler votes, in order</div></div>
+      <div class="reveal">
+        <div class="out proceed"><b>PROCEED</b><span>Allow the operation to continue unchanged</span></div>
+        <div class="out guide"><b>GUIDE</b><span>Cancel and provide feedback for the model to retry with</span></div>
+        <div class="out confirm"><b>CONFIRM</b><span>Pause for human approval (before_tool_call only)</span></div>
+        <div class="out deny"><b>DENY</b><span>Block the operation; short-circuits remaining handlers</span></div>
+      </div>
+      <div class="safety reveal" style="font-size: 20px;">Physics stops the car; the decider explains.</div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Say the safety line out loud here, first time in this section: physics stops the car; the decider explains. Interventions are an explanation layer we can trust to be well behaved (fail-closed with <code>on_error="deny"</code>), not the thing that keeps a wheel off a foot. A fifth action, Transform, modifies event content in place; it is not on the slide.</p>
+    <p>The four descriptions are the interventions page's action table, word for word ("Allow the operation to continue unchanged", "Block the operation. Short-circuits remaining handlers", "Cancel and provide feedback for the model to retry with", "Pause for human approval"); the "before_tool_call only" qualifier is from the page's lifecycle table, and Confirm uses the SDK's interrupt/resume. The command gate description is from our code deep-dive of strands-robots (report 01, section 1.4). Barge-in: the bidi overview says the user can "talk over the agent (barge in)"; the stream-events page says to clear buffered audio when <code>BidiBargeInEvent</code> arrives, which <code>AudioIO.output()</code> does automatically.</p>
+  </aside>
+</section>
+
+<!-- C3. What the Harness SDK is -->
+<section class="slide">
+  <div class="kicker">Part 3 · The Harness SDK</div>
+  <h2>"An agent harness is the software around a model that turns it into an agent."</h2>
+  <div class="grid c2" style="align-items: start;">
+    <div>
+      <ul class="s03-tight" style="margin: 0; padding-left: 26px;">
+        <li class="reveal"><b>Strands Harness SDK</b>: build one yourself, end to end. <b>Strands harness</b>: the assembled one; <code>create_harness()</code> returns a plain <code>strands.Agent</code>.</li>
+        <li class="reveal"><b>Sandboxes.</b> Shell and file tools run through <code>Agent(sandbox=...)</code>: <code>DockerSandbox</code>, <code>SshSandbox</code>, or your own <code>PosixShellSandbox</code>. No sandbox means the host.</li>
+        <li class="reveal"><b>Policies.</b> <code>interventions="ask"</code>, <code>"smart"</code>, a natural-language rubric, a <code>.cedar</code> file, or a handler such as <code>CedarAuthorization</code>. Subagents inherit it.</li>
+        <li class="reveal"><b>Memory.</b> Sessions resume by id; long-term memory is markdown under <code>./.agent/memory</code>.</li>
+        <li class="reveal"><b>Same loop</b> as the agent loop, plus batteries: tuned prompt, context management, caching, subagents, skills.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="figure s03-fig" style="height: 190px;"><img src="assets/03/strands-sandbox-execution-boundary.themed.svg" alt="Agent (model, hooks, state) and sandbox tools on your infrastructure; operations cross into an execution backend: Docker, SSH or custom"></div>
+      <div class="caption">official diagram, strandsagents.com (sandbox-execution-boundary.svg), recoloured to the deck tokens</div>
+<pre class="s03-code reveal" style="margin-top: 12px; font-size: 16px;"><span class="k">from</span> strands.sandbox.ssh <span class="k">import</span> SshSandbox
+<span class="k">from</span> strands.vended_interventions.cedar <span class="k">import</span> CedarAuthorization
+<span class="k">from</span> strands_harness <span class="k">import</span> create_harness
+agent = create_harness(
+    instructions=INSTRUCTIONS,
+    builtin_tools=[<span class="s">"shell"</span>, <span class="s">"read"</span>, <span class="s">"write"</span>, <span class="s">"edit"</span>, <span class="s">"web_fetch"</span>],
+    interventions=CedarAuthorization(policies=POLICY, on_error=<span class="s">"deny"</span>),
+    memory=<span class="k">True</span>, session=<span class="k">True</span>,
+    sandbox=SshSandbox(host=<span class="s">"deepracer@&lt;car&gt;"</span>, working_dir=<span class="s">"/opt/aws/deepracer"</span>),
+)</pre>
+      <div class="caption">ops/race_engineer.py, trimmed: the whole race engineer is this one call</div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>The title is the first sentence of the SDK overview page; the first bullet's opening is its second sentence. Strands harness (the product) sits on the Strands Harness SDK (the toolkit); the docs say to use the harness when its defaults fit and the SDK directly for a bespoke tool set or a custom loop.</p>
+    <p>Sandbox facts from the "Available Sandboxes" page: both backends register sandbox shell and file-editor tools; SshSandbox spawns a fresh ssh process per command, key-based auth only, BatchMode enforced, an allowlist of ssh options. The sandbox overview says omitting the sandbox parameter runs the command and file tools directly on the host. <code>PosixShellSandbox</code> is the abstract base exported by <code>strands.sandbox</code> (package docstring in strands-py). The harness README says the environment plugin reads through the agent's sandbox "whether the agent runs locally, in Docker, or over SSH"; <code>sandbox</code> itself reaches <code>Agent</code> through <code>**agent_kwargs</code> (harness-py agent.py). Interventions sugar (ask, smart, rubric, .cedar, a handler, or a list) and memory are from the harness README sections "Requiring approval for tool calls" and "Long-term memory"; the README also says <code>programmatic_tool_caller</code> calls are gated, so delegation cannot bypass the policy. The code is our ops/race_engineer.py with the host resolution and env loading removed.</p>
+  </aside>
+</section>
+
+<!-- C4. Harness functionality tour -->
+<section class="slide">
+  <div class="kicker">Part 3 · Harness tour</div>
+  <h2>What <code>create_harness()</code> wires up</h2>
+  <div class="grid c3 s03-cards">
+    <div class="card reveal"><h3>Sandbox</h3><p>Shell and file tools run through the sandbox: host, Docker or SSH.</p></div>
+    <div class="card reveal"><h3>Policy</h3><p>Cedar policies evaluated before each tool call: default-deny, fail-closed with <code>on_error="deny"</code>.</p></div>
+    <div class="card reveal"><h3>Memory</h3><p>Sessions resume by id; long-term memory as markdown files, plus <code>search_memory</code>.</p></div>
+    <div class="card reveal"><h3>Tools</h3><p>Eight built-ins: shell, read, write, edit, web_fetch, web_search, programmatic_tool_caller, subagent.</p></div>
+    <div class="card reveal"><h3>Interventions</h3><p><code>"ask"</code> approves every call, <code>"smart"</code> adds an LLM risk classifier, a <code>.cedar</code> path loads a policy. Children inherit it.</p></div>
+    <div class="card reveal"><h3>Observability</h3><p>OpenTelemetry spans for model, tools and subagents; off unless <code>OTEL_TRACES_EXPORTER</code> is set.</p></div>
+  </div>
+  <p class="muted" style="margin-top: 26px; font-size: 22px;">Also in the box: a tuned system prompt, context management, prompt caching, Agent Skills, and the <code>strands</code> CLI.</p>
+  <aside class="notes">
+    <p>One line per card, each from the docs: sandbox (Available Sandboxes page and the official sandbox-execution-boundary diagram's story line: only execution crosses the boundary; model calls, hooks and state stay on your side), policy (Cedar Authorization page: the action is the tool name, <code>context.input</code> its arguments, <code>context.session</code> what your enricher adds), memory (README "Long-term memory": facts distilled into markdown, folded back into context, flush before a short run ends), tools (configuration reference; yours and MCP servers add alongside; a list pins names, a mapping edits), interventions (README "Requiring approval for tool calls": subagent children and <code>programmatic_tool_caller</code> calls are gated too), observability (README "Tracing": "the model loop, tool calls, and subagent delegation all emit OpenTelemetry spans"; with <code>OTEL_TRACES_EXPORTER</code> unset "the harness touches telemetry not at all"). The two built-in plugins (todos, environment) are in the configuration reference.</p>
+    <p>The tuned prompt, per the README: explore before changing, confirm before anything irreversible, verify before calling a task done. If asked "why not just Agent + tools": the harness is the fastest route to a preconfigured agent; everything is a default, not a constraint, and the return value is a plain Agent.</p>
+  </aside>
+</section>
+
+<!-- C5. The rule -->
+<section class="slide">
+  <div class="kicker">Part 3 · The rule</div>
+  <h2>The harness is the race engineer, never the driving loop</h2>
+  <div class="grid c2" style="align-items: start;">
+    <ul class="s03-tight" style="margin: 0; padding-left: 26px;">
+      <li class="reveal"><b>Driving</b> stays on strands-robots' gated <code>drive_*</code> tools. Cedar forbids <code>manual_drive</code>, <code>cmd_vel</code> and <code>servo_msg</code> in any harness shell command, confirmed or not.</li>
+      <li class="reveal"><b>The race engineer</b> has SSH hands on the car: reads are free; a calibration write or a service restart needs the operator's yes.</li>
+      <li class="reveal"><b>Pit Stop on the stand, 14 Oct 2026.</b> Read <code>calibration.json</code> over SSH (steering mid 1450000), recalled 1456000, reported the 6000 offset without changing anything.</li>
+      <li class="reveal">Operator <b>not</b> confirmed: the <code>edit</code> call was <span style="color: var(--deny);">refused by Cedar</span>; the engineer proposed the fix and waited. The file stayed 1450000.</li>
+      <li class="reveal safety">Physics stops the car; the decider explains.</li>
+    </ul>
+    <div>
+<pre class="s03-code" style="font-size: 15px;">forbid(principal, action == Action::<span class="s">"shell"</span>, resource)
+when { context.input.command like <span class="s">"*manual_drive*"</span> || ... };
+forbid(principal, action in [Action::<span class="s">"write"</span>, Action::<span class="s">"edit"</span>], resource)
+unless { context.session has operator_confirmed
+         &amp;&amp; context.session.operator_confirmed == true };
+
+<span class="c">$ python -m ops.race_engineer "... it should be 1456000. Fix it in the file now."</span>
+Tool #1: edit
+<span class="d">&lt;thinking&gt; The tool call to edit the calibration file was denied by the Cedar policy. &lt;/thinking&gt;</span>
+... corrected from 1450000 to 1456000. <span class="ok">Please confirm to proceed with this change.</span></pre>
+      <div class="caption">ops/pit_stop.cedar (excerpt) and docs/results/pit-stop-2026-10-14/02-refused-write.txt; model us.amazon.nova-pro-v1:0 on Bedrock</div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>This is the project's own rule, stated in CLAUDE.md and in report 08: "The harness is not the driving loop. Driving stays on strands-robots' gated drive_* tools with the car's safety envelope. The harness is the race engineer." The Pit Stop beat is pre-recorded (council verdict, report 11): live SSH over hall Wi-Fi and a bad write are both unacceptable risks. The "6000" is in nanoseconds of servo PWM (the README calls it a 6000 ns offset; the prompt called it 6 PWM units).</p>
+    <p>Honesty points to say: the "remembered" 1456000 is the staged premise of the beat; it entered memory through the refused-write request, as a presenter seeds it before the show. The car's real steering centre is 1450000 and was not touched. The red line in the transcript is the model's own <code>&lt;thinking&gt;</code> block, shown as recorded; the denial itself came from Cedar before the tool ran. The confirmed path (DEEPRACER_OPERATOR_CONFIRMED=1, the edit allowed, the car drives straight) was left for the recording session with the operator at the keyboard. Fixes the run produced: SshSandbox takes bare Option=value strings, and the engineer's notebook actions (search_memory, retrieve_context, todo_write) are permitted without confirmation since they never touch the car.</p>
+  </aside>
+</section>
+
+<!-- C6. Where to start -->
+<section class="slide">
+  <div class="kicker">Part 3 · Where to start</div>
+  <img class="s03-wordmark" src="assets/logos/strands-wordmark.svg" alt="Strands wordmark">
+  <h2>Start here</h2>
+  <div class="grid c2" style="align-items: start;">
+    <div>
+<pre class="s03-code"><span class="c"># SDK (Python 3.10+)</span>
+pip install strands-agents strands-agents-tools
+<span class="c"># the assembled harness</span>
+pip install strands-harness
+<span class="c"># Cedar interventions</span>
+pip install 'strands-agents[cedar]'
+<span class="c"># bidi voice with Nova Sonic (Python 3.12+)</span>
+pip install "strands-agents[bidi,bidi-io,bidi-pyaudio,bidi-aec]"
+<span class="c"># the terminal console over the harness</span>
+npm install -g @strands-agents/cli</pre>
+      <div class="caption">install lines as printed in the docs and READMEs, checked 17 Oct 2026</div>
+    </div>
+    <ul class="s03-tight" style="margin: 0; padding-left: 26px;">
+      <li class="reveal">Docs: <b>strandsagents.com/docs/user-guide/sdk/</b> (agent loop, interventions, hooks, sandbox, bidi) and <b>/docs/user-guide/harness/</b> (quickstart, configuration, composing with the SDK).</li>
+      <li class="reveal">Code: <b>github.com/strands-agents/harness-sdk</b>, Apache-2.0, 8.8k stars (17 Oct 2026); Python SDK, TypeScript SDK, harness, CLI and the docs site in one monorepo.</li>
+      <li class="reveal">Latest: strands-agents <b>1.61.1</b> and strands-harness <b>0.3.1</b> (PyPI, 15 Oct 2026); TypeScript SDK 1.21.0, CLI 0.2.1 (14 Oct 2026).</li>
+      <li class="reveal">Write against <code>strands.bidi</code>. <code>strands.experimental.bidi</code> is a deprecated shim: it still ships in 1.61.1, but its warning says it goes.</li>
+      <li class="reveal muted">Community: discord.gg/strands; samples at github.com/strands-agents/samples.</li>
+    </ul>
+  </div>
+  <aside class="notes">
+    <p>All install lines are copied from the monorepo README, the harness-py README, the Cedar page, the bidi quickstart and the strands-cli README. Version numbers were read on PyPI and the GitHub releases page on 2026-10-17. The shim: <code>strands/experimental/bidi/__init__.py</code> at tags python/v1.60.0 and python/v1.61.1 and on main still exists and still warns "deprecated and will be removed in v1.60.0"; the 1.60.0 and 1.61.x release notes list no removal. So the stated removal version has passed without the removal; the only safe statement is that it is deprecated and will go. The wordmark is the official dark-mode wordmark the Strands READMEs embed.</p>
+  </aside>
+</section>

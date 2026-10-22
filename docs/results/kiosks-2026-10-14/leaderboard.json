@@ -1,0 +1,224 @@
+{
+  "session": "s-kiosks-evidence",
+  "entries": [
+    {
+      "nickname": "Ada",
+      "class": "clear",
+      "probability": 0.93,
+      "latency_ms": 1,
+      "labels": [
+        "clear",
+        "obstacle_near",
+        "person_in_frame",
+        "off_surface",
+        "unclear",
+        "shoe"
+      ],
+      "expected": "shoe",
+      "consent": false,
+      "frame_ref": null,
+      "ts": "2026-10-14T16:10:00.366Z",
+      "request_id": "kiosk-judge-1791994200366",
+      "wrong": true,
+      "fool_score": 1.07,
+      "error": null,
+      "rank": 1,
+      "tries": 1
+    },
+    {
+      "nickname": "Linus",
+      "class": "clear",
+      "probability": 0.8,
+      "latency_ms": 1,
+      "labels": [
+        "clear",
+        "obstacle_near",
+        "person_in_frame",
+        "off_surface",
+        "unclear",
+        "shoe"
+      ],
+      "expected": null,
+      "consent": false,
+      "frame_ref": null,
+      "ts": "2026-10-14T16:10:01.615Z",
+      "request_id": "kiosk-judge-1791994201615",
+      "wrong": false,
+      "fool_score": 0.2,
+      "error": null,
+      "rank": 2,
+      "tries": 1
+    },
+    {
+      "nickname": "Grace",
+      "class": "clear",
+      "probability": 0.93,
+      "latency_ms": 1,
+      "labels": [
+        "clear",
+        "obstacle_near",
+        "person_in_frame",
+        "off_surface",
+        "unclear",
+        "shoe"
+      ],
+      "expected": "clear",
+      "consent": true,
+      "frame_ref": "frames/kiosk-judge-20261014-161000-982694.jpg",
+      "ts": "2026-10-14T16:10:00.981Z",
+      "request_id": "kiosk-judge-1791994200981",
+      "wrong": false,
+      "fool_score": 0.07,
+      "error": null,
+      "rank": 3,
+      "tries": 1
+    }
+  ],
+  "total": 3,
+  "recent": [
+    {
+      "class": "clear",
+      "probability": 0.8,
+      "latency_ms": 1,
+      "probabilities": {
+        "clear": 0.8,
+        "obstacle_near": 0.04,
+        "person_in_frame": 0.04,
+        "off_surface": 0.04,
+        "unclear": 0.04,
+        "shoe": 0.04
+      },
+      "error": null,
+      "caption": null,
+      "request_id": "kiosk-judge-1791994201615",
+      "ts": "2026-10-14T16:10:01.615Z",
+      "nickname": "Linus",
+      "expected": null,
+      "labels": [
+        "clear",
+        "obstacle_near",
+        "person_in_frame",
+        "off_surface",
+        "unclear",
+        "shoe"
+      ],
+      "consent": false,
+      "frame_saved": false,
+      "frame_ref": null,
+      "action": "Proceed",
+      "reason": "Linus: clear (p=0.80)",
+      "wrong": false,
+      "fool_score": 0.2,
+      "egress": [
+        {
+          "what": "camera console GET /route (one frame)",
+          "host": "127.0.0.1:8390",
+          "ms": 2
+        },
+        {
+          "what": "decider POST /v1/systemone (choice)",
+          "host": "127.0.0.1:8411",
+          "ms": 1
+        }
+      ],
+      "accepted": true,
+      "session": "s-kiosks-evidence"
+    },
+    {
+      "class": "clear",
+      "probability": 0.93,
+      "latency_ms": 1,
+      "probabilities": {
+        "clear": 0.93,
+        "obstacle_near": 0.014,
+        "person_in_frame": 0.014,
+        "off_surface": 0.014,
+        "unclear": 0.014,
+        "shoe": 0.014
+      },
+      "error": null,
+      "caption": null,
+      "request_id": "kiosk-judge-1791994200981",
+      "ts": "2026-10-14T16:10:00.981Z",
+      "nickname": "Grace",
+      "expected": "clear",
+      "labels": [
+        "clear",
+        "obstacle_near",
+        "person_in_frame",
+        "off_surface",
+        "unclear",
+        "shoe"
+      ],
+      "consent": true,
+      "frame_saved": true,
+      "frame_ref": "frames/kiosk-judge-20261014-161000-982694.jpg",
+      "action": "Proceed",
+      "reason": "Grace: clear (p=0.93), said clear: agreed",
+      "wrong": false,
+      "fool_score": 0.07,
+      "egress": [
+        {
+          "what": "camera console GET /route (one frame)",
+          "host": "127.0.0.1:8390",
+          "ms": 2
+        },
+        {
+          "what": "decider POST /v1/systemone (choice)",
+          "host": "127.0.0.1:8411",
+          "ms": 1
+        }
+      ],
+      "accepted": true,
+      "session": "s-kiosks-evidence"
+    },
+    {
+      "class": "clear",
+      "probability": 0.93,
+      "latency_ms": 1,
+      "probabilities": {
+        "clear": 0.93,
+        "obstacle_near": 0.014,
+        "person_in_frame": 0.014,
+        "off_surface": 0.014,
+        "unclear": 0.014,
+        "shoe": 0.014
+      },
+      "error": null,
+      "caption": null,
+      "request_id": "kiosk-judge-1791994200366",
+      "ts": "2026-10-14T16:10:00.366Z",
+      "nickname": "Ada",
+      "expected": "shoe",
+      "labels": [
+        "clear",
+        "obstacle_near",
+        "person_in_frame",
+        "off_surface",
+        "unclear",
+        "shoe"
+      ],
+      "consent": false,
+      "frame_saved": false,
+      "frame_ref": null,
+      "action": "Proceed",
+      "reason": "Ada: clear (p=0.93), said shoe: fooled it",
+      "wrong": true,
+      "fool_score": 1.07,
+      "egress": [
+        {
+          "what": "camera console GET /route (one frame)",
+          "host": "127.0.0.1:8390",
+          "ms": 2
+        },
+        {
+          "what": "decider POST /v1/systemone (choice)",
+          "host": "127.0.0.1:8411",
+          "ms": 1
+        }
+      ],
+      "accepted": true,
+      "session": "s-kiosks-evidence"
+    }
+  ]
+}

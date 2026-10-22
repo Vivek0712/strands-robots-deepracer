@@ -1,0 +1,289 @@
+<!-- SECTION B: Physical AI and strands-robots, zero to hero. Ten slides. Sources in 02-physical-ai.notes.md -->
+<style>
+  /* scoped to this section: prefix s02- */
+  .s02-stat { text-align: center; }
+  .s02-stat .big { font-size: 54px; }
+  .s02-stat .lab { font-size: 18px; color: var(--muted); margin-top: 6px; }
+  .s02-stat .src { font-family: var(--mono); font-size: 15px; color: var(--dim); margin-top: 4px; }
+  .s02-stack { display: grid; grid-template-columns: repeat(9, auto); align-items: center; gap: 8px; margin-top: 22px; justify-content: start; }
+  .s02-stack .pill { font-size: 15px; padding: 6px 14px; }
+  .s02-stack .ar { color: var(--strand-4); font-size: 22px; }
+  .s02-loop { grid-template-columns: 1fr auto 1fr auto 1.25fr auto 1fr auto 1fr; }
+  .s02-loop .node { position: relative; animation: s02-glow 9s linear infinite; }
+  .s02-contain img { object-fit: contain; }
+  .s02-loop .node:nth-child(1) { animation-delay: 0s; }
+  .s02-loop .node:nth-child(3) { animation-delay: 1.8s; }
+  .s02-loop .node:nth-child(5) { animation-delay: 3.6s; }
+  .s02-loop .node:nth-child(7) { animation-delay: 5.4s; }
+  .s02-loop .node:nth-child(9) { animation-delay: 7.2s; }
+  @keyframes s02-glow {
+    0%, 18% { border-color: var(--strand-1); box-shadow: 0 0 22px rgba(255,107,61,0.35); }
+    22%, 100% { border-color: var(--line); box-shadow: none; }
+  }
+  .s02-gate { border-color: var(--strand-2) !important; }
+  .s02-back { font-family: var(--mono); color: var(--strand-4); font-size: 16px; text-align: center; margin-top: 10px; letter-spacing: 0.08em; }
+  .s02-row { display: flex; gap: 28px; align-items: flex-start; margin-top: 10px; }
+  .s02-row > * { min-width: 0; }
+  .s02-list { margin: 0; padding-left: 22px; }
+  .s02-list li { margin-bottom: 8px; }
+  .s02-code { font-family: var(--mono); font-size: 17px; color: var(--strand-4); background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; padding: 2px 8px; white-space: nowrap; }
+  .s02-robots img { height: 92px; width: 92px; border-radius: 14px; background: #fff; padding: 6px; object-fit: contain; }
+  .s02-robots { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px; }
+  .s02-robots figure { margin: 0; text-align: center; }
+  .s02-robots figcaption { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .s02-white { background: #fff; display: flex; align-items: center; justify-content: center; }
+  .s02-white img { object-fit: contain; height: 100%; width: auto; }
+  .s02-cheat .card p { font-size: 19px; margin: 0; }
+  .s02-cheat .card h3 { font-size: 22px; }
+  .s02-cheat .card code { font-family: var(--mono); color: var(--strand-4); font-size: 16px; }
+  .s02-step { padding-right: 16px; }
+  .s02-step b { font-size: 15px; }
+  .s02-step span { font-size: 17px; display: block; }
+  .s02-step .s02-code { display: inline-block; margin-top: 6px; font-size: 14px; white-space: normal; }
+</style>
+
+<!-- 1. What is Physical AI -->
+<section class="slide">
+  <div class="kicker">Part 2 · &middot; Physical AI &middot; 1 / 10</div>
+  <h2>Physical AI: the agent gets a body</h2>
+  <p>NVIDIA's definition: "Physical AI lets autonomous systems like cameras, robots, and self-driving cars perceive, understand, reason, perform or orchestrate complex actions in the physical world."</p>
+  <ul class="s02-list">
+    <li class="reveal">A software agent reads and writes text. A physical agent reads sensors and writes motor commands; the world grades the answer.</li>
+    <li class="reveal">Three forces: models learned to act (VLAs), simulation made training cheap, agent SDKs made the model a planner that calls tools.</li>
+    <li class="reveal">Jensen Huang, CES 2025: "the ChatGPT moment for general robotics is just around the corner."</li>
+  </ul>
+  <div class="timeline" style="margin-top: 40px">
+    <div class="t"><b>Jul 2023 &middot; models learn to act</b><span>RT-2: Google DeepMind's vision-language-action model</span></div>
+    <div class="t"><b>Oct 2024 &middot; models learn to act</b><span>&pi;0: Physical Intelligence's robot foundation model</span></div>
+    <div class="t"><b>Jan 2025 &middot; simulation</b><span>CES: NVIDIA Cosmos world foundation models</span></div>
+    <div class="t"><b>Mar 2025 &middot; simulation</b><span>GR00T N1: NVIDIA's open humanoid foundation model</span></div>
+    <div class="t"><b>May 2025 &middot; agents</b><span>Strands Agents SDK open-sourced by AWS</span></div>
+  </div>
+  <div class="caption" style="margin-top: 26px">three forces, five dated events; each date's primary source is in the notes</div>
+  <aside class="notes">
+    Definition is a direct quote from NVIDIA's glossary page on physical AI (one sentence). The three forces are my framing; each is backed by a dated primary source on the timeline (DeepMind RT-2 blog 28 Jul 2023, "a novel vision-language-action (VLA) model"; Physical Intelligence pi0 blog 31 Oct 2024; NVIDIA GR00T N1 press release 18 Mar 2025, "the world's first open, fully customizable foundation model for generalized humanoid reasoning and skills", Newton "under development with Google DeepMind and Disney Research"; AWS Open Source blog "Introducing Strands Agents" 16 May 2025). The Huang line: Fortune, 8 Jan 2025, reporting the CES keynote of 6 Jan 2025; NVIDIA's own Cosmos press release of the same day quotes him as "The ChatGPT moment for robotics is coming." Say: this talk is about the third force, the agent SDK, applied to a car.
+  </aside>
+</section>
+
+<!-- 2. How the world is evolving -->
+<section class="slide">
+  <div class="kicker">Part 2 · &middot; Physical AI &middot; 2 / 10</div>
+  <h2>More bodies every year, and a stack forming under them</h2>
+  <div class="grid c4" style="margin-top: 8px">
+    <div class="card s02-stat reveal"><div class="big">542k</div><div class="lab">industrial robots installed in 2024</div><div class="src">IFR, Sep 2025</div></div>
+    <div class="card s02-stat reveal"><div class="big">4.66M</div><div class="lab">industrial robots in operation, 2024</div><div class="src">IFR, Sep 2025</div></div>
+    <div class="card s02-stat reveal"><div class="big">~200k</div><div class="lab">professional service robots sold, 2024 (+9%)</div><div class="src">IFR, Oct 2025</div></div>
+    <div class="card s02-stat reveal"><div class="big">~18k</div><div class="lab">humanoids shipped in 2025 (analyst estimate)</div><div class="src">IDC est., Jan 2026, via press</div></div>
+  </div>
+  <p style="margin-top: 22px">Under every one of those bodies the same layers are settling into place. strands-robots names them the way its README does: prompt, agent, policy, backend, motor.</p>
+  <div class="s02-stack">
+    <span class="pill on">prompt</span><span class="ar">&rarr;</span>
+    <span class="pill on">agent</span><span class="ar">&rarr;</span>
+    <span class="pill on">policy (VLA / RL / planner)</span><span class="ar">&rarr;</span>
+    <span class="pill on">backend (sim or driver)</span><span class="ar">&rarr;</span>
+    <span class="pill on">motor</span>
+  </div>
+  <p class="small" style="margin-top: 14px">Logistics leads service robots (102,900 units, +14%); consumer service robots close to 20 million. Humanoid counts are analyst estimates and differ by method (Goldman Sachs: 15k-20k).</p>
+  <aside class="notes">
+    The three IFR numbers are from primary press releases: IFR World Robotics 2025 Industrial Robots (Frankfurt, 25 Sep 2025): 542,000 installed in 2024, operational stock 4,664,000 (+9%), Asia 74% of installs, China 295,000, 2025 forecast 575,000; IFR Service Robots (7 Oct 2025): almost 200,000 professional units (+9%), logistics 102,900 (+14%), consumer close to 20 million (+11%), from a sample of 294 suppliers. The humanoid figure is an analyst estimate, not a census: IDC's January 2026 count of about 18,000 units for 2025, read via Jiemian and IT Brief, not from the IDC report itself; Goldman Sachs 15,000-20,000. Say "about" and "estimate" out loud; do not quote forecasts as facts. The stack sentence paraphrases the README's "How it works" paragraph: "A prompt reaches the agent; the agent calls the robot tool; a policy turns the observation into an action chunk; the backend ... executes it".
+  </aside>
+</section>
+
+<!-- 3. What strands-robots is -->
+<section class="slide">
+  <div class="kicker">Part 2 · &middot; strands-robots &middot; 3 / 10</div>
+  <h2>strands-robots: "control, simulate, and train robots with natural language"</h2>
+  <div class="s02-row">
+    <div style="flex: 1">
+      <p>The repo's own line: "Control robots and physical hardware with natural language through Strands Agents." One <span class="s02-code">Robot()</span> call: a MuJoCo simulation by default, a real robot with <span class="s02-code">mode="real"</span>; same code, same tool surface.</p>
+      <ul class="s02-list">
+        <li class="reveal"><b>Control</b>: the robot object is itself a Strands <span class="s02-code">AgentTool</span>; <span class="s02-code">Agent(tools=[robot])("pick up the red cube")</span>.</li>
+        <li class="reveal"><b>Simulate</b>: MuJoCo, Newton, Isaac and mjlab behind one <span class="s02-code">SimEngine</span>.</li>
+        <li class="reveal"><b>Train</b>: LeRobot, Cosmos 3, PPO / FastSAC / FastTD3, Isaac Lab, SageMaker behind one <span class="s02-code">create_trainer()</span>.</li>
+        <li class="reveal"><b>Mesh</b>: every <span class="s02-code">Robot(mesh=True)</span> is a Zenoh peer; one fleet-wide e-stop.</li>
+      </ul>
+      <div style="margin-top: 10px">
+        <span class="pill on">186 stars</span><span class="pill on">39 forks</span><span class="pill on">Apache-2.0</span><span class="pill on">v0.5.3 &middot; 7 Oct 2026</span><span class="pill on">7 releases since Feb 2026</span><span class="pill on">Python 3.12+</span>
+      </div>
+    </div>
+    <div class="figure s02-contain" style="flex: 1; height: 450px"><img src="assets/02/hero_loop.svg" alt="Strands Robots hero: one Robot object, any robot; the agent perceives, reasons and acts, the world answers"></div>
+  </div>
+  <div class="caption">docs/assets/hero_loop.svg from github.com/strands-labs/robots &middot; 157 robots in the registry (77 curated + 80 URDF), 16 policy providers, 19 native drivers at main on 17 Oct 2026</div>
+  <aside class="notes">
+    Stats from the GitHub API on 17 Oct 2026: 186 stars, 39 forks, Apache-2.0, created 19 Feb 2026, 7 releases (v0.3.8 on 23 Feb 2026 through v0.5.3 on 7 Oct 2026); star and fork counts move daily, re-check the morning of the talk. The title line is the README h2; pyproject says requires-python >= 3.12. Counts are derived the way the docs hook facts.py derives them: robots.json has 77 curated entries in 8 categories (arm 23, humanoid 21, hand 9, mobile 8, mobile_manip 8, bimanual 5, aerial 2, expressive 1) plus 80 in urdf_robots.json = 157, matching the README's "150+ robots across 8 categories"; policies.json lists 16 providers; _SHIPPED_DRIVERS in strands_robots/drivers/__init__.py has 19 entries at main (the 17 from September plus earthrover and yahboom_m3pro). Say: Amazon-built, Strands Labs org, and the DeepRacer later in this talk rides on its Ackermann driver.
+  </aside>
+</section>
+
+<!-- 4. The core loop -->
+<section class="slide">
+  <div class="kicker">Part 2 · &middot; strands-robots &middot; 4 / 10</div>
+  <h2>The core loop: a tool call does not reach a motor without passing the gate</h2>
+  <div class="loop s02-loop" style="margin-top: 10px">
+    <div class="node"><b>1 PROMPT</b>"drive forward one metre"</div>
+    <div class="arrow">&rarr;</div>
+    <div class="node"><b>2 AGENT</b>Strands Agent picks a tool and an <span class="s02-code">action</span></div>
+    <div class="arrow">&rarr;</div>
+    <div class="node s02-gate"><b>3 COMMAND GATE</b><span class="s02-code">gate_motion</span>: allowlist &rarr; bypass &rarr; refuse &rarr; ask</div>
+    <div class="arrow">&rarr;</div>
+    <div class="node"><b>4 TRANSPORT</b>serial, DDS, rosbridge, Zenoh mesh</div>
+    <div class="arrow">&rarr;</div>
+    <div class="node"><b>5 ROBOT</b>sim twin or metal; envelope comes back</div>
+  </div>
+  <div class="flow" style="height: 18px; margin-top: 6px"><div class="dot"></div></div>
+  <div class="s02-back">&larr; observation: {"status", "content": [text | json | image]} &larr;</div>
+  <div class="grid c3" style="margin-top: 18px">
+    <div class="card reveal"><h3>Interventions</h3><p>The gate raises a Strands interrupt, <span class="s02-code">&lt;tool&gt;-command-approval</span>. Only <span class="s02-code">y / yes / approve / approved</span> proceeds; the model never sees the reply. Reads and stops are never gated.</p></div>
+    <div class="card reveal"><h3>Headless runs</h3><p><span class="s02-code">STRANDS_ROS2_COMMAND_ALLOW=/cmd_vel</span> pre-approves one surface; <span class="s02-code">BYPASS_TOOL_CONSENT=true</span> allows all, with a WARNING. Nobody to ask: the call fails closed.</p></div>
+    <div class="card reveal"><h3>Audit</h3><p>One JSONL row per verdict in <span class="s02-code">~/.strands_robots/mesh_audit.jsonl</span>, HMAC-signed when <span class="s02-code">STRANDS_MESH_AUDIT_PSK</span> is set.</p></div>
+  </div>
+  <p class="safety" style="margin-top: 14px">Physics stops the car; the decider explains.</p>
+  <aside class="notes">
+    Order of the gate is from docs/learn/agents.md "The operator gate": 1 allowlist variable names the command, allow silently; 2 BYPASS_TOOL_CONSENT=true, allow with a WARNING; 3 no tool_context, refuse naming the variable; 4 raise the interrupt named &lt;tool&gt;-command-approval; "y, yes, approve or approved proceeds, anything else declines; the model never sees the reply" (same page). Reads never gated: docs/learn/ros2.md; stop ungated: docs/start/first-agent.md ("Six read or halt, ungated"). The blocklist is matched on the final path segment, so /cmd_vel covers every namespace, and /manual_drive, /vehicle_state, /enable_state cover the DeepRacer. Audit path and HMAC from docs/learn/agents.md "Audit". Envelope shape from docs/start/first-robot.md. Say the safety line out loud: the gate is an explanation layer, not the safety layer; the pen, the hop cap and the marshal's thumb stop the car.
+  </aside>
+</section>
+
+<!-- 5. Transports and robots -->
+<section class="slide">
+  <div class="kicker">Part 2 · &middot; strands-robots &middot; 5 / 10</div>
+  <h2>One gate, many wires: what it can talk to</h2>
+  <div class="s02-row">
+    <div style="flex: 1.2">
+      <ul class="s02-list">
+        <li class="reveal"><b>ROS 2 in-process</b>: <span class="s02-code">use_ros</span> over rclpy; echo, publish, services, actions.</li>
+        <li class="reveal"><b>rosbridge WebSocket</b>: <span class="s02-code">use_rosbridge</span>, ROS 1 too; the Curiosity rover is <span class="s02-code">RosbridgeRobot.from_curiosity()</span>.</li>
+        <li class="reveal"><b>Raw DDS / RTPS</b>: <span class="s02-code">use_rtps</span> acts as a node with no ROS install.</li>
+        <li class="reveal"><b>19 native drivers</b>: Feetech, Dynamixel, Franka, Unitree G1 / Go2, UR, Spot, Crazyflie, Stretch, xArm, Kinova, KUKA, Robotiq, Booster, RBY1, Reachy, Microduck, EarthRover, Yahboom.</li>
+        <li class="reveal"><b>Fleet</b>: Zenoh mesh, mTLS and an ACL, bridged to AWS IoT Core. <b>DeepRacer</b>: <span class="s02-code">AckermannRosRobot.from_deepracer()</span>, bicycle model to a servo pair.</li>
+      </ul>
+      <p class="safety">Physics stops the car; the decider explains.</p>
+    </div>
+    <div style="flex: 0.8">
+      <div class="figure s02-contain" style="height: 400px"><img src="assets/02/use_ros_agent_square.gif" alt="An agent driving turtlesim through use_ros, from the strands-robots docs"></div>
+      <div class="caption">docs/assets/img/use_ros_agent_square.gif: an agent on a ROS 2 graph</div>
+    </div>
+  </div>
+  <div class="s02-robots">
+    <figure><img src="assets/02/so100.webp" alt="SO-100 arm"><figcaption>so100</figcaption></figure>
+    <figure><img src="assets/02/unitree_g1.webp" alt="Unitree G1"><figcaption>unitree_g1</figcaption></figure>
+    <figure><img src="assets/02/unitree_go2.webp" alt="Unitree Go2"><figcaption>unitree_go2</figcaption></figure>
+    <figure><img src="assets/02/spot.webp" alt="Boston Dynamics Spot"><figcaption>spot</figcaption></figure>
+    <figure><img src="assets/02/crazyflie.webp" alt="Crazyflie"><figcaption>crazyflie</figcaption></figure>
+    <figure><img src="assets/02/stretch3.webp" alt="Stretch 3"><figcaption>stretch3</figcaption></figure>
+    <figure><img src="assets/02/shadow_hand.webp" alt="Shadow Hand"><figcaption>shadow_hand</figcaption></figure>
+    <figure><img src="assets/02/aloha.webp" alt="ALOHA"><figcaption>aloha</figcaption></figure>
+    <figure><img src="assets/02/reachy_mini.webp" alt="Reachy Mini"><figcaption>reachy_mini</figcaption></figure>
+    <figure><img src="assets/02/yahboom_m3pro.webp" alt="Yahboom M3 Pro"><figcaption>yahboom_m3pro</figcaption></figure>
+  </div>
+  <aside class="notes">
+    Three ROS transports and the shared gate: docs/learn/ros2.md (use_ros: echo, publish, service_call, action_send_goal; use_rosbridge: "ROS 1 and ROS 2 robots running rosbridge"; use_rtps: "no distro, no rclpy"); the README's ROS 2 row says "observe and command any graph (use_ros), act as a node without rclpy (use_rtps)". Nav2 is not named in the docs, so the slide says "actions". The driver names are the 19 entries of _SHIPPED_DRIVERS in strands_robots/drivers/__init__.py at main on 17 Oct 2026 (feetech, dynamixel, franka, g1, go2, reachy, microduck, robotiq, booster, rby1, ur, xarm, kinova, kuka, stretch, spot, crazyflie, earthrover, yahboom_m3pro). Mesh: README mesh row ("across hosts, mTLS and an ACL ... bridge fleets over AWS IoT Core") and docs/learn/mesh/bridges.md. Curiosity: examples/rosbridge/curiosity_agent.py at main calls RosbridgeRobot.from_curiosity(host=...); the speaker's own strands-robots-ros2 repo runs it in Gazebo over rosbridge. DeepRacer: strands_robots/drivers/ros/ackermann_robot.py at main, AckermannRosRobot.from_deepracer(node_name="deepracer"), "converts internally with a bicycle model" to "normalized servo pairs (angle/throttle in [-1, 1])". MAVLink is NOT supported anywhere in the tree; do not claim it. Gazebo appears only as the simulator on the far side of rosbridge in the Curiosity example, not as a strands-robots backend. Robot thumbnails are docs/assets/img/robots/*.webp from the repo.
+  </aside>
+</section>
+
+<!-- 6. Simulate -->
+<section class="slide">
+  <div class="kicker">Part 2 · &middot; strands-robots &middot; 6 / 10</div>
+  <h2>Simulate: the twin is the dry run</h2>
+  <div class="s02-row">
+    <div style="flex: 1">
+      <ul class="s02-list">
+        <li class="reveal"><span class="s02-code">Robot("so101")</span> is already a MuJoCo world and a 77-action tool: worlds, objects, cameras, physics, recording, randomization, benchmarks.</li>
+        <li class="reveal">Four backends behind one <span class="s02-code">SimEngine</span>: MuJoCo (CPU, default), Newton (GPU), Isaac (photoreal, USD), mjlab (thousands of worlds).</li>
+        <li class="reveal">Twin: <span class="s02-code">transport="twin"</span> steps a MuJoCo model of the real arm with the same driver, "so a command can be rehearsed before the arm moves". "There is no dry_run flag; the dry run is mode='sim'."</li>
+        <li class="reveal">Dashboard: <span class="s02-code">strands-robots dashboard --open</span>; Fleet, Devices, Calibrate, Agent, Settings; two e-stops; a consent card before any real motion.</li>
+      </ul>
+    </div>
+    <div style="flex: 1">
+      <div class="figure" style="height: 250px"><video autoplay muted loop playsinline><source src="assets/02/mujoco-1.webm" type="video/webm"><source src="assets/02/mujoco-1.mp4" type="video/mp4"></video></div>
+      <div class="caption">docs/assets/sim/mujoco-1.webm: the MuJoCo backend</div>
+      <div class="figure s02-contain" style="height: 380px; margin-top: 10px"><img src="assets/02/fleet.dark.png" alt="Dashboard Fleet tab: a simulated so101, cameras, joints"></div>
+      <div class="caption">docs/assets/dashboard/fleet.dark.png: the Fleet tab</div>
+    </div>
+  </div>
+  <aside class="notes">
+    77 actions: docs/start/first-agent.md prints "77 actions" for the so101 tool spec (also pinned by tests/simulation/mujoco/test_tool_spec.py, deep-dive 02, section 2.1). Backend table from docs/learn/simulation/index.md: mujoco, newton, isaac, mjlab with their install extras. Twin quote from docs/concepts/glossary.md "twin"; dry-run quote from docs/learn/agents.md "Posture". Dashboard tabs (Fleet, Devices, Calibrate, Agent, Settings), port 8090 and the two e-stops from docs/learn/dashboard.md. The deep-dive from Sep 2026 said the dashboard server was not in the tree; at main on 17 Oct 2026 strands_robots/dashboard/static/ and the docs page exist, so it has since shipped. Video and screenshot are repo files; the MP4 is a local H.264 transcode of the repo's WebM (ffmpeg) so the clip also plays on a browser without VP9.
+  </aside>
+</section>
+
+<!-- 7. Train -->
+<section class="slide">
+  <div class="kicker">Part 2 · &middot; strands-robots &middot; 7 / 10</div>
+  <h2>Train: record, verify, label, train, run it back</h2>
+  <div class="s02-row">
+    <div style="flex: 1">
+      <ul class="s02-list">
+        <li class="reveal">One contract: <span class="s02-code">create_trainer(name).validate(spec)</span> &rarr; <span class="s02-code">train</span> &rarr; <span class="s02-code">status</span> &rarr; <span class="s02-code">export</span>; <span class="s02-code">validate</span> launches nothing.</li>
+        <li class="reveal"><span class="s02-code">list_trainers()</span> at main: cosmos3, fast_sac, fast_td3, isaaclab, lerobot_local, mock, ppo, sagemaker.</li>
+        <li class="reveal">Imitation: LeRobot (ACT, Diffusion, SmolVLA, &pi;0, GR00T N1.7) in-process; Cosmos 3 SFT; the same spec as one SageMaker job.</li>
+        <li class="reveal">RL from a reward: <span class="s02-code">SimEnv</span> over any <span class="s02-code">SimEngine</span>; PPO, FastSAC, FastTD3; GPU-parallel via Isaac Lab.</li>
+        <li class="reveal">Then <span class="s02-code">create_policy("rl", checkpoint_dir=...)</span> runs the checkpoint in the sim and, behind the gate, on the robot.</li>
+      </ul>
+    </div>
+    <div style="flex: 1">
+      <div class="figure s02-contain" style="height: 575px"><img src="assets/02/d08_data_flywheel.dark.svg" alt="The data flywheel drawing from the strands-robots docs: record, verify, label, train, deploy and measure"></div>
+      <div class="caption">docs/assets/drawings/d08_data_flywheel.dark.svg: the Teach-it rung</div>
+    </div>
+  </div>
+  <aside class="notes">
+    Lifecycle and trainer list from docs/learn/training/index.md (its fence prints ['cosmos3', 'fast_sac', 'fast_td3', 'isaaclab', 'lerobot_local', 'mock', 'ppo', 'sagemaker']; the page description says "nine trainers" while the fence shows eight, so say "eight at main"). "validate ... pure preflight, launches nothing" is that page's sketch. LeRobot policy types from the same table (act, diffusion, smolvla, pi0, pi05, groot); GR00T N1.7 from docs/learn/training/lerobot.md ("GR00T N1.7 trains through lerobot_local ... base_model nvidia/GR00T-N1.7-3B"); "in process, no subprocess" is the table's column for lerobot_local. Hardware floors there: lerobot_local 1 GPU 8 GB; cosmos3 8 GPUs 80 GB. RL details from docs/learn/training/rl.md: SimEnv, VecSimEnv, the three trainers, pip install 'strands-robots[rl]', policy.pt + policy_meta.json, "Real runs need total_timesteps in the hundreds of thousands", "GPU-parallel RL: isaaclab". The five steps are the headings of docs/start/teach-it.md. The Curiosity rover example (strands-robots-ros2) is a control example over rosbridge, not a training example, so it lives on slide 5; the repo documents no training for it.
+  </aside>
+</section>
+
+<!-- 8. Physical AI Toolchain on AWS -->
+<section class="slide">
+  <div class="kicker">Part 2 · &middot; Ecosystem &middot; 8 / 10</div>
+  <h2>Physical AI Toolchain on AWS: Strands Agents and strands-robots at the centre</h2>
+  <div class="s02-row">
+    <div style="flex: 1.15">
+      <p>Announced by AWS on 7 Oct 2026: "reference architectures, Infrastructure as Code, and deployment automation" for the Physical AI stack. Apache-2.0, Terraform, aws-samples on GitHub.</p>
+      <ul class="s02-list">
+        <li class="reveal">Four pillars: synthetic data (Cosmos), model training (GR00T, DreamZero, Isaac Lab), SIL simulation (Isaac Sim), sim-to-real / HIL (Jetson); NVIDIA OSMO orchestrates.</li>
+        <li class="reveal">At the centre, the "Agentic AI Orchestration Layer": Strands Agents, with strands-robots as "the natural-language control plane that ties them together and drives the robot at the end of the loop".</li>
+        <li class="reveal">The agent is "the feedback arrow of the flywheel": checkpoint to behaviour, then decide what to generate or train next.</li>
+        <li class="reveal">Published costs: GR00T fine-tune about $79 (11 h, ml.g5.12xlarge); Isaac Lab RL $10-30. Edge deployment, AgentCore hosting: "Planned".</li>
+      </ul>
+    </div>
+    <div style="flex: 0.85">
+      <div class="figure s02-white" style="height: 380px"><img src="assets/02/toolchain_flywheel.png" alt="Physical AI Development Flywheel from the AWS toolchain README: four pillars around an agentic AI orchestration layer"></div>
+      <div class="caption">flywheel.png from aws-samples/sample-the-physical-ai-toolchain-on-aws</div>
+    </div>
+  </div>
+  <aside class="notes">
+    The brief called this "Physical AI Open Chain Toolkit". No project by that exact name exists on the web or GitHub (searched 17 Oct 2026); the recent launch that matches is the "Physical AI Toolchain on AWS" (AWS Physical AI blog "Introducing AWS Physical AI Toolchain", 7 Oct 2026, Abhishek Srivastav et al.; repo aws-samples/sample-the-physical-ai-toolchain-on-aws, Apache-2.0, 56 stars and 18 forks on 17 Oct 2026, created 9 Jul 2026, Strands component added 29 Jul 2026, so "announced" on 7 Oct, not first published). The AWS blog itself names only "an AI-driven orchestration layer built on the Strands Agents SDK"; it does not name strands-robots. The strands-robots quotes are from the repo: README component row "Natural-language robot orchestration with Strands Agents SDK + strands-robots (MuJoCo sim by default, real hardware opt-in); Amazon Bedrock AgentCore hosted runtime planned", and strands-agents-on-aws/README.md ("the natural-language control plane that ties them together and drives the robot at the end of the loop"; "The agent is the feedback arrow of the flywheel"). Pillar names and the cost table are the README's own (Synthetic Data Generation, Model Training, SIL Simulation, Sim-to-Real / HIL; GR00T full ~$79, 11 hrs on ml.g5.12xlarge; Isaac Lab RL ~$10-30; Edge Deployment "Planned"). NEURA Robotics, RLWRLD and Config are the customers named by aboutamazon.com. Say: this is why a Strands agent in front of a DeepRacer is not a hobby pattern; it is the published AWS reference shape.
+  </aside>
+</section>
+
+<!-- 9. Zero to hero -->
+<section class="slide">
+  <div class="kicker">Part 2 · &middot; Zero to hero &middot; 9 / 10</div>
+  <h2>Five steps up the ladder, each ending with something you can show</h2>
+  <p>Six rungs in the docs, every fence run on a laptop with no GPU. First <span class="s02-code">strands-robots doctor</span>; no probe touches hardware.</p>
+  <div class="timeline">
+    <div class="t s02-step reveal"><b>1 &middot; Install</b><span>MuJoCo on a CPU</span><span class="s02-code">uv pip install "strands-robots[sim-mujoco]"</span><span class="small">docs: start/install</span></div>
+    <div class="t s02-step reveal"><b>2 &middot; Run it, 3 min with install</b><span>an SO-101 in a world: two joints move, a frame saved</span><span class="s02-code">Robot("so101").send_action({"1": 0.5, "3": -0.8}, n_substeps=500)</span><span class="small">docs: start/first-robot</span></div>
+    <div class="t s02-step reveal"><b>3 &middot; Talk to it, 10 min</b><span>a sentence moves the sim arm; the gate stops a real one</span><span class="s02-code">Agent(tools=[robot])("move joint 1 to 0.5 rad")</span><span class="small">docs: start/first-agent</span></div>
+    <div class="t s02-step reveal"><b>4 &middot; Real arm, same checkpoint, 30 + 15 min</b><span>SmolVLA from the Hub drives sim, then the real arm</span><span class="s02-code">Robot("so101", mode="real", port=...).run_policy(policy, ...)</span><span class="small">docs: start/first-real-arm, start/first-policy</span></div>
+    <div class="t s02-step reveal"><b>5 &middot; Teach it, a day; Fleet, a week</b><span>record, verify, label, train, run it back; then mesh and dashboard</span><span class="s02-code">create_trainer("lerobot_local"); Robot(mesh=True)</span><span class="small">docs: start/teach-it, start/fleet</span></div>
+  </div>
+  <p class="small" style="margin-top: 18px">strands-labs.github.io/robots/. A CPU runs the MuJoCo path; a GPU is for Newton, Isaac and mjlab, fast inference, and training.</p>
+  <aside class="notes">
+    The rung table is docs/start/index.md (See it 30 s; Install + Run it 3 min; Talk to it 10 min; Real arm 30 min; Same checkpoint 15 min; Teach it a day; Fleet a week). I merged "See it" into the opening sentence and folded Real arm into step 4 to fit five. Commands are the fences on docs/start/install.md (uv venv --python 3.12; uv pip install "strands-robots[sim-mujoco]"), first-robot.md (robot = Robot("so101"); robot.send_action({"1": 0.5, "3": -0.8}, n_substeps=500)), first-agent.md (Agent(tools=[robot]) and "move joint 1 to 0.5 rad"), first-policy.md (lerobot/smolvla_base, 865 MB download, run on a laptop CPU in 20.8 s for 90 steps; Robot("so101", mode="real", port="/dev/ttyACM0", ...).run_policy(policy, ...)), teach-it.md (create_trainer("lerobot_local", ...)) and fleet.md (Robot(..., mesh=True)). "No probe touches hardware or the network" is from install.md under Check. GPU sentence: install.md Requirements ("a GPU is only needed for the Newton and Isaac backends and for policy inference at speed"), plus the simulation table (mjlab needs an NVIDIA GPU) and the training floors (lerobot_local 1 GPU), so the slide lists all of them rather than calling Newton and Isaac the only places.
+  </aside>
+</section>
+
+<!-- 10. Cheat-sheet -->
+<section class="slide">
+  <div class="kicker">Part 2 · &middot; Cheat-sheet &middot; 10 / 10</div>
+  <h2>Six words to carry into the rest of the talk</h2>
+  <div class="grid c3 s02-cheat" style="margin-top: 8px">
+    <div class="card reveal"><h3>gate</h3><p><code>gate_motion</code>: the check every command that can move a physical robot passes, ending in an operator interrupt or a refusal.</p></div>
+    <div class="card reveal"><h3>transport</h3><p>What carries the bytes to the motors: serial, TCP, DDS, ROS 2. The DeepRacer's, in this project: ROS 2 over rosbridge.</p></div>
+    <div class="card reveal"><h3>registry</h3><p><code>robots.json</code> and <code>policies.json</code>, the source of truth. "Code reads the row; it never hard-codes a robot."</p></div>
+    <div class="card reveal"><h3>twin</h3><p>A MuJoCo model of the real robot stepped by the same driver (<code>transport="twin"</code>): rehearse before the metal moves. The dry run is <code>mode="sim"</code>.</p></div>
+    <div class="card reveal"><h3>audit</h3><p>One JSONL row per operator verdict in <code>~/.strands_robots/mesh_audit.jsonl</code>, HMAC-signed with a PSK.</p></div>
+    <div class="card reveal"><h3>intervention</h3><p>The Strands interrupt that pauses the turn to ask a person: <code>&lt;tool&gt;-command-approval</code>. <code>y</code> resumes; anything else declines; the model never sees the reply.</p></div>
+  </div>
+  <p class="safety" style="margin-top: 20px">Physics stops the car; the decider explains.</p>
+  <aside class="notes">
+    gate, transport, twin and interrupt are near-verbatim from docs/concepts/glossary.md (transport there: "a serial port, a TCP socket, DDS, ROS 2"); registry sentence from docs/concepts/architecture.md "Registry is the source of truth"; audit from docs/learn/agents.md "Audit". "The model never sees the reply" is the gate's prompt-injection rule (docs/learn/agents.md). The DeepRacer transport sentence is this project's own design (rosbridge Ackermann driver, CLAUDE.md layout), per speaker, which is why the card says "in this project". Close with the safety line and hand over to the DeepRacer section.
+  </aside>
+</section>

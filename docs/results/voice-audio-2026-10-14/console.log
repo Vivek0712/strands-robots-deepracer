@@ -1,0 +1,24 @@
+rehearsal out <scratch>/voice/live; pre-grant STRANDS_ROS2_COMMAND_ALLOW=/manual_drive,/vehicle_state,/enable_state
+fake stack up: rosbridge 9491, console http://127.0.0.1:8490, decider http://127.0.0.1:8511
+  [PASS] Nova Sonic connection open: 3 ms
+  [PASS] preflight (arms the heartbeat): go
+  [PASS] hop utterance streamed while pressed: 24 frames, 2.323 s
+you> hop forward twenty centimeters.
+tool> drive_deepracer {"angular":0,"duration":0.5,"linear":0.4}
+rover> I moved forward for half a second.
+  [PASS] hop: rover finished speaking before the next press: 1.68 s heard
+  [PASS] hop: user transcript heard: hop forward twenty centimeters.
+  [PASS] hop: gated drive produced motion events: 2 motion events, verdicts ['Confirm', 'Proceed'], tools ['drive_deepracer']
+you> roll forward slowly for two seconds and describe the pen.
+tool> drive_deepracer {"angular":0,"duration":2,"linear":0.1}
+  [PASS] roll: the rover called a tool for the roll: drive_deepracer
+tool> look {"question":"Describe the pen."}
+  [PASS] roll: rover is narrating (new spoken response): audio starts 1 -> 2, 1.84 s heard
+-- barge-in --
+rover> I am rolling forward and I see two faint white lines on a dark background.
+  [PASS] stop: BidiBargeInEvent reached BargeInStop: press -> barge-in 971 ms (voice clock), BargeInStop {'t_ms': 969, 'stop_t_ms': 971, 'latency_ms': 1, 'error': None}
+  [PASS] stop: stop event with cause barge_in logged: {"request_id": null, "cause": "barge_in", "latency_ms": 1}
+you> stop.
+tool> stop_deepracer {}
+rover> I have stopped.
+summary -> <scratch>/voice/live/summary.md (PASS)

@@ -1,0 +1,6 @@
+services:
+  hub:
+    ports:
+      - "127.0.0.1:8443:8443"
+    volumes:
+      - ~/.krewhq-org/projects/deepracer/team-map.yaml:/opt/krewhq/config/team-map.yaml:ro

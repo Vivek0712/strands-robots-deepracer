@@ -1,0 +1,31 @@
+rover thinks> pre-flight: battery, camera, calibration, link, deadman
+rover> No go. camera: no frames in 1 s. battery 11 of 10, camera off, deadman armed. I will not drive until that is fixed.
+beat preflight on car: PASS
+  [PASS] preflight() returned the section 4 payload (2530 ms)
+  [PASS] a preflight event was logged
+  [PASS] go/no-go is explicit
+  latencies: preflight_ms=2530, link_rtt_ms=0.0
+  note: no-go: camera: no frames in 1 s
+rover thinks> red light: rolling under the slow envelope, narrating
+you> Roll forward slowly for two seconds and tell me what you see as you go.
+you> STOP
+rover> You said stop at 1791960585454 and my wheels stopped 253 milliseconds later.
+beat red_light on car: FAIL
+  [FAIL] the rover started rolling
+  [PASS] stop_all ran on barge-in (253 ms)
+  [PASS] barge-in to stop under budget: budget 1000 ms
+  [PASS] voice barge_in event logged with t_ms
+  [PASS] stop event with cause barge_in logged
+  [PASS] wheels are stopped
+  latencies: barge_in_t_ms=1791960585454, stop_t_ms=1791960585708, barge_in_to_stop_ms=253
+rover thinks> pull the plug: hop, then the router dies
+you> Roll forward slowly for two seconds.
+rover thinks> link lost: no heartbeat leaving the laptop
+rover> Lost you for 2 seconds. I stopped. The car did that, not me.
+beat pull_the_plug on car: PASS
+  [PASS] deadman tripped after the heartbeat stopped (253 ms): state=tripped
+  [PASS] trip within budget: budget 1500 ms
+  [PASS] deadman re-armed once heartbeats resumed (1335 ms): state=armed
+  [PASS] a stop with cause deadman was logged
+  latencies: cut_to_tripped_ms=253, gone_ms=1588
+  note: no motion event seen before the plug was pulled; cutting the heartbeat anyway

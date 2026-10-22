@@ -1,0 +1,7 @@
+[Unit]
+Description=DeepRacer camera guard: kill the stock camera_node when no camera is attached (OOM mitigation)
+After=deepracer-core.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/deepracer-agent/deepracer-camera-guard.sh

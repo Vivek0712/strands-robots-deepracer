@@ -1,0 +1,259 @@
+{
+  "repo": "~/strands-robots-deepracer",
+  "article": "docs/article/article.md",
+  "generated": "2026-10-22T15:47:57+05:30",
+  "checks": [
+    {
+      "name": "decider_usage",
+      "title": "Decider 2B usage",
+      "status": "PASS",
+      "weight": 10,
+      "bucket": "decider",
+      "gate": true,
+      "evidence": [
+        "/v1/systemone: 17 hit(s), first beats/kiosk.py:474",
+        "strands-decider: 7 hit(s), first harness/fake_decider.py:3",
+        "strands_decider: 2 hit(s), first harness/fake_decider.py:4",
+        "StrandsAgents/strands-decider-2B: not found in .py files",
+        "\"noul\": 61 hit(s), first beats/kiosk.py:585",
+        "\"choice\": 45 hit(s), first harness/fake_decider.py:8",
+        "\"score\": 10 hit(s), first harness/fake_decider.py:9"
+      ],
+      "fix": ""
+    },
+    {
+      "name": "intervention_handler",
+      "title": "InterventionHandler wiring",
+      "status": "PASS",
+      "weight": 10,
+      "bucket": "decider",
+      "gate": true,
+      "evidence": [
+        "subclass src/deepracer_agent/gate.py:515: class DeciderGate(InterventionHandler):",
+        "before_tool_call src/deepracer_agent/gate.py:594",
+        "imported from strands.interventions: Confirm, Deny, Guide, Proceed"
+      ],
+      "fix": ""
+    },
+    {
+      "name": "bedrock_pairing",
+      "title": "Amazon Bedrock pairing",
+      "status": "PASS",
+      "weight": 8,
+      "bucket": "decider",
+      "gate": true,
+      "evidence": [
+        "anthropic.claude: 1 hit(s), first src/deepracer_agent/runtime.py:38",
+        "amazon.nova: 12 hit(s), first src/deepracer_agent/look.py:34",
+        "us.anthropic: 1 hit(s), first src/deepracer_agent/runtime.py:38",
+        "bedrock-runtime: 1 hit(s), first src/deepracer_agent/look.py:88",
+        "nova-sonic: 1 hit(s), first src/deepracer_agent/voice_rehearsal.py:246"
+      ],
+      "fix": ""
+    },
+    {
+      "name": "reusable_pattern",
+      "title": "Reusable decision pattern folder",
+      "status": "FAIL",
+      "weight": 10,
+      "bucket": "decider",
+      "gate": true,
+      "evidence": [
+        "present: patterns/strands/_client.py",
+        "present: patterns/strands/tool_call_intervention.py",
+        "missing: patterns/strands/README.md",
+        "README has a how-to-use / drop-in note: False",
+        "question set shown as JSON (json.dumps(QUESTIONS) or a ```json block): False"
+      ],
+      "fix": "Create patterns/strands/README.md mirroring upstream examples/strands/."
+    },
+    {
+      "name": "strands_family",
+      "title": "Strands family coverage (informational)",
+      "status": "PASS",
+      "weight": 3,
+      "bucket": "creativity",
+      "gate": false,
+      "evidence": [
+        "README mentions 5/6: strands-agents, strands-robots, strands.bidi, Strands Box, strands-decider"
+      ],
+      "fix": ""
+    },
+    {
+      "name": "readme_quality",
+      "title": "README structure",
+      "status": "PASS",
+      "weight": 6,
+      "bucket": "communication",
+      "gate": false,
+      "evidence": [
+        "title: True; hero image above first section: True; badges: True",
+        "sections present (9/9): What it does, Architecture, Quick start, The decision handed to Decider 2B, Reusable pattern, Safety, Strands stack, Hackathon submission, License"
+      ],
+      "fix": ""
+    },
+    {
+      "name": "license_and_guides",
+      "title": "LICENSE and contributor guide",
+      "status": "FAIL",
+      "weight": 3,
+      "bucket": "originality",
+      "gate": true,
+      "evidence": [
+        "LICENSE: missing",
+        "CONTRIBUTING/AGENTS: AGENTS.md"
+      ],
+      "fix": "Add a LICENSE file (a public repo without one is not reusable)."
+    },
+    {
+      "name": "notebook",
+      "title": "Walk-through notebook",
+      "status": "WARN",
+      "weight": 2,
+      "bucket": "communication",
+      "gate": false,
+      "evidence": [
+        "notebooks/*.ipynb: none"
+      ],
+      "fix": "Add notebooks/<name>.ipynb that calls the pattern against the fake decider."
+    },
+    {
+      "name": "article_front_matter",
+      "title": "Article front matter",
+      "status": "PASS",
+      "weight": 8,
+      "bucket": "communication",
+      "gate": true,
+      "evidence": [
+        "title: 115 chars (limit 255)",
+        "description: 509 chars (limit 512)",
+        "tags (5): aws-deepracer, strands-agents, strands-decider-2b, amazon-bedrock, guardrails",
+        "cover img/cover.png: 1200x675 (want 1200x675)"
+      ],
+      "fix": ""
+    },
+    {
+      "name": "article_body",
+      "title": "Article body",
+      "status": "WARN",
+      "weight": 6,
+      "bucket": "communication",
+      "gate": false,
+      "evidence": [
+        "byline 'Vivek Raja, AWS AI Hero': True",
+        "heading containing 'Decider': True",
+        "word count (prose, excluding code blocks and image lines): 3959",
+        "placeholder line 10: < COVER IMAGE >",
+        "placeholder line 234: [TESTIMONIALS",
+        "placeholder line 248: [REPO URL",
+        "placeholder line 256: [REPO URL"
+      ],
+      "fix": "Resolve 4 placeholder(s) in the article before publishing."
+    },
+    {
+      "name": "submission_doc",
+      "title": "Submission package (hackathon/SUBMISSION.md)",
+      "status": "WARN",
+      "weight": 6,
+      "bucket": "communication",
+      "gate": true,
+      "evidence": [
+        "tags present: #strands-decider-2b, #guardrails",
+        "declared pattern line: True",
+        "repo URL: placeholder",
+        "video URL: placeholder; mentions 3 min: True"
+      ],
+      "fix": "Replace the repo and video URL placeholders with the real links before submitting."
+    },
+    {
+      "name": "originality_statement",
+      "title": "Originality statement",
+      "status": "PASS",
+      "weight": 3,
+      "bucket": "originality",
+      "gate": false,
+      "evidence": [
+        "SUBMISSION.md states originality and prior non-publication: True"
+      ],
+      "fix": ""
+    },
+    {
+      "name": "secrets",
+      "title": "Secrets scan of tracked files",
+      "status": "WARN",
+      "weight": 10,
+      "bucket": "gate",
+      "gate": true,
+      "evidence": [
+        "WARN car/connect/env.example:6: password assignment, review",
+        "WARN docs/context/02-deepracer-ros-http-stack.md:87: password assignment, review",
+        "WARN docs/context/02-deepracer-ros-http-stack.md:91: password assignment, review",
+        "WARN portal/frontend/dist/assets/index-B_10MklX.js:40: IPv4 literal 192.168.1.23",
+        "WARN portal/frontend/src/views/Settings.tsx:143: IPv4 literal 192.168.1.23",
+        "WARN src/deepracer_agent/connect.py:5: IPv4 literal 10.0.0.1",
+        "WARN src/deepracer_agent/connect.py:239: IPv4 literal 10.0.0.1",
+        "WARN src/deepracer_agent/discover.py:104: IPv4 literal 10.0.0.1",
+        "WARN src/deepracer_agent/discover.py:104: IPv4 literal 10.0.1.1",
+        "WARN src/deepracer_agent/discover.py:212: IPv4 literal 192.0.2.1",
+        "WARN src/deepracer_agent/quick_hop.py:9: IPv4 literal 192.168.0.7",
+        "WARN src/deepracer_agent/quick_hop.py:22: IPv4 literal 192.168.0.7",
+        "... (more omitted)"
+      ],
+      "fix": "Review each password assignment and IPv4 literal; move values to env or config."
+    },
+    {
+      "name": "people_photos",
+      "title": "People-photo policy (human review)",
+      "status": "WARN",
+      "weight": 2,
+      "bucket": "gate",
+      "gate": true,
+      "evidence": [
+        "approved event photos: 3",
+        "review: docs/results/portal/04-main-person-deny.png"
+      ],
+      "fix": "Open each flagged image; keep it only if no real person is shown."
+    },
+    {
+      "name": "tests",
+      "title": "Tests present and collectable",
+      "status": "PASS",
+      "weight": 4,
+      "bucket": "decider",
+      "gate": false,
+      "evidence": [
+        "test files under tests/: 37",
+        "pytest --collect-only tests/unit: 852 tests, exit 0"
+      ],
+      "fix": ""
+    }
+  ],
+  "score": {
+    "creativity": {
+      "max": 30,
+      "estimate": 30.0,
+      "checks": 1
+    },
+    "decider": {
+      "max": 30,
+      "estimate": 22.9,
+      "checks": 5
+    },
+    "communication": {
+      "max": 25,
+      "estimate": 18.8,
+      "checks": 5
+    },
+    "originality": {
+      "max": 15,
+      "estimate": 7.5,
+      "checks": 2
+    },
+    "total": {
+      "max": 100,
+      "estimate": 79.2,
+      "checks": 15
+    }
+  },
+  "exit_code": 1
+}

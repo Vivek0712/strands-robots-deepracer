@@ -1,0 +1,13 @@
+rover thinks> red light: rolling under the slow envelope, narrating
+you> Roll forward slowly for two seconds and tell me what you see as you go.
+you> STOP
+rover> You said stop and my wheels stopped 2 milliseconds later.
+beat red_light on sim: PASS
+  [PASS] the rover started rolling
+  [PASS] stop_all ran on barge-in (2 ms)
+  [PASS] barge-in to stop under budget: budget 1000 ms
+  [PASS] voice barge_in event logged with t_ms
+  [PASS] stop event with cause barge_in logged
+  [PASS] wheels are stopped
+  latencies: barge_in_t_ms=0, stop_t_ms=3, barge_in_to_stop_ms=2
+  note: roll turn ended with CancelledError

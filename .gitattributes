@@ -1,0 +1,4 @@
+# Keep the built deck and the committed frontend bundle out of the language bar and diffs.
+docs/talk/*.html linguist-generated
+portal/frontend/dist/* linguist-generated
+portal/frontend/dist/**/* linguist-generated

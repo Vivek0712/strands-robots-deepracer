@@ -1,0 +1,80 @@
+{"ts":"2026-10-14T16:10:30.245Z","seq":1,"session":"s-20261014-1610","beat":"red_light","type":"body","source":"runtime","payload":{"active":"sim"}}
+{"ts":"2026-10-14T16:10:30.590Z","seq":2,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":3}}
+{"ts":"2026-10-14T16:10:31.109Z","seq":3,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":3}}
+{"ts":"2026-10-14T16:10:31.621Z","seq":4,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":1}}
+{"ts":"2026-10-14T16:10:31.762Z","seq":5,"session":"s-20261014-1610","beat":"red_light","type":"preflight","source":"driver","payload":{"battery":10,"camera_fps":14.1,"link_rtt_ms":0.0,"mode":null,"enabled":null,"deadman":"armed","decider_latency_ms":null,"calibration":"ok","pwm_outputs":"unknown","go":true,"reasons":[]}}
+{"ts":"2026-10-14T16:10:32.133Z","seq":6,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":99}}
+{"ts":"2026-10-14T16:10:32.637Z","seq":7,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":81}}
+{"ts":"2026-10-14T16:10:32.766Z","seq":8,"session":"s-20261014-1610","beat":"red_light","type":"voice","source":"agent","payload":{"event":"ptt_down","text":null,"t_ms":0}}
+{"ts":"2026-10-14T16:10:33.155Z","seq":9,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":77}}
+{"ts":"2026-10-14T16:10:33.666Z","seq":10,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":66}}
+{"ts":"2026-10-14T16:10:34.188Z","seq":11,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":68}}
+{"ts":"2026-10-14T16:10:34.713Z","seq":12,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":71}}
+{"ts":"2026-10-14T16:10:35.067Z","seq":13,"session":"s-20261014-1610","beat":"red_light","type":"voice","source":"agent","payload":{"event":"ptt_up","text":null,"t_ms":2302}}
+{"ts":"2026-10-14T16:10:35.222Z","seq":14,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":62}}
+{"ts":"2026-10-14T16:10:35.576Z","seq":15,"session":"s-20261014-1610","beat":"red_light","type":"voice","source":"agent","payload":{"event":"speech_start","text":null,"t_ms":2811}}
+{"ts":"2026-10-14T16:10:35.743Z","seq":16,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":62}}
+{"ts":"2026-10-14T16:10:35.922Z","seq":17,"session":"s-20261014-1610","beat":"red_light","type":"voice","source":"agent","payload":{"event":"transcript","text":"hop forward twenty centimeters.","t_ms":3157}}
+{"ts":"2026-10-14T16:10:36.000Z","seq":18,"session":"s-20261014-1610","beat":"red_light","type":"frame","source":"agent","payload":{"frame_ref":"frames/000001.jpg","width":480,"height":360}}
+{"ts":"2026-10-14T16:10:36.003Z","seq":19,"session":"s-20261014-1610","beat":"red_light","type":"thought","source":"agent","payload":{"text":"calling drive_deepracer {\"angular\":0,\"duration\":0.5,\"linear\":0.4}"}}
+{"ts":"2026-10-14T16:10:36.009Z","seq":20,"session":"s-20261014-1610","beat":"red_light","type":"verdict","source":"agent","payload":{"request_id":"chatcmpl-tool-b4ea46ce1d8417ac","stage":"envelope","action":"Confirm","reason":"outside envelope: |linear| 0.4 > 0.3 m/s","class":null,"probability":0.05,"latency_ms":5,"frame_ref":"frames/000001.jpg"}}
+{"ts":"2026-10-14T16:10:36.009Z","seq":21,"session":"s-20261014-1610","beat":"red_light","type":"verdict","source":"agent","payload":{"request_id":"chatcmpl-tool-b4ea46ce1d8417ac","stage":"frame","action":"Proceed","reason":"clear (p=0.93)","class":"clear","probability":0.93,"latency_ms":1,"frame_ref":"frames/000001.jpg"}}
+{"ts":"2026-10-14T16:10:36.009Z","seq":22,"session":"s-20261014-1610","beat":"red_light","type":"approval","source":"agent","payload":{"request_id":"chatcmpl-tool-b4ea46ce1d8417ac","decision":"approved","by":"operator"}}
+{"ts":"2026-10-14T16:10:36.010Z","seq":23,"session":"s-20261014-1610","beat":"red_light","type":"command","source":"driver","payload":{"tool":"drive_deepracer","args":{"linear":0.4,"angular":0.0,"duration":0.5},"request_id":"r-a7c8692f"}}
+{"ts":"2026-10-14T16:10:36.214Z","seq":24,"session":"s-20261014-1610","beat":"red_light","type":"approval","source":"driver","payload":{"request_id":"r-a7c8692f","decision":"approved","by":"pregrant"}}
+{"ts":"2026-10-14T16:10:36.214Z","seq":25,"session":"s-20261014-1610","beat":"red_light","type":"motion","source":"driver","payload":{"request_id":"r-a7c8692f","state":"start","angle":0.0,"throttle":0.3,"duration_s":0.5,"messages":10}}
+{"ts":"2026-10-14T16:10:36.256Z","seq":26,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":41}}
+{"ts":"2026-10-14T16:10:36.718Z","seq":27,"session":"s-20261014-1610","beat":"red_light","type":"motion","source":"driver","payload":{"request_id":"r-a7c8692f","state":"end","angle":0.0,"throttle":0.3,"duration_s":0.504,"messages":10}}
+{"ts":"2026-10-14T16:10:36.718Z","seq":28,"session":"s-20261014-1610","beat":"red_light","type":"stop","source":"driver","payload":{"request_id":"r-a7c8692f","cause":"trailing_zero","latency_ms":0}}
+{"ts":"2026-10-14T16:10:36.769Z","seq":29,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":50}}
+{"ts":"2026-10-14T16:10:37.283Z","seq":30,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":51}}
+{"ts":"2026-10-14T16:10:37.724Z","seq":31,"session":"s-20261014-1610","beat":"red_light","type":"thought","source":"agent","payload":{"text":"rover: I moved forward for half a second."}}
+{"ts":"2026-10-14T16:10:37.802Z","seq":32,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":49}}
+{"ts":"2026-10-14T16:10:38.304Z","seq":33,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":33}}
+{"ts":"2026-10-14T16:10:38.805Z","seq":34,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":22}}
+{"ts":"2026-10-14T16:10:38.960Z","seq":35,"session":"s-20261014-1610","beat":"red_light","type":"voice","source":"agent","payload":{"event":"ptt_down","text":null,"t_ms":0}}
+{"ts":"2026-10-14T16:10:39.324Z","seq":36,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":29}}
+{"ts":"2026-10-14T16:10:39.844Z","seq":37,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":28}}
+{"ts":"2026-10-14T16:10:40.363Z","seq":38,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":24}}
+{"ts":"2026-10-14T16:10:40.886Z","seq":39,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":28}}
+{"ts":"2026-10-14T16:10:41.393Z","seq":40,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":19}}
+{"ts":"2026-10-14T16:10:41.900Z","seq":41,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":11}}
+{"ts":"2026-10-14T16:10:42.416Z","seq":42,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":7}}
+{"ts":"2026-10-14T16:10:42.462Z","seq":43,"session":"s-20261014-1610","beat":"red_light","type":"voice","source":"agent","payload":{"event":"ptt_up","text":null,"t_ms":3502}}
+{"ts":"2026-10-14T16:10:42.594Z","seq":44,"session":"s-20261014-1610","beat":"red_light","type":"voice","source":"agent","payload":{"event":"speech_start","text":null,"t_ms":3634}}
+{"ts":"2026-10-14T16:10:42.919Z","seq":45,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":91}}
+{"ts":"2026-10-14T16:10:42.955Z","seq":46,"session":"s-20261014-1610","beat":"red_light","type":"voice","source":"agent","payload":{"event":"transcript","text":"roll forward slowly for two seconds and describe the pen.","t_ms":3995}}
+{"ts":"2026-10-14T16:10:43.039Z","seq":47,"session":"s-20261014-1610","beat":"red_light","type":"frame","source":"agent","payload":{"frame_ref":"frames/000002.jpg","width":480,"height":360}}
+{"ts":"2026-10-14T16:10:43.041Z","seq":48,"session":"s-20261014-1610","beat":"red_light","type":"thought","source":"agent","payload":{"text":"calling drive_deepracer {\"angular\":0,\"duration\":2,\"linear\":0.1}"}}
+{"ts":"2026-10-14T16:10:43.044Z","seq":49,"session":"s-20261014-1610","beat":"red_light","type":"thought","source":"agent","payload":{"text":"calling look {\"question\":\"Describe the pen.\"}"}}
+{"ts":"2026-10-14T16:10:43.046Z","seq":50,"session":"s-20261014-1610","beat":"red_light","type":"verdict","source":"agent","payload":{"request_id":"chatcmpl-tool-963ec7bbd6682d17","stage":"envelope","action":"Proceed","reason":"inside envelope (p=0.95)","class":null,"probability":0.95,"latency_ms":4,"frame_ref":"frames/000002.jpg"}}
+{"ts":"2026-10-14T16:10:43.047Z","seq":51,"session":"s-20261014-1610","beat":"red_light","type":"verdict","source":"agent","payload":{"request_id":"chatcmpl-tool-963ec7bbd6682d17","stage":"frame","action":"Proceed","reason":"clear (p=0.93)","class":"clear","probability":0.93,"latency_ms":2,"frame_ref":"frames/000002.jpg"}}
+{"ts":"2026-10-14T16:10:43.047Z","seq":52,"session":"s-20261014-1610","beat":"red_light","type":"command","source":"driver","payload":{"tool":"drive_deepracer","args":{"linear":0.1,"angular":0.0,"duration":2.0},"request_id":"r-a7c8692f"}}
+{"ts":"2026-10-14T16:10:43.049Z","seq":53,"session":"s-20261014-1610","beat":"red_light","type":"approval","source":"driver","payload":{"request_id":"r-a7c8692f","decision":"approved","by":"pregrant"}}
+{"ts":"2026-10-14T16:10:43.049Z","seq":54,"session":"s-20261014-1610","beat":"red_light","type":"motion","source":"driver","payload":{"request_id":"r-a7c8692f","state":"start","angle":0.0,"throttle":0.1,"duration_s":2.0,"messages":40}}
+{"ts":"2026-10-14T16:10:43.119Z","seq":55,"session":"s-20261014-1610","beat":"red_light","type":"frame","source":"agent","payload":{"frame_ref":"frames/000003.jpg","width":480,"height":360}}
+{"ts":"2026-10-14T16:10:43.437Z","seq":56,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":12}}
+{"ts":"2026-10-14T16:10:43.951Z","seq":57,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":43}}
+{"ts":"2026-10-14T16:10:44.470Z","seq":58,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":21}}
+{"ts":"2026-10-14T16:10:44.585Z","seq":59,"session":"s-20261014-1610","beat":"red_light","type":"thought","source":"agent","payload":{"text":"look: The camera frame is dark and shows two faint white lines on a black background. There is no readable text or other details visible."}}
+{"ts":"2026-10-14T16:10:44.978Z","seq":60,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":47}}
+{"ts":"2026-10-14T16:10:45.054Z","seq":61,"session":"s-20261014-1610","beat":"red_light","type":"motion","source":"driver","payload":{"request_id":"r-a7c8692f","state":"end","angle":0.0,"throttle":0.1,"duration_s":2.006,"messages":40}}
+{"ts":"2026-10-14T16:10:45.055Z","seq":62,"session":"s-20261014-1610","beat":"red_light","type":"stop","source":"driver","payload":{"request_id":"r-a7c8692f","cause":"trailing_zero","latency_ms":0}}
+{"ts":"2026-10-14T16:10:45.482Z","seq":63,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":8}}
+{"ts":"2026-10-14T16:10:45.527Z","seq":64,"session":"s-20261014-1610","beat":"red_light","type":"voice","source":"agent","payload":{"event":"ptt_down","text":null,"t_ms":0}}
+{"ts":"2026-10-14T16:10:45.986Z","seq":65,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":92}}
+{"ts":"2026-10-14T16:10:46.429Z","seq":66,"session":"s-20261014-1610","beat":"red_light","type":"voice","source":"agent","payload":{"event":"ptt_up","text":null,"t_ms":902}}
+{"ts":"2026-10-14T16:10:46.488Z","seq":67,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":77}}
+{"ts":"2026-10-14T16:10:46.496Z","seq":68,"session":"s-20261014-1610","beat":"red_light","type":"voice","source":"agent","payload":{"event":"barge_in","text":null,"t_ms":969}}
+{"ts":"2026-10-14T16:10:46.497Z","seq":69,"session":"s-20261014-1610","beat":"red_light","type":"stop","source":"driver","payload":{"request_id":"r-a7c8692f","cause":"operator","latency_ms":0}}
+{"ts":"2026-10-14T16:10:46.498Z","seq":70,"session":"s-20261014-1610","beat":"red_light","type":"stop","source":"agent","payload":{"request_id":null,"cause":"barge_in","latency_ms":1}}
+{"ts":"2026-10-14T16:10:46.499Z","seq":71,"session":"s-20261014-1610","beat":"red_light","type":"thought","source":"agent","payload":{"text":"rover: I am rolling forward and I see two faint white lines on a dark background."}}
+{"ts":"2026-10-14T16:10:46.779Z","seq":72,"session":"s-20261014-1610","beat":"red_light","type":"voice","source":"agent","payload":{"event":"speech_start","text":null,"t_ms":1252}}
+{"ts":"2026-10-14T16:10:46.813Z","seq":73,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"tripped","gap_ms":315}}
+{"ts":"2026-10-14T16:10:46.813Z","seq":74,"session":"s-20261014-1610","beat":"red_light","type":"stop","source":"deadman","payload":{"request_id":null,"cause":"deadman","latency_ms":315}}
+{"ts":"2026-10-14T16:10:46.994Z","seq":75,"session":"s-20261014-1610","beat":"red_light","type":"voice","source":"agent","payload":{"event":"transcript","text":"stop.","t_ms":1467}}
+{"ts":"2026-10-14T16:10:46.995Z","seq":76,"session":"s-20261014-1610","beat":"red_light","type":"command","source":"driver","payload":{"tool":"stop_deepracer","args":{},"request_id":"r-a7c8692f"}}
+{"ts":"2026-10-14T16:10:46.995Z","seq":77,"session":"s-20261014-1610","beat":"red_light","type":"thought","source":"agent","payload":{"text":"calling stop_deepracer {}"}}
+{"ts":"2026-10-14T16:10:46.995Z","seq":78,"session":"s-20261014-1610","beat":"red_light","type":"stop","source":"driver","payload":{"request_id":"r-a7c8692f","cause":"operator","latency_ms":0}}
+{"ts":"2026-10-14T16:10:47.375Z","seq":79,"session":"s-20261014-1610","beat":"red_light","type":"heartbeat","source":"deadman","payload":{"state":"tripped","gap_ms":876}}
+{"ts":"2026-10-14T16:10:47.787Z","seq":80,"session":"s-20261014-1610","beat":"red_light","type":"thought","source":"agent","payload":{"text":"rover: I have stopped."}}

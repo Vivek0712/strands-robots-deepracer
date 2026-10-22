@@ -1,0 +1,17 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Scan the hackathon submission on save",
+      "description": "Kiro IDE 1.0 v1 hook (trigger, matcher, action, timeout, enabled). Fires when a pattern module, anything under hackathon/, docs/article/article.md or the root README.md is saved, whether Kiro reports the path relative, with a ./ prefix or absolute under the strands-robots-deepracer workspace. Docs: https://kiro.dev/docs/hooks/",
+      "trigger": "PostFileSave",
+      "matcher": "(^(\\./)?|/strands-robots-deepracer/)(patterns/.*\\.py|hackathon/.*|docs/article/article\\.md|README\\.md)$",
+      "action": {
+        "type": "agent",
+        "prompt": "A submission file changed. From the repo root run `.venv/bin/python hackathon/scan_submission.py --repo . --article docs/article/article.md` and summarise the output: list every FAIL row first (file, rule, what is missing), then every WARN row, each with the one-line fix. If the scanner reports zero FAIL and zero WARN, say so in one line. Do not edit any file; report only. Remember the house line: physics stops the car; the decider explains."
+      },
+      "timeout": 300,
+      "enabled": true
+    }
+  ]
+}

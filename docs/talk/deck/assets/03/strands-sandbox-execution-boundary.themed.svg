@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 184" width="720" height="184">
+<style>
+svg{font-family:Inter,"SF Pro Text",-apple-system,"Segoe UI",Roboto,sans-serif}
+.dg-node{fill:#12121a;stroke:#a3a3b8;stroke-width:1}
+.dg-node.is-focal{fill:#2a1a10;stroke:#ff6b3d}
+.dg-node.is-input{fill:#171724;stroke:#5c5c72}
+.dg-node.is-hub{fill:#f2f2f7;stroke:#f2f2f7}
+.dg-node.is-optional{stroke-dasharray:4 3}
+.dg-node.is-event{fill:#1c1c2a;stroke:#5c5c72}
+.dg-zone{fill:#0f0f16;stroke:#2a2a3a;stroke-width:1}
+.dg-zone.is-boundary{fill:none;stroke:#a3a3b8;stroke-dasharray:4 4}
+.dg-mask{fill:#0b0b10}
+.dg-mask.is-on-zone{fill:#0f0f16}
+.dg-edge{fill:none;stroke:#a3a3b8;stroke-width:1.25}
+.dg-edge.is-accent{stroke:#ff6b3d;stroke-width:1.5}
+.dg-edge.is-dashed{stroke-width:1;stroke-dasharray:4 3}
+.dg-lifeline{fill:none;stroke:#5c5c72;stroke-width:1;stroke-dasharray:3 3}
+.dg-head{fill:#a3a3b8}
+.dg-head.is-accent{fill:#ff6b3d}
+.dg-name{fill:#f2f2f7;font-size:14px;font-weight:600}
+.dg-sub{fill:#a3a3b8;font-size:12px}
+.dg-code{fill:#a3a3b8;font-family:"JetBrains Mono",Menlo,monospace;font-size:11.5px}
+.dg-msg{fill:#d0d0dc;font-size:12px}
+.dg-msg.is-accent{fill:#ff6b3d;font-weight:500}
+.dg-label{fill:#a3a3b8;font-family:"JetBrains Mono",Menlo,monospace;font-size:10px;letter-spacing:.06em}
+.dg-label.is-accent{fill:#ff6b3d}
+.dg-eyebrow{fill:#a3a3b8;font-family:"JetBrains Mono",Menlo,monospace;font-size:10px;font-weight:500;letter-spacing:.12em}
+.dg-note{fill:#a3a3b8;font-size:12px;font-style:italic}
+.is-focal-text{fill:#ff6b3d}
+.is-hub-text{fill:#0b0b10}
+</style>
+  <!-- Type: architecture with a boundary. Story: only execution operations cross into the sandbox; the agent's model calls, hooks, and state stay on your infrastructure. -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 8 6" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse">
+      <path class="dg-head" d="M0,0 L8,3 L0,6 Z"/>
+    </marker>
+  </defs>
+
+  <!-- Zones -->
+  <rect class="dg-zone" x="16" y="24" width="384" height="144" rx="8"/>
+  <text class="dg-eyebrow" x="32" y="44">AGENT RUNTIME · YOUR INFRASTRUCTURE</text>
+  <rect class="dg-zone is-boundary" x="496" y="24" width="208" height="144" rx="8"/>
+  <text class="dg-eyebrow" x="512" y="44">SANDBOX · YOU PROVISION</text>
+
+  <!-- Edges (drawn before nodes) -->
+  <path class="dg-edge" d="M192,104 H222" marker-end="url(#arrow)"/>
+  <path class="dg-edge" d="M384,88 H510" marker-end="url(#arrow)"/>
+  <path class="dg-edge is-dashed" d="M512,120 H386" marker-end="url(#arrow)"/>
+
+  <!-- Edge labels (in the gap between the zones) -->
+  <rect class="dg-mask" x="410" y="68" width="76" height="12" rx="2"/>
+  <text class="dg-label" x="448" y="77" text-anchor="middle">OPERATIONS</text>
+  <rect class="dg-mask" x="422" y="98" width="52" height="12" rx="2"/>
+  <text class="dg-label" x="448" y="107.5" text-anchor="middle">OUTPUT</text>
+
+  <!-- Nodes -->
+  <rect class="dg-node" x="32" y="64" width="160" height="80" rx="6"/>
+  <text class="dg-name" x="112" y="101" text-anchor="middle">Agent</text>
+  <text class="dg-sub" x="112" y="119" text-anchor="middle">model, hooks, state</text>
+
+  <rect class="dg-node" x="224" y="64" width="160" height="80" rx="6"/>
+  <text class="dg-name" x="304" y="101" text-anchor="middle">Sandbox tools</text>
+  <text class="dg-sub" x="304" y="119" text-anchor="middle">shell, file editor</text>
+
+  <rect class="dg-node is-focal" x="512" y="64" width="176" height="80" rx="6"/>
+  <text class="dg-name is-focal-text" x="600" y="101" text-anchor="middle">Execution backend</text>
+  <text class="dg-sub" x="600" y="119" text-anchor="middle">Docker, SSH, or custom</text>
+</svg>

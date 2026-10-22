@@ -1,0 +1,15 @@
+[Unit]
+Description=DeepRacer agent deadman (zero servos 300 ms after the laptop heartbeat stops)
+After=network-online.target deepracer-core.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/opt/deepracer-agent/deepracer-deadman.sh
+Restart=on-failure
+RestartSec=3
+Environment=HOME=/root
+Environment=ROS_LOG_DIR=/var/log/deepracer-agent
+
+[Install]
+WantedBy=multi-user.target

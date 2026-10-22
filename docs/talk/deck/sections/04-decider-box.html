@@ -1,0 +1,279 @@
+<!-- SECTION D: Strands Decider (decision models) and Strands Box. 7 slides. Classes from framework.css only;
+     section-scoped keyframes below use the s4- prefix. Assets live in assets/04/ (see 04-decider-box.notes.md).
+     Reviewed 2026-10-17: facts re-verified, reveals grouped (max 6 per slide), body text trimmed for 10 m. -->
+<style>
+  /* System 1 vs System 2 contrast (slide D1) */
+  .s4-tokens { display: flex; flex-wrap: wrap; gap: 8px; min-height: 110px; }
+  .s4-tokens span { font-family: var(--mono); font-size: 17px; padding: 4px 10px; border-radius: 8px; background: var(--bg-2); border: 1px solid var(--line); color: var(--muted); opacity: 0; animation: s4-tok 6s linear infinite; }
+  .s4-tokens span:nth-child(1) { animation-delay: 0.0s; } .s4-tokens span:nth-child(2) { animation-delay: 0.35s; }
+  .s4-tokens span:nth-child(3) { animation-delay: 0.7s; } .s4-tokens span:nth-child(4) { animation-delay: 1.05s; }
+  .s4-tokens span:nth-child(5) { animation-delay: 1.4s; } .s4-tokens span:nth-child(6) { animation-delay: 1.75s; }
+  .s4-tokens span:nth-child(7) { animation-delay: 2.1s; } .s4-tokens span:nth-child(8) { animation-delay: 2.45s; }
+  .s4-tokens span:nth-child(9) { animation-delay: 2.8s; } .s4-tokens span:nth-child(10) { animation-delay: 3.15s; }
+  .s4-tokens span:nth-child(11) { animation-delay: 3.5s; } .s4-tokens span:nth-child(12) { animation-delay: 3.85s; }
+  @keyframes s4-tok { 0% { opacity: 0; transform: translateY(6px); } 6% { opacity: 1; transform: none; } 75% { opacity: 1; } 85% { opacity: 0; } 100% { opacity: 0; } }
+  .s4-bar { position: relative; height: 38px; border-radius: 10px; background: var(--bg-2); border: 1px solid var(--line); overflow: hidden; margin: 10px 0; }
+  .s4-bar i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 10px; background: linear-gradient(90deg, var(--strand-1), var(--strand-2)); animation: s4-fill 6s ease-in-out infinite; }
+  .s4-bar.deny i { background: linear-gradient(90deg, var(--deny), var(--strand-1)); animation-name: s4-fill-deny; }
+  .s4-bar b { position: absolute; z-index: 1; left: 12px; top: 7px; font-family: var(--mono); font-size: 17px; color: var(--text); text-shadow: 0 1px 4px rgba(0,0,0,0.7); }
+  .s4-bar em { position: absolute; z-index: 1; right: 12px; top: 7px; font-family: var(--mono); font-size: 17px; color: var(--text); font-style: normal; text-shadow: 0 1px 4px rgba(0,0,0,0.7); }
+  @keyframes s4-fill { 0% { width: 0; } 8% { width: 0; } 20% { width: 95%; } 80% { width: 95%; } 100% { width: 95%; } }
+  @keyframes s4-fill-deny { 0% { width: 0; } 8% { width: 0; } 20% { width: 7%; } 80% { width: 7%; } 100% { width: 7%; } }
+  .s4-stamp { font-family: var(--mono); font-size: 16px; color: var(--muted); margin-top: 6px; }
+  /* compact tables and code (slides D2, D3, D5, D6) */
+  .s4-table { width: 100%; border-collapse: collapse; font-size: 21px; }
+  .s4-table th, .s4-table td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .s4-table th { color: var(--strand-2); font-family: var(--mono); font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+  .s4-table td.n { font-family: var(--mono); color: var(--text); white-space: nowrap; }
+  .s4-pre { font-family: var(--mono); font-size: 18px; line-height: 1.4; color: var(--text); background: var(--bg-2); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin: 0; white-space: pre; overflow: hidden; }
+  .s4-pre .k { color: var(--strand-4); } .s4-pre .s { color: var(--strand-2); } .s4-pre .c { color: var(--muted); }
+  .s4-board li { list-style: none; display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: baseline; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 20px; }
+  .s4-board { padding: 0; margin: 0; }
+  .s4-board .r { font-family: var(--mono); color: var(--strand-2); } .s4-board .sc { font-family: var(--mono); color: var(--text); }
+  .s4-board .base { display: block; font-size: 15px; color: var(--muted); font-family: var(--mono); }
+  .s4-tight li { margin-bottom: 10px; }
+  .s4-tight p, .s4-tight li { font-size: 23px; }
+  /* upstream SVG figures: the copies used here have their palette pinned to the figure's own dark variant,
+     so they read the same whether the presenter Mac is in dark or light mode. The panel colour matches. */
+  .s4-fig-contain img { object-fit: contain !important; background: #1a1a19; }
+  .s4-wrap { position: relative; height: 40px; margin: 0 0 4px; }
+  .s4-wrap .dot { top: 13px; }
+</style>
+
+<!-- D1: System 1 vs System 2 -->
+<section class="slide">
+  <div class="kicker">Part 4 · Decision models</div>
+  <h2>System 1 answers. System 2 writes.</h2>
+  <div class="grid c2">
+    <div class="s4-tight">
+      <ul>
+        <li class="reveal">A <b>decision model</b> picks between options or rates on a scale. It never writes free text.</li>
+        <li class="reveal">Three typed answers, one forward pass: <b>noul</b> (yes/no), <b>choice</b> (P per option), <b>score</b> (a rubric level).</li>
+        <li class="reveal"><b>Calibrated</b>: at confidence 0.9 or more, right about 95% of the time on unseen short tasks.</li>
+        <li class="reveal">For robots: about <b>115 ms</b> a question (RTX 3090), a <b>number per class</b>, and <b>Deny</b> in code when the answer is late.</li>
+      </ul>
+      <p class="small">"System one" is the maintainers' term; "System 2" is the speaker's shorthand for the LLM.</p>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom: 14px;">
+        <h3>System 2: the LLM</h3>
+        <div class="s4-tokens" aria-hidden="true">
+          <span>Looking</span><span>at</span><span>the</span><span>frame,</span><span>I</span><span>believe</span><span>there</span><span>might</span><span>be</span><span>a</span><span>person</span><span>...</span>
+        </div>
+        <div class="s4-stamp">tokens, one at a time; seconds</div>
+      </div>
+      <div class="card">
+        <h3>System 1: the decider</h3>
+        <div class="s4-bar"><b>person_in_frame</b><i></i><em>P = 0.95</em></div>
+        <div class="s4-bar deny"><b>clear</b><i></i><em>P = 0.07</em></div>
+        <div class="s4-stamp">one forward pass; hundreds of ms; a number to threshold</div>
+      </div>
+    </div>
+  </div>
+  <p class="safety reveal">Physics stops the car; the decider explains.</p>
+  <aside class="notes">
+    <p>Sources: strands-labs/strands-decider README (re-read 2026-10-17): "one of a new class of decision models, or 'system one' models. Unlike an LLM, which can generate arbitrary text, a decision model picks between sets of options and rates things on a scale"; "answers at a confidence of 0.9 or more are right about 95% of the time"; 115 ms median per JevBench question on an RTX 3090 (95th percentile 299 ms); on an M3 Pro the warm median is 153 ms for tasks under 300 tokens and 234 ms over all tasks (evaluation/results.md), which is why the slide quotes only the 3090 number. docs/architecture.md: one forward pass, pointer head, three primitives. The launch blog (Brooker, Chambers, Nonato de Paula, 2026-10-01) says "system one models" and contrasts them with "reasoning models"; it never says "System 2": that label is the speaker's framing, and the slide says so. Fail-closed is this project's gate: a 1.5 s per-question timeout or a malformed answer denies (docs/results/decider-benchmark-2026-10-14.md, decider-calibration-2026-10-14.md). The bars are real numbers from the booth model on evening-run frame 000001 (runs/calib/2026-10-14-frame-question/calibration.json, gitignored): the person yes/no said 0.95; the five-way put 0.07 on "clear" (0.0683) and 0.60 on "unclear".</p>
+    <p>Say: an LLM is the wrong tool to ask "may this hop proceed?" 300 times an hour. You want a typed answer with a probability, in a few hundred milliseconds, and a hard rule in code for what happens when the answer is late.</p>
+  </aside>
+</section>
+
+<!-- D2: JevBench and the landscape -->
+<section class="slide">
+  <div class="kicker">Part 4 · The leaderboard</div>
+  <h2>How decision models took over: JevBench</h2>
+  <div class="grid c2">
+    <div class="s4-tight">
+      <ul>
+        <li class="reveal"><b>JevBench</b> by Benchmark Heaven: an independent leaderboard for decision models, scored on accuracy, calibration, latency and cost.</li>
+        <li class="reveal">Strands Decider 2B at launch: <b>0.723</b> on the 231 public tasks, 50th of 89 overall, <b>3rd of 33</b> in the 2B class.</li>
+        <li class="reveal">Today's open-weights top is <b>Gemma 4</b> territory: nine of the top fourteen sit on a Gemma 4 base, led by a Gemma-4-31B LoRA at 81.7.</li>
+      </ul>
+    </div>
+    <div class="card reveal">
+      <h3>Open-weights Capability board, fetched 17 Oct 2026</h3>
+      <ul class="s4-board">
+        <li><span class="r">1</span><span>Quyet-1.0-Large <span class="base">gemma-4-31B-it, LoRA</span></span><span class="sc">81.7</span></li>
+        <li><span class="r">2</span><span>Jeff-1.0-Large <span class="base">base undisclosed</span></span><span class="sc">81.5</span></li>
+        <li><span class="r">3</span><span>metask-jev-rain-31B service v3 <span class="base">base undisclosed</span></span><span class="sc">79.6</span></li>
+        <li><span class="r">4</span><span>decisio v0.8.0 <span class="base">gemma-4-31B-it</span></span><span class="sc">79.6</span></li>
+        <li><span class="r">7</span><span>deck-31B <span class="base">gemma-4-31B-it</span></span><span class="sc">77.6</span></li>
+        <li><span class="r">12</span><span>decider-12b v2 (Mapika) <span class="base">gemma-4-12B-it</span></span><span class="sc">72.5</span></li>
+      </ul>
+      <div class="caption">Capability = mean of Intelligence and Calibration. benchmarkheaven.com/jev-models, board v1.7.46</div>
+    </div>
+  </div>
+  <div class="timeline reveal">
+    <div class="t"><b>v1.2</b><span>52 ranked systems</span></div>
+    <div class="t"><b>25 Sep 2026</b><span>v1.4.2: 89 systems</span></div>
+    <div class="t"><b>1 Oct 2026</b><span>Strands Decider 2B released</span></div>
+    <div class="t"><b>9 Oct 2026</b><span>Five sizes, Gemma 4 torsos</span></div>
+    <div class="t"><b>17 Oct 2026</b><span>v1.7.46: 181 ranked systems</span></div>
+  </div>
+  <aside class="notes">
+    <p>Sources: https://github.com/fstandhartinger/jevbench README ("JevBench by Benchmark Heaven is a benchmark for AI decision models ... typed decision accuracy, probability calibration, latency and cost. Maintained by Benchmark Heaven, independently of TypeSafe AI"; canonical board https://benchmarkheaven.com/jev-models). The board page downloaded 2026-10-17 (14.6 MB, text-grepped): "board v1.7.46 · updated 2026-10-16", "181 ranked systems" (the 2026-10-16 fetch said 180: the count moved by one overnight under the same board version), "Show all 130 Jev-class systems", "Capability Score averages Intelligence and Calibration", "Jev-class means at most 2x the cost and median latency of Jev (v1.5 reference)". Rows and base models re-read from the page: 1 Quyet-1.0-Large 81.7 google/gemma-4-31B-it ("Gemma-4-31B decoder, option-letter logits"); 2 Jeff-1.0-Large 81.5 undisclosed; 3 metask-jev-rain-31B-trained service v3 79.6 undisclosed; 4 decisio v0.8.0 79.6 google/gemma-4-31B-it; 5 and 6 metask-jev-rain 31B / 12B undisclosed; 7 deck-31B 77.6 google/gemma-4-31B-it; 8 Rene-1 31B FP8 Gemma 4 31B; 9 H2O-Lightning-4B Qwen3.5-4B; 10 Bobcat Flash 1.2 and 11 Surogate Rune, gemma-4-26B-A4B-it; 12 decider-12b v2 72.5 gemma-4-12B-it; 13 Xor 26B-A4B gemma-4-26B-A4B; 14 decider-12b v1 gemma-4-12B-it. Nine of fourteen on Gemma 4. Strands numbers: strands-decider evaluation/jevbench.md (v1.4.2 board, 89 systems, v19 0.723 = 167/231, 50th, 3rd of 33 in the 2B class, "excluding them, first of 30"; "the board has grown from 52 systems to 89 since v1.2"); the launch blog repeats "3rd of 33 in the 2B class, and 1st of 30 excluding the just-over-2B models". Dates: launch blog datePublished 2026-10-01; Gemma 4 deciders and the v1 2B first released 2026-10-09 (Hugging Face card "2026-10-09: first release"; README commit #63).</p>
+    <p>Speaker claim check: the speaker said the newest top entries are "Gemini-4-based". The board shows <b>Gemma 4</b> (Google's open weights), not Gemini: "Gemini" appears only as an API reference system (Gemini 3.1 Flash-Lite). Say Gemma 4 on stage. The current board has no row named strands, hobson or Vivek; the Strands rank quoted is the launch rank from the v1.4.2 board in the upstream doc. If asked about the overall top: "reasoning models (GPT-6 Luna 0.996), then Jev rebuilds on larger torsos" (same doc).</p>
+  </aside>
+</section>
+
+<!-- D3: Strands Decider deep dive -->
+<section class="slide">
+  <div class="kicker">Part 4 · Strands Decider</div>
+  <h2>Five sizes, one mechanism, one endpoint</h2>
+  <div class="grid c2">
+    <div>
+      <table class="s4-table reveal">
+        <thead><tr><th>Size</th><th>Base</th><th>JevBench /231</th><th>Brier</th></tr></thead>
+        <tbody>
+          <tr><td class="n">2B</td><td>Qwen3.5-2B-Base (1.9B)</td><td class="n">180</td><td class="n">0.280</td></tr>
+          <tr><td class="n">E2B</td><td>Gemma 4 E2B-it</td><td class="n">180</td><td class="n">0.313</td></tr>
+          <tr><td class="n">E4B</td><td>Gemma 4 E4B-it</td><td class="n">187</td><td class="n">0.243</td></tr>
+          <tr><td class="n">12B</td><td>Gemma 4 12B-it</td><td class="n">200</td><td class="n">0.173</td></tr>
+          <tr><td class="n">26B-A4B</td><td>Gemma 4 26B-A4B-it (MoE)</td><td class="n">207</td><td class="n">0.162</td></tr>
+        </tbody>
+      </table>
+      <p class="small" style="margin: 10px 0 12px;"><code>StrandsAgents/strands-decider-&lt;size&gt;-&lt;base&gt;-v1-2610</code>, Apache-2.0. One <code>POST /v1/systemone</code>, three question types; the state is encoded once, so extra questions are nearly free.</p>
+      <pre class="s4-pre reveal"><span class="c"># the booth decider, as served on 2026-10-14</span>
+strands-decider serve <span class="s">StrandsAgents/strands-decider-2B-qwen3.5-v1-2610</span> \
+    --vision --port 8111 --device mps
+curl -s 127.0.0.1:8111/health   <span class="c"># "vision": true</span></pre>
+    </div>
+    <div>
+      <div class="figure s4-fig-contain" style="height: 470px;"><img src="assets/04/decider-latency_vs_questions-dark.svg" alt="Latency against number of questions: shared prefix stays flat while batched grows linearly"></div>
+      <div class="caption">upstream research/figures/latency_vs_questions.svg (RTX 3090): shared prefix vs batched</div>
+      <div class="grid c3" style="margin-top: 14px; gap: 12px;">
+        <div class="card reveal" style="padding: 14px 16px;"><div class="big" style="font-size: 44px;">141<span class="small" style="font-size: 18px;"> ms</span></div><div class="small">envelope yes/no, p50</div></div>
+        <div class="card reveal" style="padding: 14px 16px;"><div class="big" style="font-size: 44px;">349<span class="small" style="font-size: 18px;"> ms</span></div><div class="small">frame choice, 480x360, p50</div></div>
+        <div class="card reveal" style="padding: 14px 16px;"><div class="big" style="font-size: 44px;">490<span class="small" style="font-size: 18px;"> ms</span></div><div class="small">both, p50 (p95 498)</div></div>
+      </div>
+      <div class="caption">booth 2B with --vision on an Apple M4 Pro (MPS), 2026-10-14</div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Sources: strands-decider README (re-read 2026-10-17): the Gemma 4 table (E2B 180 / 0.313, E4B 187 / 0.243, 12B 200 / 0.173, 26B-A4B 207 / 0.162; bases google/gemma-4-*-it; "the same pointer head and answer the same three question types as the Qwen3.5 model"; 102 to 245 ms per JevBench question on one H100) and "strands-decider-2B-qwen3.5-v1-2610 scores 180, Brier 0.280"; "at 1.9 billion parameters"; Apache-2.0. Hugging Face card StrandsAgents/strands-decider-2B-qwen3.5-v1-2610: base_model Qwen/Qwen3.5-2B-Base, 180/231 (0.779), Brier 0.280, ECE 0.072, apache-2.0, "2026-10-09: first release". docs/inference.md: "Asking many questions is nearly free" (shared-prefix cache forked per question). Figure: raw.githubusercontent.com/strands-labs/strands-decider/main/research/figures/latency_vs_questions.svg (HTTP 200, 6,456 bytes); the deck uses a copy with the figure's own dark palette pinned (see notes.md). Booth latencies: docs/results/decider-benchmark-2026-10-14.md, table "Results": 2B-qwen3.5-v1-2610 noul 141/144, choice 349/354, gate 490/498 ms p50/p95, load 9.4 s, 5.4 GB, 6/7 drawn frames, envelope 140/140 with the deterministic check; Apple M4 Pro 24 GB under load. The serve command is verbatim from that note's "How to start the booth decider". Gemma 4 E2B on the same Mac: 1,119 ms per hop, 11 GB, 7/7 frames, two MPS crashes: recorded cuts only. Note the upstream README says "--vision is for the Qwen3.5 model"; the Gemma 4 image path used in the benchmark is the speaker's open PR #67.</p>
+    <p>Say: the 2B fits the 300 to 700 ms stop-latency budget from report 12 with about 200 ms left for the frame grab; the Gemma 4 E2B does not on this Mac. Published Gemma 4 latencies are 102 to 245 ms per question on one H100, so size the hardware, not the model, if you want the bigger ones live.</p>
+  </aside>
+</section>
+
+<!-- D4: the speaker's contribution -->
+<section class="slide">
+  <div class="kicker">Part 4 · Contribution</div>
+  <h2>Giving the decider eyes: <code>--vision</code>, merged upstream</h2>
+  <div class="grid c2">
+    <div class="s4-tight">
+      <ul>
+        <li class="reveal"><b>PR #10</b>, merged 3 Oct 2026: Qwen3.5-2B-Base is multimodal, but upstream loaded only its text decoder. <code>--vision</code> keeps the vision tower and reuses the published adapter. <b>No retraining.</b></li>
+        <li class="reveal">v19 with images: NaturalBench <b>0.784</b>, POPE <b>0.877</b>. Same accuracy as an image-trained 2B, better calibrated (ECE 0.014 vs 0.080).</li>
+        <li class="reveal"><b>PR #67</b> (open, 12 Oct): image and audio for the Gemma 4 E2B/E4B. Issue #39: a 4B candidate scored an <em>estimated</em> number one on the JevBench text board with a local proxy scorer; <em>unofficial, official run pending</em>.</li>
+        <li class="reveal"><b>decider-lab</b> (Apache-2.0, public 6 Oct): one <code>lab.yaml</code> to serve, evaluate, calibrate, compare with paired 95% CIs and fine-tune, on local, ssh, AWS or Vast.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="figure s4-fig-contain" style="height: 520px;"><img src="assets/04/decider-lab-studio-leaderboard.png" alt="decider-lab Studio: a run root's leaderboard with 95% CI whiskers and the local-proxy notice"></div>
+      <div class="caption">decider-lab Studio leaderboard (github.com/Vivek0712/decider-lab, docs/img)</div>
+      <div class="logo-row" style="margin-top: 14px;"><img src="assets/logos/strands-wordmark.svg" alt="Strands" style="height: 28px;"><span class="pill on">strands-decider #10 merged</span><span class="pill">#67 open</span><span class="pill">decider-lab, issue #45</span></div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Re-verified 2026-10-17 with `gh pr view 10 -R strands-labs/strands-decider`: title "feat(vision): image input for Strands Decider (v19), vision tower kept, no retraining", author Vivek0712 (Vivek Raja P S), created 2026-10-02T10:41Z, merged 2026-10-03T23:17Z, merge commit 75c9fd3. PR #67 "feat(gemma4): image and audio input for Gemma 4 E2B / E4B, encoders kept, no retraining", created 2026-10-12T04:32Z, OPEN. Issue #39 opened by Vivek0712 2026-10-05, OPEN, zero comments, title "... est. #1 on the JevBench text leaderboard and #1 in the 4B class (*benchmarked locally, unofficial)". docs/vision.md (upstream main): images inside the state, longer side at most 448 px, at most 4 images, the vision tower adds about 331M parameters, adapter keys remapped; results table v19 `--vision` NaturalBench 0.784 / POPE-adversarial 0.877 vs Mapika/decider-2b-vision (image-trained) 0.794 / 0.860; NaturalBench ECE 0.014 vs 0.080. decider-lab: `gh api repos/Vivek0712/decider-lab` created 2026-10-06T03:40Z, public, Apache-2.0, description "Evaluate, calibrate, compare and fine-tune decision models ... locally, over ssh, on AWS or on a rented GPU"; upstream issue #45 opened 2026-10-06, OPEN. Image copied from docs/img/studio-leaderboard.png in github.com/Vivek0712/decider-lab (237,969 bytes). Wordmark: https://strandsagents.com/latest/assets/wordmark-github-dark.svg (HTTP 200, 2,086 bytes, green fill, reads on both themes).</p>
+    <p><b>Per speaker, unverified:</b> "held the number one spot on the JEV leaderboard for about a week". Nothing on benchmarkheaven.com names strands, hobson or Vivek; the speaker's own LINEAGE.md says "All board positions are estimates; submission to the maintainers is pending." The slide therefore says "estimated number one ... local proxy scorer; unofficial, official run pending", and that wording must not be strengthened without a dated board URL or screenshot.</p>
+  </aside>
+</section>
+
+<!-- D5: architecture of a request -->
+<section class="slide">
+  <div class="kicker">Part 4 · Under the hood</div>
+  <h2>One request per hop: envelope, person, frame</h2>
+  <div class="loop reveal" style="margin-bottom: 16px;">
+    <div class="node"><b>1 AGENT</b>proposes <code>drive_deepracer(v, w, t)</code></div>
+    <div class="node"><b>2 GATE</b>state = command + envelope + deterministic check, plus one frame</div>
+    <div class="node"><b>3 DECIDER</b>encodes once; one typed answer per question</div>
+    <div class="node"><b>4 TABLE</b>person &ge; 0.50 or unclear &ge; 0.65: Deny. Obstacle: Guide. Outside envelope: Confirm</div>
+    <div class="node"><b>5 MOTOR</b>through the command gate; zero servo pair on exit</div>
+  </div>
+  <div class="grid c2">
+    <pre class="s4-pre reveal">POST /v1/systemone
+{ <span class="k">"state"</span>: <span class="s">"drive_deepracer linear=0.25 angular=0.4 duration=1.5
+            envelope |v|&lt;=0.3 |w|&lt;=1.0 t&lt;=2; deterministic_check: inside"</span>,
+  <span class="k">"images"</span>: [<span class="s">"&lt;480x360 JPEG&gt;"</span>],
+  <span class="k">"questions"</span>: {
+    <span class="k">"envelope"</span>: noul   <span class="s">"Is this drive command inside the briefed envelope?"</span>
+    <span class="k">"person"</span>:   noul   <span class="s">"Is a person (any part of a human body) visible
+                        in this camera frame?"</span>
+    <span class="k">"frame"</span>:    choice <span class="s">"What is directly in front of the car
+                        in this camera frame?"</span>
+                       {clear, obstacle_near, person_in_frame,
+                        off_surface, unclear} }}
+
+<span class="c">-&gt; envelope 0.89   person 0.95   frame: unclear 0.60
+=&gt; Deny: person 0.95 &ge; 0.50  (unclear 0.60 alone is under the 0.65 bar)</span></pre>
+    <div>
+      <div class="figure s4-fig-contain" style="height: 400px;"><img src="assets/04/decider-architecture-dark.svg" alt="Hobson architecture: keep the decoder torso, discard the LM head, score each option with a pointer head"></div>
+      <div class="caption">upstream research/figures/architecture.svg: torso kept, LM head gone, pointer readout</div>
+      <ul class="s4-tight" style="margin: 10px 0 0; padding-left: 22px;">
+        <li class="reveal" style="font-size: 19px;">Numbers stay in code: 140/140 envelope answers with the deterministic check in the state; 110/140 without.</li>
+        <li class="reveal" style="font-size: 19px;">Late (1.5 s) or malformed: Deny. The person yes/no can add a Deny, never remove one.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="safety reveal" style="margin-top: 10px;">Physics stops the car; the decider explains.</p>
+  <aside class="notes">
+    <p>Sources: src/deepracer_agent/gate.py as read 2026-10-17: GATED_TOOLS ("drive_deepracer"); ENVELOPE_QUESTION = "Is this drive command inside the briefed envelope?", PERSON_QUESTION = "Is a person (any part of a human body) visible in this camera frame?", FRAME_QUESTION = "What is directly in front of the car in this camera frame?" (all three verbatim on the slide); FRAME_CLASSES (clear, obstacle_near, person_in_frame, off_surface, unclear); DENY_CLASSES (person_in_frame, unclear). Thresholds as the code stands today: `deny_threshold` defaults to 0.5 and applies to person_in_frame (and to the yes/no override in `combine_frame_answers`: P(yes) at or above 0.5 makes the class person_in_frame); `UNCLEAR_THRESHOLD = 0.65` (env `DEEPRACER_UNCLEAR_THRESHOLD` overrides) applies to unclear, because the booth model says unclear at 0.5 to 0.6 on plain corridors; a weak unclear proceeds and says so. obstacle_near returns Guide (re-plan at half speed); an envelope violation returns Confirm; most severe wins. docs/results/decider-benchmark-2026-10-14.md: the default Envelope (|linear| &lt;= 0.3 m/s, |angular| &lt;= 1.0 rad/s, duration &lt;= 2 s), the deterministic_check line, 140/140 vs 110/140 (2B) without it, mean P(inside) 0.89 for the 2B on inside commands, the 1.5 s per-question deny budget. docs/results/decider-calibration-2026-10-14.md: both frame questions in one POST sharing the image prefix, "a missing or malformed half raises DeciderUnavailable", "monotone toward Deny", frame 000001: person 0.95, five-way unclear 0.60. The JSON on the slide is a schematic of the gate's request (question strings verbatim; the envelope state line paraphrased; the question objects are abbreviated to type and instructions; the real payload has "type"/"instructions"/"criteria" keys and the envelope and frame questions travel in two requests, text first, then frame). Decider internals: upstream docs/architecture.md and docs/inference.md. Figure: raw.githubusercontent.com/strands-labs/strands-decider/main/research/figures/architecture.svg (HTTP 200, 8,034 bytes), used as a copy with its own dark palette pinned. Zero servo pair on exit and the command gate: CLAUDE.md.</p>
+    <p>Say: the decider never compares 1.5 &gt; 1.0; Envelope.violations does, and the decider turns that plus the frame into a calibrated, speakable reason. The person yes/no was added on 14 Oct after eleven sharp frames of a person came back "unclear" at 0.58 to 0.67: the Deny was right, the explanation was wrong, and the fix cost about 95 ms per hop. Today unclear needs 0.65 to deny on its own; a person needs 0.50.</p>
+  </aside>
+</section>
+
+<!-- D6: Strands Box -->
+<section class="slide">
+  <div class="kicker">Part 4 · Strands Box</div>
+  <h2>Strands Box: the agent process in a sandbox</h2>
+  <div class="grid c2">
+    <div class="s4-tight">
+      <ul>
+        <li class="reveal">An <b>open-source sandbox engine for AI agents</b>: strands-agents/box, Rust, Apache-2.0, v0.1.0 on 7 Oct 2026.</li>
+        <li class="reveal">Two layers: the host OS enforces <code>box.toml</code> grants; a <b>Dogwood</b> (Cedar-syntax) policy rules on the rest. <b>Default deny</b>; <code>forbid</code> wins.</li>
+        <li class="reveal">Enforced <b>outside the agent process</b>: shell, Python (Monty), egress gateway and MCP broker ask one engine. The agent holds a placeholder, never the real credential.</li>
+        <li class="reveal">Event history makes rules temporal: "no more than three Slack posts every 10 minutes". Every decision logged to <code>records.jsonl</code>.</li>
+        <li class="reveal">Here: <b>optional</b>, around the race-engineer agent on the laptop (macOS Apple silicon only in 0.1.x). Never on the car.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="figure s4-fig-contain" style="height: 400px;"><img src="assets/04/box-core-diagram.png" style="background: #fff;" alt="Strands Box architecture: containment and policy enforcement points"></div>
+      <div class="caption">AWS Open Source Blog, "Introducing Strands Box", 2026-10-07 (box-core-diagram.png)</div>
+      <pre class="s4-pre reveal" style="margin-top: 12px;"><span class="c">// policy.dw, from the launch post</span>
+@id("allow_https_to_aws")
+<span class="k">permit</span> (principal, action == Box::Action::<span class="s">"http:request"</span>, resource)
+<span class="k">when</span> {
+  context.input.host like <span class="s">"*.us-west-2.amazonaws.com"</span> &amp;&amp;
+  context.input.port == 443
+};</pre>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Sources (re-read 2026-10-17): https://github.com/strands-agents/box README: "An open source sandbox engine for AI agents"; "combines operating-system isolation with semantic policies written in Dogwood"; "Box is harness-agnostic"; "The host OS enforces the direct access restrictions in box.toml. Strands Shell, Monty for Python, the egress gateway, and the MCP broker send the operations they handle to the embedded Dogwood Local Engine ... Box enforces its allow or deny decisions outside the agent process"; "denied by default: a matching permit must allow the operation, and a matching forbid overrides that permission"; "share an event history ... a file read through Shell or Python can cause the gateway to deny a later outbound HTTP request"; "Credential injection ... The agent does not receive the underlying secrets"; "Decision records ... <box_dir>/private/telemetry/records.jsonl"; "Preview: Box currently supports local execution on macOS with Apple silicon". `gh api repos/strands-agents/box`: language Rust, license Apache-2.0; release v0.1.0 published 2026-10-07T17:24:27Z. AWS Open Source Blog, Fernando Dingler, 07 OCT 2026: the policy snippet on the slide is verbatim (`@id("allow_https_to_aws") permit (principal, action == Box::Action::"http:request", resource) when { context.input.host like "*.us-west-2.amazonaws.com" && context.input.port == 443 };`); "Dogwood uses Cedar's syntax"; "A policy can let the agent post, but no more than three times every 10 minutes"; "the agent receives a placeholder token, which the gateway replaces with the real secret before forwarding a permitted request. The real secret never enters the agent's environment". Diagram: https://d2908q01vomqb2.cloudfront.net/ca3512f4dfa95a03169c5a670a4c91a19b3077b4/2026/10/06/box-core-diagram.png from that post (HTTP 200, 269,397 bytes). Dropped in review: "terminates TLS" and "Linux planned" (neither phrase is in the README or the AWS post; a Linux containment backend exists in the source tree, but the public preview statement is macOS only). Placement in this project: docs/context/12-architecture.md row "Strands Box (optional) | Laptop (macOS only in 0.1.x) | sandboxes the agent process; egress only to car and Bedrock".</p>
+    <p>Say: Box is for the agent that has shell access to the car (the race engineer), not for the driving loop. The decider says why a hop was refused; Box says what the agent process was allowed to touch. Different layers, both logged.</p>
+  </aside>
+</section>
+
+<!-- D7: synthesis -->
+<section class="slide">
+  <div class="kicker">Part 4 · Putting it together</div>
+  <h2>Agent proposes. Decider explains. Physics stops. Box confines.</h2>
+  <div class="s4-wrap flow"><div class="dot"></div></div>
+  <div class="loop reveal">
+    <div class="node"><b>STRANDS AGENT</b>voice (bidi) and tools: the LLM proposes one hop</div>
+    <div class="node"><b>DECIDER GATE</b>2B, <code>--vision</code>: envelope, person, frame; about 0.5 s</div>
+    <div class="node"><b>COMMAND GATE</b>allow-list; zero servo pair on exit</div>
+    <div class="node"><b>DEEPRACER</b>ROS 2 over rosbridge; a camera frame comes back</div>
+    <div class="node pulse"><b>PHYSICS</b>pen, hop cap, on-car deadman, marshal's thumb</div>
+  </div>
+  <div class="grid c3" style="margin-top: 22px;">
+    <div class="card reveal"><h3>System 2 proposes</h3><p>The LLM turns speech and a frame into a plan. Creative, and slow.</p></div>
+    <div class="card reveal"><h3>System 1 explains</h3><p>Typed, calibrated, a few hundred milliseconds. The gate thresholds it; the rover speaks it. Never the safety layer.</p></div>
+    <div class="card reveal"><h3>Box confines the process</h3><p>What the agent may read, run and reach, decided outside the agent, logged. Laptop side, optional.</p></div>
+  </div>
+  <p class="safety reveal" style="margin-top: 18px; font-size: 26px;">Physics stops the car; the decider explains.</p>
+  <aside class="notes">
+    <p>Sources: the project posture is CLAUDE.md ("physics stops the car (pen, hop cap, on-car deadman, marshal's thumb); the decider explains. Never present the decider as the safety layer"; the command gate `strands_robots._command_gate` and the zero servo pair before exit; rosbridge Ackermann driver). docs/context/12-architecture.md: the laptop runs the agent, the harness race engineer and (optionally) Strands Box; the car runs ROS 2. Decider latency: docs/results/decider-benchmark-2026-10-14.md (490 ms p50 for both questions on the booth model) plus about 95 ms for the person yes/no (calibration note). Bidi voice: docs/context/03 section 3 (strands.bidi GA in strands-agents 1.57.2, 2026-10-01). Box: report 03 section 1 and report 12. "System 1 / System 2" is the speaker's framing (see D1).</p>
+    <p>Say: four layers, four different kinds of guarantee. The LLM gives you intent, the decider gives you a number and a sentence, the command gate gives you an allow-list, physics gives you a stop that needs no software at all. If one sentence survives this section, it is the safety line.</p>
+  </aside>
+</section>

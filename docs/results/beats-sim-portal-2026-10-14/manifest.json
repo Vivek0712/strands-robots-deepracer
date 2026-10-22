@@ -1,0 +1,22 @@
+[
+  {
+    "file": "01-beats-marshal-deny.png",
+    "caption": "Live (rerun of the Marshal beat, real AgentRuntime + Nova Pro + fake decider): the person-in-frame Deny, stop cause deny, drawn stick figure on the live view.",
+    "bytes": 297067
+  },
+  {
+    "file": "02-beats-apology.png",
+    "caption": "Apology beat replayed from events-rerun-marshal-apology.jsonl up to seq 85 (the live watcher missed it: the beat's last two events never reached the portal, see portal.md): the rover's why_stopped answer in the Thought panel.",
+    "bytes": 280332
+  },
+  {
+    "file": "03-beats-final-audit.png",
+    "caption": "Live, full run: the audit panel after all seven beats (element screenshot).",
+    "bytes": 70128
+  },
+  {
+    "file": "04-beats-final-main.png",
+    "caption": "Live, full run: the whole Pit Wall after Pull the Plug: stop cause deadman 329 ms, 'link lost' thought, BARGE-IN marker from Red Light.",
+    "bytes": 268630
+  }
+]

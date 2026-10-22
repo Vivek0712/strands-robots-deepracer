@@ -1,0 +1,8 @@
+harness.fake_car.ws server listening on 127.0.0.1:9491
+harness.fake_car fake car on ws://127.0.0.1:9491 (control http://127.0.0.1:8492)
+harness.fake_console fake console on http://127.0.0.1:8490
+harness.fake_decider fake decider on http://127.0.0.1:8511
+harness.fake_car.ws connection closed
+harness.stack sim stack ready: {'DEEPRACER_BODY': 'sim', 'DEEPRACER_HOST': '127.0.0.1', 'DEEPRACER_ROSBRIDGE_PORT': '9491', 'DEEPRACER_CONSOLE_URL': 'http://127.0.0.1:8490', 'DECIDER_URL': 'http://127.0.0.1:8511', 'DEEPRACER_SIM_SHARED': '<scratch>/voice/live/shared.json'}
+harness.fake_car.ws connection closed
+harness.fake_car.ws connection open

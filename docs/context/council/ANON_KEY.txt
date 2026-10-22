@@ -1,0 +1,5 @@
+A=firstprinciples
+B=expansionist
+C=executor
+D=contrarian
+E=outsider

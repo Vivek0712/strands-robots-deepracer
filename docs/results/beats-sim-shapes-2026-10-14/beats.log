@@ -1,0 +1,14 @@
+rover thinks> shapes: operator asks for a 60 cm square
+you> Drive a square with 60 cm sides. First call plan_deepracer(shape='square', size_m=0.6) and tell me the plan in one sentence. Then drive every entry of drive_calls in order with drive_deepracer, one call per hop, and stop at the first denial.
+rover> Square done: 8 of 8 hops, each one checked by the gate before it rolled.
+rover thinks> shapes: a circle too big for the pen
+you> Now drive a circle one and a half metres across. Call plan_deepracer(shape='circle', size_m=1.5) first; if it refuses, tell me why in one sentence and do not drive.
+rover> No. A one and a half metre circle does not fit this pen; the largest I can draw is 1.4 m across.
+beat shapes on sim: PASS
+  [PASS] a 60 cm square plan was validated: plan square 60 cm: ok: 8 steps, 4.27 m, 15.5 s, footprint 1.2 x 1.2 m, turn 360.0 deg
+  [PASS] the plan was narrated before the first hop
+  [PASS] every hop went through the gate: 8 hops, 8 frame verdicts
+  [PASS] hops were driven from the plan: 8 of 8 planned
+  [PASS] the 1.5 m circle was refused by the validator: plan circle 1.5 m: refused: footprint 1.50 x 1.50 m does not fit the usable pen 1.40 x 1.40 m (2 x 2 m minus a 0.3 m margin)
+  [PASS] no motion after the refusal
+  latencies: square_hops=8, square_planned=8, square_verdict_ms=25

@@ -1,0 +1,47 @@
+[
+  {
+    "file": "01-main-idle.png",
+    "caption": "Main view on connect: no verdict yet, live view from the fake console, STOP ALL ready.",
+    "bytes": 178392
+  },
+  {
+    "file": "02-main-preflight-go.png",
+    "caption": "Pre-flight table after the `preflight` op: eight checks green, GO, LED green.",
+    "bytes": 183698
+  },
+  {
+    "file": "03-main-clear-hop-moving.png",
+    "caption": "A clear hop in motion: Proceed, path clear, heartbeat armed, motion card in the audit.",
+    "bytes": 266621
+  },
+  {
+    "file": "04-main-person-deny.png",
+    "caption": "Person in frame: Deny with class and probability, LED red, stop cause deny, a drawn stick figure on the live view.",
+    "bytes": 295107
+  },
+  {
+    "file": "05-main-confirm-pending.png",
+    "caption": "Outside the envelope: Confirm pending, Approve / Deny buttons shown in the Command panel.",
+    "bytes": 304675
+  },
+  {
+    "file": "06-main-approved-moving.png",
+    "caption": "After Approve: approval card by operator, frame verdict Proceed, motion start for 3 s.",
+    "bytes": 274249
+  },
+  {
+    "file": "07-main-stop-all.png",
+    "caption": "STOP ALL during motion: stop cause operator with its latency, LED amber, motion end card.",
+    "bytes": 273304
+  },
+  {
+    "file": "08-kiosk-simon-guide.png",
+    "caption": "Simon Says kiosk: an attendee typed a command, the gate answered Guide (obstacle near, halved speed).",
+    "bytes": 218665
+  },
+  {
+    "file": "09-kiosk-judge.png",
+    "caption": "Frame Judge kiosk: live view large, latest class and probability, verdict and frame cards with thumbnails.",
+    "bytes": 241102
+  }
+]

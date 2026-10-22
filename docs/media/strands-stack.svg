@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="250" viewBox="0 0 1200 250" role="img" aria-labelledby="t d">
+  <title id="t">The six Strands pieces on one DeepRacer</title>
+  <desc id="d">Strands Agents, strands-robots, Strands Decider 2B, Strands Bidi, Strands Harness and Strands Box, each with its role in the agentic DeepRacer. Physics stops the car; the decider explains.</desc>
+  <style>
+    .bg { fill: #0b0b10; }
+    .card { fill: #15161d; stroke: #8b8f98; stroke-width: 1.2; }
+    .card-hi { fill: #1b1512; stroke: #ff6b3d; stroke-width: 1.6; }
+    .name { font: 700 17px Inter, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; fill: #f2f2f7; }
+    .role { font: 400 12.5px Inter, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; fill: #c7c9d1; }
+    .head { font: 600 13px Inter, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; fill: #8b8f98; letter-spacing: 1.5px; }
+    .foot { font: 500 13px Inter, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; fill: #c7c9d1; }
+    .foot-b { font: 700 13px Inter, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; fill: #ff6b3d; }
+    .mono { font: 500 11.5px "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace; fill: #8b8f98; }
+  </style>
+  <rect class="bg" x="0" y="0" width="1200" height="250" rx="14"/>
+  <text class="head" x="30" y="34">SIX STRANDS PIECES ON ONE STOCK AWS DEEPRACER</text>
+  <line x1="30" y1="46" x2="1170" y2="46" stroke="#8b8f98" stroke-opacity="0.35" stroke-width="1"/>
+
+  <!-- 1 Strands Agents -->
+  <g transform="translate(30,62)">
+    <rect class="card" x="0" y="0" width="180" height="128" rx="10"/>
+    <rect x="0" y="0" width="180" height="5" rx="2.5" fill="#7c5cff"/>
+    <text class="name" x="14" y="34">Strands Agents</text>
+    <text class="role" x="14" y="58">the loop on Amazon</text>
+    <text class="role" x="14" y="75">Bedrock (Nova Pro):</text>
+    <text class="role" x="14" y="92">drive, stop, look, plan</text>
+    <text class="mono" x="14" y="116">strands.Agent</text>
+  </g>
+
+  <!-- 2 strands-robots -->
+  <g transform="translate(222,62)">
+    <rect class="card" x="0" y="0" width="180" height="128" rx="10"/>
+    <rect x="0" y="0" width="180" height="5" rx="2.5" fill="#3ddcff"/>
+    <text class="name" x="14" y="34">strands-robots</text>
+    <text class="role" x="14" y="58">rosbridge driver, bicycle</text>
+    <text class="role" x="14" y="75">model, 20 Hz heartbeat,</text>
+    <text class="role" x="14" y="92">command gate and audit</text>
+    <text class="mono" x="14" y="116">MobileBaseRobot</text>
+  </g>
+
+  <!-- 3 Strands Decider 2B (highlighted) -->
+  <g transform="translate(414,62)">
+    <rect class="card-hi" x="0" y="0" width="180" height="128" rx="10"/>
+    <rect x="0" y="0" width="180" height="5" rx="2.5" fill="#ff6b3d"/>
+    <text class="name" x="14" y="34">Strands Decider 2B</text>
+    <text class="role" x="14" y="58">typed questions before</text>
+    <text class="role" x="14" y="75">every hop: envelope,</text>
+    <text class="role" x="14" y="92">person, frame class</text>
+    <text class="mono" x="14" y="116">POST /v1/systemone</text>
+  </g>
+
+  <!-- 4 Strands Bidi -->
+  <g transform="translate(606,62)">
+    <rect class="card" x="0" y="0" width="180" height="128" rx="10"/>
+    <rect x="0" y="0" width="180" height="5" rx="2.5" fill="#ffb347"/>
+    <text class="name" x="14" y="34">Strands Bidi</text>
+    <text class="role" x="14" y="58">push-to-talk voice on</text>
+    <text class="role" x="14" y="75">Amazon Nova Sonic;</text>
+    <text class="role" x="14" y="92">barge-in calls stop_all</text>
+    <text class="mono" x="14" y="116">strands.bidi</text>
+  </g>
+
+  <!-- 5 Strands Harness -->
+  <g transform="translate(798,62)">
+    <rect class="card" x="0" y="0" width="180" height="128" rx="10"/>
+    <rect x="0" y="0" width="180" height="5" rx="2.5" fill="#3fb950"/>
+    <text class="name" x="14" y="34">Strands Harness</text>
+    <text class="role" x="14" y="58">race engineer: SSH</text>
+    <text class="role" x="14" y="75">sandbox on the car under</text>
+    <text class="role" x="14" y="92">a Cedar policy, no motion</text>
+    <text class="mono" x="14" y="116">create_harness</text>
+  </g>
+
+  <!-- 6 Strands Box -->
+  <g transform="translate(990,62)">
+    <rect class="card" x="0" y="0" width="180" height="128" rx="10"/>
+    <rect x="0" y="0" width="180" height="5" rx="2.5" fill="#ff4d4f"/>
+    <text class="name" x="14" y="34">Strands Box</text>
+    <text class="role" x="14" y="58">fence around the agent</text>
+    <text class="role" x="14" y="75">process; egress only to</text>
+    <text class="role" x="14" y="92">the car and Bedrock</text>
+    <text class="mono" x="14" y="116">egress log on the kiosk</text>
+  </g>
+
+  <line x1="30" y1="206" x2="1170" y2="206" stroke="#8b8f98" stroke-opacity="0.35" stroke-width="1"/>
+  <text x="30" y="230"><tspan class="foot-b">Physics stops the car</tspan><tspan class="foot"> (pen lip, hop cap, on-car deadman, marshal's thumb). </tspan><tspan class="foot-b">The decider explains.</tspan></text>
+</svg>

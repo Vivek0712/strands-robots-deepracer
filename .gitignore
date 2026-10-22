@@ -1,0 +1,19 @@
+upstream/
+.venv/
+__pycache__/
+*.pyc
+.env
+
+# project
+.venv/
+runs/
+*.egg-info/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+portal/frontend/node_modules/
+.agent/
+eventpics/
+
+.DS_Store

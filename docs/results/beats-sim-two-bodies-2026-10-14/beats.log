@@ -1,0 +1,12 @@
+rover thinks> two bodies: the same agent, the same line, the DeepRacer and its twin
+you> Hop forward twenty centimetres.  (to both bodies)
+you> Stop all.
+rover> One word stopped two bodies: the fake car in 1 milliseconds and the twin in 1. The twin rolled 16 centimetres and froze. Physics stopped them; I only said why.
+beat two_bodies on sim: PASS
+  [PASS] both bodies started on one line (3245 ms): sim=True, twin=True
+  [PASS] stop all halted sim within budget (1 ms): budget 1000 ms
+  [PASS] stop all halted twin within budget (1 ms): budget 1000 ms
+  [PASS] twin pose moved then froze: 16.0 cm, 7 pose samples, frozen=True
+  [PASS] a stop by the operator was logged for both bodies: sim, twin
+  [PASS] events for both bodies carry distinct body labels: sim, twin
+  latencies: line_to_both_moving_ms=3245, stop_all_sim_ms=1, stop_all_twin_ms=1, twin_travel_cm=16.0

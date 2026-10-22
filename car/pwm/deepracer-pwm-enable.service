@@ -1,0 +1,14 @@
+[Unit]
+Description=DeepRacer PWM outputs: enable pwmchip0 pwm0 (throttle) and pwm1 (steering) after the stock servo node exports them
+After=deepracer-core.service
+# A restart of deepracer-core re-exports the channels; PartOf re-runs this oneshot with it.
+PartOf=deepracer-core.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/opt/deepracer-agent/deepracer-pwm-enable.sh
+TimeoutStartSec=90
+
+[Install]
+WantedBy=multi-user.target

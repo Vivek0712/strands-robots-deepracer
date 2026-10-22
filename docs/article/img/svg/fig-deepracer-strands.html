@@ -1,0 +1,44 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{margin:0;background:#0b0b10;font-family:Inter,-apple-system,"Segoe UI",sans-serif;color:#f2f2f7}
+.c{position:relative;width:1600px;height:900px;overflow:hidden;background:radial-gradient(900px 500px at 70% 60%,rgba(124,92,255,.18),transparent 60%),radial-gradient(700px 400px at 20% 20%,rgba(255,107,61,.14),transparent 60%),#0b0b10}
+.car{position:absolute;left:560px;top:90px;width:760px}
+.lbl{position:absolute;width:300px;background:rgba(23,23,36,.96);border:1.5px solid var(--c);border-radius:12px;padding:10px 13px;font-size:15px;line-height:1.3}
+.lbl b{display:block;font-family:"JetBrains Mono",Menlo,monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--c);margin-bottom:3px}
+svg{position:absolute;inset:0;width:1600px;height:900px;pointer-events:none}
+.dot{fill:var(--c);filter:drop-shadow(0 0 6px var(--c))}
+.title{position:absolute;left:36px;top:28px;font-size:30px;font-weight:800;letter-spacing:-.01em}
+.sub{position:absolute;left:36px;top:68px;font-size:15px;color:#a3a3b8;font-family:"JetBrains Mono",Menlo,monospace}
+.foot{position:absolute;left:36px;bottom:22px;font-size:14px;color:#ffb347;font-family:"JetBrains Mono",Menlo,monospace}
+</style></head><body><div class="c">
+<div class="title">One stock AWS DeepRacer, every kind of Strands</div>
+<div class="sub">where each piece of the Strands stack touches the car</div>
+<img class="car" src="fig-deepracer.png">
+<svg>
+  <g stroke-width="2" fill="none">
+    <line x1="330" y1="170" x2="905" y2="238" stroke="#7c5cff"/>
+    <line x1="330" y1="340" x2="700" y2="470" stroke="#3fb950"/>
+    <line x1="330" y1="580" x2="985" y2="505" stroke="#ff4d4f"/>
+    <line x1="1296" y1="150" x2="1010" y2="175" stroke="#ff6b3d"/>
+    <line x1="1296" y1="345" x2="1050" y2="300" stroke="#3ddcff"/>
+    <line x1="1296" y1="540" x2="1185" y2="335" stroke="#ffb347"/>
+    <line x1="1296" y1="720" x2="905" y2="580" stroke="#a3a3b8"/>
+  </g>
+  <g>
+    <circle class="dot" style="--c:#7c5cff" cx="905" cy="238" r="7"/>
+    <circle class="dot" style="--c:#3fb950" cx="700" cy="470" r="7"/>
+    <circle class="dot" style="--c:#ff4d4f" cx="985" cy="505" r="7"/>
+    <circle class="dot" style="--c:#ff6b3d" cx="1010" cy="175" r="7"/>
+    <circle class="dot" style="--c:#3ddcff" cx="1050" cy="300" r="7"/>
+    <circle class="dot" style="--c:#ffb347" cx="1185" cy="335" r="7"/>
+    <circle class="dot" style="--c:#a3a3b8" cx="905" cy="580" r="7"/>
+  </g>
+</svg>
+<div class="lbl" style="--c:#7c5cff;left:30px;top:120px"><b>Camera: Strands Decider</b>every frame is judged before a hop: is a person in view, what is ahead, calibrated probabilities. The look tool asks Amazon Nova Pro what it sees.</div>
+<div class="lbl" style="--c:#3fb950;left:30px;top:300px"><b>Drive: strands-robots</b>the MobileBaseRobot driver turns a hop into a 20 Hz servo stream over rosbridge; the command gate allow-lists the topics and audits every publish; a trailing zero ends each hop.</div>
+<div class="lbl" style="--c:#ff4d4f;left:30px;top:540px"><b>Servos and ESC: the deadman</b>our node on the car zeroes throttle and steering 300 ms after the last heartbeat and turns the tail LED red. Physics stops the car.</div>
+<div class="lbl" style="--c:#ff6b3d;left:1290px;top:110px"><b>Compute: Strands Harness</b>the race engineer reaches ROS 2 over SSH under a Cedar policy: reads calibration, remembers the offset, cannot write without the operator.</div>
+<div class="lbl" style="--c:#3ddcff;left:1290px;top:305px"><b>The loop: Strands Agents</b>one agent on Amazon Bedrock plans, drives through gated tools, narrates, remembers your name and reports its own metrics.</div>
+<div class="lbl" style="--c:#ffb347;left:1290px;top:500px"><b>Voice: Strands Bidi</b>push-to-talk through Amazon Nova Sonic; the word "stop" spoken over the rover reaches the servos as a barge-in.</div>
+<div class="lbl" style="--c:#a3a3b8;left:1290px;top:680px"><b>The process: Strands Box</b>the agent runs inside a sandbox whose egress is the car and Bedrock only, with a log line for everything else.</div>
+<div class="foot">Physics stops the car; the decider explains.</div>
+</div></body></html>

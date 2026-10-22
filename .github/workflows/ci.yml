@@ -1,0 +1,62 @@
+# CI: lint, unit (layer 0) and sim (layer 1) on every push and PR. Layers 2 and 3 need the car.
+#
+# strands-robots comes from the git pin in pyproject.toml (the fork branch with the manual-mode
+# fix). On the laptop it is installed editable from the upstream worktree instead (CONTRACTS §2);
+# CI has no worktree, so `uv pip install -e ".[dev]"` resolves the pin over the network. If the
+# pin ever needs a private token, set STRANDS_ROBOTS_REF to a public ref or add a GH token to
+# the checkout step; nothing else in the build touches the network.
+name: ci
+
+on:
+  push:
+    branches: [main, strands-agentic-deepracer]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PY: .venv/bin/python
+      PYTEST: .venv/bin/pytest
+      RUFF: .venv/bin/ruff
+      # Headless pre-grant for the three command surfaces, as the tests document (CONTRACTS §3).
+      STRANDS_ROS2_COMMAND_ALLOW: /manual_drive,/vehicle_state,/enable_state
+      DEEPRACER_BODY: sim
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+          enable-cache: true
+
+      - name: Create the venv and install the project (strands-robots from the git pin)
+        run: |
+          uv venv --python 3.12 .venv
+          uv pip install --python .venv/bin/python -e ".[dev]"
+
+      - name: Lint (ruff check + format --check on every team path that exists)
+        run: |
+          paths=""
+          for p in src portal/backend harness beats tests; do [ -e "$p" ] && paths="$paths $p"; done
+          $RUFF check $paths
+          $RUFF format --check $paths
+
+      - name: Unit (layer 0)
+        run: make unit
+
+      - name: Sim (layer 1: fake car + fake console + fake decider)
+        run: make sim
+
+      - name: Keep the sim run artefacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sim-runs
+          path: runs/
+          if-no-files-found: ignore

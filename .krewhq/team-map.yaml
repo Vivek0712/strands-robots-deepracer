@@ -1,0 +1,32 @@
+# KrewHQ team map for the strands-robots-deepracer project (local pilot hub).
+teams:
+  deepracer:
+    members: [u:Vivek0712]
+    roles:
+      em: [u:Vivek0712]
+      ic: [u:Vivek0712]
+    services: [deepracer]
+  car:
+    members: [u:Vivek0712]
+    roles: {em: [u:Vivek0712], ic: [u:Vivek0712]}
+    services: [deepracer]
+  intelligence:
+    members: [u:Vivek0712]
+    roles: {em: [u:Vivek0712], ic: [u:Vivek0712]}
+    services: [deepracer]
+  portal:
+    members: [u:Vivek0712]
+    roles: {em: [u:Vivek0712], ic: [u:Vivek0712]}
+    services: [deepracer]
+  qa:
+    members: [u:Vivek0712]
+    roles: {em: [u:Vivek0712], ic: [u:Vivek0712]}
+    services: [deepracer]
+services:
+  deepracer:
+    owners: [deepracer, car, intelligence, portal, qa]
+    contributors: []
+    repos:
+      - name: strands-robots-deepracer
+        paths: []
+    depends_on: []

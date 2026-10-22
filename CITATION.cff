@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+message: "If you use this software or its Decider gate pattern, please cite it as below."
+title: "Agentic AWS DeepRacer on strands-robots"
+abstract: >-
+  A stock AWS DeepRacer driven by strands-robots over ROS 2 (rosbridge). A Strands Agents
+  loop on Amazon Bedrock turns spoken or typed instructions into bounded movements; before
+  every motor command a local Strands Decider 2B judges the command against the briefed
+  envelope and the live camera frame and maps its answers to the Strands interventions
+  Proceed, Guide, Confirm and Deny. Strands Bidi gives the rover a push-to-talk voice through
+  Amazon Nova Sonic; a Strands Harness race engineer services the car under a Cedar policy.
+  Physics stops the car; the decider explains.
+type: software
+version: 0.1.0
+date-released: "2026-10-22"
+license: Apache-2.0
+repository-code: "https://github.com/Vivek0712/strands-robots-deepracer"
+authors:
+  - family-names: Raja
+    given-names: Vivek
+    email: vivekraja98@gmail.com
+keywords:
+  - aws-deepracer
+  - strands-agents
+  - strands-robots
+  - strands-decider-2b
+  - amazon-bedrock
+  - guardrails
+  - physical-ai
+  - ros2
+references:
+  - type: software
+    title: "strands-robots"
+    authors:
+      - name: "strands-labs"
+    repository-code: "https://github.com/strands-labs/robots"
+  - type: software
+    title: "strands-decider"
+    authors:
+      - name: "strands-labs"
+    repository-code: "https://github.com/strands-labs/strands-decider"

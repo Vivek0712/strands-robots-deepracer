@@ -1,0 +1,18 @@
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8292/deadman?enabled=true "HTTP/1.0 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8292/frame?label=clear "HTTP/1.0 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8292/deadman?enabled=true "HTTP/1.0 200 OK"
+INFO:twisted:Starting factory <roslibpy.comm.comm_autobahn.AutobahnRosBridgeClientFactory object at 0x1080ac770>
+INFO:roslibpy:Connection to ROS ready.
+INFO:botocore.credentials:Found credentials in shared credentials file: ~/.aws/credentials
+INFO:strands.telemetry.metrics:Creating Strands MetricsClient
+INFO:botocore.credentials:Found credentials in shared credentials file: ~/.aws/credentials
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8290/login "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8290/login "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8290/route?topic=/camera_pkg/display_mjpeg&width=480&height=360 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8311/v1/systemone "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8311/v1/systemone "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8290/login "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8290/login "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8290/route?topic=/camera_pkg/display_mjpeg&width=480&height=360 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8311/v1/systemone "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8311/v1/systemone "HTTP/1.1 200 OK"

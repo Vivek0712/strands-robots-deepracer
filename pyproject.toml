@@ -1,0 +1,89 @@
+[project]
+name = "deepracer-agent"
+version = "0.1.0"
+description = "Agentic AWS DeepRacer on strands-robots: gated rosbridge driver, decider gate, voice, Pit Wall portal, fake-car harness, seven beats"
+requires-python = ">=3.12,<3.13"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+dependencies = [
+  # --- shared (Lead) ---
+  "strands-agents>=1.57.2",
+  # strands-robots is pinned to the fork branch carrying the manual-mode fix; during this dev
+  # session it is installed editable from the upstream worktree (see docs/dev/CONTRACTS.md §2).
+  "strands-robots @ git+https://github.com/Vivek0712/robots@fix/deepracer-manual-state",
+  "roslibpy>=1.8.1",
+  "httpx>=0.28",
+  "websockets>=13",
+  "boto3>=1.40",
+  "pillow>=11",
+  "numpy>=2",
+  "strands-harness>=0.2",
+  "cedarpy>=4",
+  # --- Car team ---
+  # --- Intelligence team ---
+  # strands.bidi needs the `bidi` extra (aws-sdk-bedrock-runtime, smithy) for Nova Sonic; `bidi-io` is
+  # the console display. Microphone/speaker is the optional `voice` extra below (needs PortAudio).
+  "strands-agents[bidi,bidi-io]>=1.57.2",
+  # --- Portal team ---
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "python-multipart>=0.0.9",
+  # --- QA team ---
+  # harness/ and tests/ use only shared deps (websockets, pillow, httpx, roslibpy); none added.
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8",
+  "pytest-asyncio>=0.24",
+  "ruff>=0.6",
+  "mypy>=1.11",
+]
+voice = [
+  # confirmed extra names from strands-agents 1.60.0 metadata: bidi-pyaudio (PyAudio, needs
+  # `brew install portaudio`) and bidi-aec (WebRTC echo cancellation). Not needed for --text mode.
+  "strands-agents[bidi-pyaudio,bidi-aec]>=1.57.2",
+]
+# --- Portal team: `make evidence` (headless Chromium screenshots + webm of the Pit Wall) ---
+# after `uv pip install --python .venv/bin/python -e ".[evidence]"` run
+# `.venv/bin/python -m playwright install chromium` once.
+evidence = [
+  "playwright>=1.49",
+]
+# --- Notebook (hackathon): `notebooks/decider_gate_walkthrough.ipynb`; run with `.venv/bin/jupyter lab notebooks/` ---
+notebook = ["jupyter>=1.1", "nbconvert>=7", "ipykernel>=6", "matplotlib>=3.9", "pandas>=2.2"]
+
+[project.scripts]
+deepracer-portal = "portal.backend.app:main"
+deepracer-beat = "beats.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/deepracer_agent", "portal", "harness", "beats", "ops"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+markers = [
+  "sim: needs the fake car / fake console / fake decider (laptop only)",
+  "wheels_off: needs the real car on a stand (DEEPRACER_HOST set)",
+  "pen: needs the pen and a present operator",
+]
+addopts = "-m 'not wheels_off and not pen'"
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+extend-exclude = ["portal/frontend", "car"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+"car/**" = ["UP"]  # on-car code must stay Python 3.8 compatible

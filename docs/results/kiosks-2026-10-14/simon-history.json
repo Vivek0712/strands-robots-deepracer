@@ -1,0 +1,325 @@
+{
+  "session": "s-kiosks-evidence",
+  "history": [
+    {
+      "text": "turn left",
+      "ts": "2026-10-14T16:10:06.048Z",
+      "request_id": null,
+      "command": {
+        "linear": 0.0,
+        "angular": 0.5,
+        "duration": 0.5
+      },
+      "action": "Deny",
+      "reason": "Ackermann cannot yaw at rest",
+      "card": "Deny: a car cannot turn on the spot. Ask for a rolling turn: 'roll forward and turn left'.",
+      "latency_ms": null,
+      "class": null,
+      "probability": null,
+      "stages": [],
+      "replan": null,
+      "egress": [],
+      "egress_note": "No model call: Simon Says parses the text locally and asks only the decider; the camera grab is listed when the kiosk timed it.",
+      "accepted": true,
+      "session": "s-kiosks-evidence",
+      "envelope": {
+        "max_linear": 0.3,
+        "max_duration_s": 2.0,
+        "allowed_directions": [
+          "forward",
+          "backward"
+        ],
+        "max_angular": 1.0
+      }
+    },
+    {
+      "text": "hop forward",
+      "ts": "2026-10-14T16:10:05.452Z",
+      "request_id": "kiosk-simon-1791994205448",
+      "command": {
+        "linear": 0.3,
+        "angular": 0.0,
+        "duration": 0.5
+      },
+      "action": "Deny",
+      "reason": "person_in_frame (p=0.97): stopping; someone is in front of me",
+      "card": "Deny: person_in_frame (p=0.97): stopping; someone is in front of me.",
+      "latency_ms": 2,
+      "class": "person_in_frame",
+      "probability": 0.97,
+      "stages": [
+        {
+          "request_id": "kiosk-simon-1791994205448",
+          "stage": "envelope",
+          "action": "Proceed",
+          "reason": "inside envelope (p=0.95)",
+          "class": null,
+          "probability": 0.95,
+          "latency_ms": 1,
+          "frame_ref": null
+        },
+        {
+          "request_id": "kiosk-simon-1791994205448",
+          "stage": "frame",
+          "action": "Deny",
+          "reason": "person_in_frame (p=0.97): stopping; someone is in front of me",
+          "class": "person_in_frame",
+          "probability": 0.97,
+          "latency_ms": 1,
+          "frame_ref": null
+        }
+      ],
+      "replan": null,
+      "egress": [
+        {
+          "what": "camera console GET /route (one frame)",
+          "host": "127.0.0.1:8390",
+          "ms": 2
+        },
+        {
+          "what": "decider POST /v1/systemone (envelope, noul)",
+          "host": "127.0.0.1:8411",
+          "ms": 1
+        },
+        {
+          "what": "decider POST /v1/systemone (frame, person noul + choice)",
+          "host": "127.0.0.1:8411",
+          "ms": 1
+        }
+      ],
+      "egress_note": "No model call: Simon Says parses the text locally and asks only the decider; the camera grab is listed when the kiosk timed it.",
+      "accepted": true,
+      "session": "s-kiosks-evidence",
+      "envelope": {
+        "max_linear": 0.3,
+        "max_duration_s": 2.0,
+        "allowed_directions": [
+          "forward",
+          "backward"
+        ],
+        "max_angular": 1.0
+      }
+    },
+    {
+      "text": "hop forward",
+      "ts": "2026-10-14T16:10:04.834Z",
+      "request_id": "kiosk-simon-1791994204831",
+      "command": {
+        "linear": 0.3,
+        "angular": 0.0,
+        "duration": 0.5
+      },
+      "action": "Guide",
+      "reason": "obstacle_near (p=0.90): re-plan at half speed, linear <= 0.15 m/s, or stop",
+      "card": "Guide: obstacle_near (p=0.90): re-plan at half speed, linear <= 0.15 m/s, or stop. The gate would take: forward at 0.15 m/s for 0.5 s.",
+      "latency_ms": 2,
+      "class": "obstacle_near",
+      "probability": 0.9,
+      "stages": [
+        {
+          "request_id": "kiosk-simon-1791994204831",
+          "stage": "envelope",
+          "action": "Proceed",
+          "reason": "inside envelope (p=0.95)",
+          "class": null,
+          "probability": 0.95,
+          "latency_ms": 1,
+          "frame_ref": null
+        },
+        {
+          "request_id": "kiosk-simon-1791994204831",
+          "stage": "frame",
+          "action": "Guide",
+          "reason": "obstacle_near (p=0.90): re-plan at half speed, linear <= 0.15 m/s, or stop",
+          "class": "obstacle_near",
+          "probability": 0.9,
+          "latency_ms": 1,
+          "frame_ref": null
+        }
+      ],
+      "replan": {
+        "linear": 0.15,
+        "angular": 0.0,
+        "duration": 0.5
+      },
+      "egress": [
+        {
+          "what": "camera console GET /route (one frame)",
+          "host": "127.0.0.1:8390",
+          "ms": 2
+        },
+        {
+          "what": "decider POST /v1/systemone (envelope, noul)",
+          "host": "127.0.0.1:8411",
+          "ms": 1
+        },
+        {
+          "what": "decider POST /v1/systemone (frame, person noul + choice)",
+          "host": "127.0.0.1:8411",
+          "ms": 1
+        }
+      ],
+      "egress_note": "No model call: Simon Says parses the text locally and asks only the decider; the camera grab is listed when the kiosk timed it.",
+      "accepted": true,
+      "session": "s-kiosks-evidence",
+      "envelope": {
+        "max_linear": 0.3,
+        "max_duration_s": 2.0,
+        "allowed_directions": [
+          "forward",
+          "backward"
+        ],
+        "max_angular": 1.0
+      }
+    },
+    {
+      "text": "go forward fast for two seconds",
+      "ts": "2026-10-14T16:10:04.236Z",
+      "request_id": "kiosk-simon-1791994204232",
+      "command": {
+        "linear": 0.6,
+        "angular": 0.0,
+        "duration": 2.0
+      },
+      "action": "Confirm",
+      "reason": "outside envelope: |linear| 0.6 > 0.3 m/s",
+      "card": "Confirm: outside envelope: |linear| 0.6 > 0.3 m/s. An operator must approve this one. The gate would take: forward at 0.3 m/s for 2 s.",
+      "latency_ms": 2,
+      "class": "clear",
+      "probability": 0.93,
+      "stages": [
+        {
+          "request_id": "kiosk-simon-1791994204232",
+          "stage": "envelope",
+          "action": "Confirm",
+          "reason": "outside envelope: |linear| 0.6 > 0.3 m/s",
+          "class": null,
+          "probability": 0.05,
+          "latency_ms": 1,
+          "frame_ref": null
+        },
+        {
+          "request_id": "kiosk-simon-1791994204232",
+          "stage": "frame",
+          "action": "Proceed",
+          "reason": "clear (p=0.93)",
+          "class": "clear",
+          "probability": 0.93,
+          "latency_ms": 1,
+          "frame_ref": null
+        }
+      ],
+      "replan": {
+        "linear": 0.3,
+        "angular": 0.0,
+        "duration": 2.0
+      },
+      "egress": [
+        {
+          "what": "camera console GET /route (one frame)",
+          "host": "127.0.0.1:8390",
+          "ms": 2
+        },
+        {
+          "what": "decider POST /v1/systemone (envelope, noul)",
+          "host": "127.0.0.1:8411",
+          "ms": 1
+        },
+        {
+          "what": "decider POST /v1/systemone (frame, person noul + choice)",
+          "host": "127.0.0.1:8411",
+          "ms": 1
+        }
+      ],
+      "egress_note": "No model call: Simon Says parses the text locally and asks only the decider; the camera grab is listed when the kiosk timed it.",
+      "accepted": true,
+      "session": "s-kiosks-evidence",
+      "envelope": {
+        "max_linear": 0.3,
+        "max_duration_s": 2.0,
+        "allowed_directions": [
+          "forward",
+          "backward"
+        ],
+        "max_angular": 1.0
+      }
+    },
+    {
+      "text": "hop forward",
+      "ts": "2026-10-14T16:10:03.619Z",
+      "request_id": "kiosk-simon-1791994203616",
+      "command": {
+        "linear": 0.3,
+        "angular": 0.0,
+        "duration": 0.5
+      },
+      "action": "Proceed",
+      "reason": "inside envelope (p=0.95); clear (p=0.93)",
+      "card": "Proceed: inside envelope (p=0.95); clear (p=0.93).",
+      "latency_ms": 1,
+      "class": "clear",
+      "probability": 0.93,
+      "stages": [
+        {
+          "request_id": "kiosk-simon-1791994203616",
+          "stage": "envelope",
+          "action": "Proceed",
+          "reason": "inside envelope (p=0.95)",
+          "class": null,
+          "probability": 0.95,
+          "latency_ms": 1,
+          "frame_ref": null
+        },
+        {
+          "request_id": "kiosk-simon-1791994203616",
+          "stage": "frame",
+          "action": "Proceed",
+          "reason": "clear (p=0.93)",
+          "class": "clear",
+          "probability": 0.93,
+          "latency_ms": 0,
+          "frame_ref": null
+        }
+      ],
+      "replan": null,
+      "egress": [
+        {
+          "what": "camera console GET /route (one frame)",
+          "host": "127.0.0.1:8390",
+          "ms": 1
+        },
+        {
+          "what": "decider POST /v1/systemone (envelope, noul)",
+          "host": "127.0.0.1:8411",
+          "ms": 1
+        },
+        {
+          "what": "decider POST /v1/systemone (frame, person noul + choice)",
+          "host": "127.0.0.1:8411",
+          "ms": 0
+        }
+      ],
+      "egress_note": "No model call: Simon Says parses the text locally and asks only the decider; the camera grab is listed when the kiosk timed it.",
+      "accepted": true,
+      "session": "s-kiosks-evidence",
+      "envelope": {
+        "max_linear": 0.3,
+        "max_duration_s": 2.0,
+        "allowed_directions": [
+          "forward",
+          "backward"
+        ],
+        "max_angular": 1.0
+      }
+    }
+  ],
+  "envelope": {
+    "max_linear": 0.3,
+    "max_duration_s": 2.0,
+    "allowed_directions": [
+      "forward",
+      "backward"
+    ],
+    "max_angular": 1.0
+  }
+}

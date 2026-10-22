@@ -1,0 +1,17 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Run the pattern library tests on save",
+      "description": "Kiro IDE 1.0 v1 hook (trigger, matcher, action, timeout, enabled). Fires when a Python file under patterns/ is saved, whether Kiro reports the path relative, with a ./ prefix or absolute. Docs: https://kiro.dev/docs/hooks/",
+      "trigger": "PostFileSave",
+      "matcher": "(^|/)patterns/.*\\.py$",
+      "action": {
+        "type": "agent",
+        "prompt": "A pattern module changed. From the repo root run `.venv/bin/python -m pytest tests/unit/test_patterns.py -q` and report the pass/fail count. For each failure quote the test name, the assertion message and the file:line it points at, and propose the smallest fix without applying it. Then run `.venv/bin/ruff check patterns && .venv/bin/ruff format --check patterns` and report any finding. The gate must never fail open: if a test shows a Proceed where the decider was unavailable, flag it as the first item."
+      },
+      "timeout": 300,
+      "enabled": true
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{"ts":"2026-10-14T20:57:49.362Z","seq":1,"session":"s-20261014-2057","beat":"preflight","type":"body","source":"runtime","payload":{"active":"car"}}
+{"ts":"2026-10-14T20:57:49.363Z","seq":2,"session":"s-20261014-2057","beat":"preflight","type":"thought","source":"agent","payload":{"text":"pre-flight: battery, camera, calibration, link, deadman"}}
+{"ts":"2026-10-14T20:57:49.949Z","seq":3,"session":"s-20261014-2057","beat":"preflight","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":0}}
+{"ts":"2026-10-14T20:57:50.937Z","seq":4,"session":"s-20261014-2057","beat":"preflight","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":3}}
+{"ts":"2026-10-14T20:57:51.440Z","seq":5,"session":"s-20261014-2057","beat":"preflight","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":44}}
+{"ts":"2026-10-14T20:57:52.436Z","seq":6,"session":"s-20261014-2057","beat":"preflight","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":47}}
+{"ts":"2026-10-14T20:57:52.937Z","seq":7,"session":"s-20261014-2057","beat":"preflight","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":116}}
+{"ts":"2026-10-14T20:57:53.438Z","seq":8,"session":"s-20261014-2057","beat":"preflight","type":"heartbeat","source":"deadman","payload":{"state":"armed","gap_ms":1}}
+{"ts":"2026-10-14T20:57:53.597Z","seq":9,"session":"s-20261014-2057","beat":"preflight","type":"preflight","source":"driver","payload":{"battery":-1,"camera_fps":27.7,"link_rtt_ms":0.0,"mode":null,"enabled":null,"deadman":"armed","decider_latency_ms":null,"calibration":"ok","pwm_outputs":"ok","go":false,"reasons":["battery level -1 (pack not seen or too low)"]}}
+{"ts":"2026-10-14T20:57:53.598Z","seq":10,"session":"s-20261014-2057","beat":"preflight","type":"thought","source":"agent","payload":{"text":"rover: No go. battery level -1 (pack not seen or too low). battery not seen, camera 28 frames a second, deadman armed. I will not drive until that is fixed."}}

@@ -1,0 +1,67 @@
+[
+  {
+    "file": "01-judge-idle.png",
+    "caption": "Frame Judge on open: live view, the judge form with the consent switch off, the five built-in labels on the card, an empty leaderboard.",
+    "bytes": 167164
+  },
+  {
+    "file": "02-judge-label-added.png",
+    "caption": "The presenter typed 'shoe' and pressed Add: the card now has six labels and the next question is asked over the new list, no retraining.",
+    "bytes": 32142
+  },
+  {
+    "file": "03-judge-fooled-no-consent.png",
+    "caption": "Ada says she holds a shoe; the decider says clear p=0.93 with its latency, so she fooled it. Consent off: the card says the frame was judged in memory and not saved.",
+    "bytes": 164766
+  },
+  {
+    "file": "04-judge-agreed-consent.png",
+    "caption": "Grace says clear, the decider agrees. Consent on: the frame is written to the run dir and the card shows its frames/ path; the leaderboard shows the thumbnail.",
+    "bytes": 167836
+  },
+  {
+    "file": "05-judge-leaderboard-3.png",
+    "caption": "After three judgements: Linus held the sign card (clear at p=0.80, the least sure answer). Best fools ranks Ada (wrong class) first, then the lowest probabilities.",
+    "bytes": 196879
+  },
+  {
+    "file": "06-judge-leaderboard-table.png",
+    "caption": "The best fools table alone: rank, nickname, decider class, what they said, p, ms, frame (thumbnail only for the consented one).",
+    "bytes": 30674
+  },
+  {
+    "file": "07-judge-phone.png",
+    "caption": "Frame Judge at phone width (390 px): one column, the judge form first, the page scrolls.",
+    "bytes": 166029
+  },
+  {
+    "file": "08-simon-proceed.png",
+    "caption": "Simon Says: 'hop forward' on a clear frame is Proceed; the Box egress log lists the camera grab and the two decider questions with host and milliseconds.",
+    "bytes": 182111
+  },
+  {
+    "file": "09-simon-confirm-replan.png",
+    "caption": "'go forward fast for two seconds' asks for 0.6 m/s, outside the briefed envelope: Confirm, and the slower plan the gate would take (0.3 m/s for 2 s) is shown under the card.",
+    "bytes": 205374
+  },
+  {
+    "file": "10-simon-guide.png",
+    "caption": "A box close to the bumper: Guide, re-plan at half speed (0.15 m/s), probability and latency on the card, the egress log beside it.",
+    "bytes": 227877
+  },
+  {
+    "file": "11-simon-deny.png",
+    "caption": "A person in frame: Deny with class person_in_frame and its probability; the history shows the four answers in order.",
+    "bytes": 229906
+  },
+  {
+    "file": "12-simon-deny-yaw.png",
+    "caption": "'turn left' is refused before the gate: Ackermann cannot yaw at rest, no outbound call (empty egress log).",
+    "bytes": 48515
+  },
+  {
+    "file": "13-simon-phone.png",
+    "caption": "Simon Says at phone width (390 px): the reason card first, then the live view, the egress log and the history, one column.",
+    "bytes": 172465
+  }
+]

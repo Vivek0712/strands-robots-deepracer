@@ -1,0 +1,32 @@
+/* Settings: car connection, Wi-Fi stick, decider and voice. Two columns wide, one on a phone. */
+.grid { flex: 1; min-height: 0; display: grid; gap: 10px; grid-template-columns: 1fr 1fr; overflow-y: auto; align-content: start; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.cardTitle { font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin: 0; display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.status { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.statusBig { font-size: 30px; font-weight: 900; letter-spacing: 0.02em; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 15px; margin: 0; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; font-family: var(--mono); font-variant-numeric: tabular-nums; word-break: break-word; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.row > input { flex: 1; font-size: 17px; }
+.row > button { font-weight: 700; }
+.field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 160px; }
+.field span { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.steps { display: flex; flex-direction: column; gap: 6px; }
+.step { display: grid; grid-template-columns: 26px 1fr auto; gap: 10px; align-items: baseline; padding: 6px 10px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; font-size: 15px; }
+.stepName { font-weight: 700; }
+.stepDetail { grid-column: 2 / -1; color: var(--muted); font-size: 14px; word-break: break-word; }
+.stepStatus { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.mark { width: 18px; height: 18px; border-radius: 50%; display: inline-block; vertical-align: middle; }
+.ok .mark { background: var(--green); }
+.fail .mark { background: var(--red); }
+.skip .mark { background: var(--dim); }
+.running .mark { border: 3px solid var(--line-2); border-top-color: var(--blue); animation: spin 0.9s linear infinite; background: transparent; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.ok .stepStatus { color: #bbf7d0; }
+.fail .stepStatus { color: #fecaca; }
+.report { background: #0b1016; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; max-height: 260px; overflow: auto; font-size: 14px; }
+.toggle { display: flex; align-items: center; gap: 12px; font-size: 18px; cursor: pointer; }
+.toggle input { width: 26px; height: 26px; accent-color: var(--green); }
+.url { font-family: var(--mono); font-size: 16px; word-break: break-all; }
+@media (max-width: 900px) { .grid { flex: none; overflow: visible; grid-template-columns: 1fr; } }

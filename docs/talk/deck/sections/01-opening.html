@@ -1,0 +1,221 @@
+<!-- Section 01: Opening (title, speaker, Strands big picture, timeline, contributor, agenda) -->
+<style>
+  /* Scoped to this section with the oa- prefix. */
+  .oa-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+  .oa-bg svg { position: absolute; left: -5%; top: 18%; width: 110%; height: 64%; opacity: 0.55; }
+  .oa-bg .oa-strand { fill: none; stroke-width: 10; stroke-linecap: round; stroke-dasharray: 160 240; animation: oa-flow 9s linear infinite; }
+  .oa-bg .oa-strand.s1 { stroke: var(--strand-1); }
+  .oa-bg .oa-strand.s2 { stroke: var(--strand-4); animation-duration: 12s; animation-direction: reverse; }
+  .oa-bg .oa-ghost { fill: none; stroke-width: 10; stroke-linecap: round; opacity: 0.18; }
+  .oa-bg .oa-ghost.g1 { stroke: var(--strand-1); }
+  .oa-bg .oa-ghost.g2 { stroke: var(--strand-4); }
+  .oa-bg .oa-strand.s3 { stroke: var(--strand-3); stroke-width: 4; stroke-dasharray: 20 60; animation-duration: 20s; opacity: 0.6; }
+  .oa-bg .oa-blob { position: absolute; width: 640px; height: 640px; border-radius: 50%; filter: blur(90px); opacity: 0.35; animation: oa-drift 16s ease-in-out infinite alternate; }
+  .oa-bg .oa-blob.b1 { background: var(--strand-1); left: -14%; top: -20%; }
+  .oa-bg .oa-blob.b2 { background: var(--strand-3); right: -12%; top: 30%; animation-delay: -5s; }
+  .oa-bg .oa-blob.b3 { background: var(--strand-4); left: 35%; bottom: -40%; animation-delay: -10s; width: 480px; height: 480px; }
+  .oa-bg .oa-node { position: absolute; width: 10px; height: 10px; border-radius: 50%; background: var(--strand-2); box-shadow: 0 0 16px var(--strand-2); animation: oa-blink 3.2s ease-in-out infinite; }
+  @keyframes oa-flow { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -800; } }
+  @keyframes oa-drift { from { transform: translate(0, 0) scale(1); } to { transform: translate(90px, -60px) scale(1.15); } }
+  @keyframes oa-blink { 0%, 100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.3); } }
+  .oa-fg { position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center; height: 100%; }
+  .oa-title h1 { max-width: 1100px; font-size: 76px; }
+  .oa-title .oa-speaker { font-size: 30px; margin: 10px 0 36px; }
+  .oa-title .logo-row img { height: 64px; }
+  .oa-title .logo-row .oa-mark { height: 72px; }
+  /* speaker slide */
+  .oa-who li { margin-bottom: 10px; font-size: 22px; }
+  .oa-who .logo-row { gap: 22px 30px; margin-top: 10px; }
+  .oa-who .logo-row img { height: 60px; }
+  .oa-who .logo-row .oa-ug { height: 76px; }
+  .oa-who .logo-row .oa-hero { height: 84px; }
+  .oa-who .logo-row img.oa-invert { filter: brightness(0) invert(1) drop-shadow(0 2px 8px rgba(0,0,0,0.4)); }
+  /* big-picture slide */
+  .oa-strands-diagram { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: center; margin-top: 8px; }
+  .oa-strands-diagram .card { text-align: center; padding: 18px 16px; }
+  .oa-strands-diagram .card p { margin: 6px 0 0; font-size: 18px; color: var(--muted); }
+  .oa-link { font-family: var(--mono); font-size: 34px; color: var(--strand-2); text-align: center; line-height: 1; }
+  .oa-link small { display: block; font-size: 13px; letter-spacing: 0.14em; color: var(--muted); margin-top: 6px; }
+  /* timeline slide */
+  .oa-year { font-family: var(--mono); color: var(--strand-4); letter-spacing: 0.18em; font-size: 14px; margin: 18px 0 -16px; }
+  .oa-tl .timeline .t { padding-right: 10px; }
+  .oa-tl .timeline .t span { font-size: 18px; line-height: 1.3; display: block; }
+  /* contributor slide */
+  .oa-prs .card { padding: 16px 18px; }
+  .oa-prs .card h3 { font-size: 19px; margin-bottom: 6px; }
+  .oa-prs .card p { font-size: 17px; margin: 0; color: var(--muted); }
+  .oa-prs .card b { color: var(--text); font-weight: 600; }
+  /* agenda slide */
+  .oa-agenda { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 6px; }
+  .oa-agenda .row { display: grid; grid-template-columns: 70px 1fr 2.2fr; gap: 16px; align-items: center; }
+  .oa-agenda .min { font-family: var(--mono); font-size: 20px; color: var(--strand-2); text-align: right; }
+  .oa-agenda .what { font-size: 22px; }
+  .oa-agenda .bar { height: 14px; border-radius: 999px; background: linear-gradient(90deg, var(--strand-1), var(--strand-3)); box-shadow: 0 0 14px rgba(255,107,61,0.35); }
+</style>
+
+<!-- Slide 1: title -->
+<section class="slide oa-title">
+  <div class="oa-bg" aria-hidden="true">
+    <div class="oa-blob b1"></div><div class="oa-blob b2"></div><div class="oa-blob b3"></div>
+    <svg viewBox="0 0 1600 400" preserveAspectRatio="none">
+      <path class="oa-ghost g1" d="M0,200 C200,40 300,40 500,200 S800,360 1000,200 S1400,40 1600,200"/>
+      <path class="oa-ghost g2" d="M0,200 C200,360 300,360 500,200 S800,40 1000,200 S1400,360 1600,200"/>
+      <path class="oa-strand s1" d="M0,200 C200,40 300,40 500,200 S800,360 1000,200 S1400,40 1600,200"/>
+      <path class="oa-strand s2" d="M0,200 C200,360 300,360 500,200 S800,40 1000,200 S1400,360 1600,200"/>
+      <path class="oa-strand s3" d="M0,200 L1600,200"/>
+    </svg>
+    <div class="oa-node" style="left:31%; top:49%"></div>
+    <div class="oa-node" style="left:62%; top:49%; animation-delay:-1.1s"></div>
+    <div class="oa-node" style="left:93%; top:49%; animation-delay:-2.2s"></div>
+  </div>
+  <div class="oa-fg">
+    <div class="kicker">Part 1 · Strands Agents · Strands Labs · AWS DeepRacer</div>
+    <h1>Control, simulate and train robots with natural language</h1>
+    <p class="oa-speaker">Vivek Raja &nbsp;<span class="muted">· AWS AI Hero · github.com/Vivek0712</span></p>
+    <div class="logo-row">
+      <img class="oa-mark" src="assets/logos/strands-mark.svg" alt="Strands mark">
+      <img src="assets/logos/strands-wordmark.svg" alt="STRANDS wordmark">
+      <img src="assets/logos/aws-hero-ai.svg" alt="AWS AI Hero badge">
+    </div>
+    <p class="small" style="margin-top:28px">One hour: the Strands big picture, physical AI with strands-robots, the harness, the decider, and a DeepRacer that takes orders in plain English. <span class="safety">Physics stops the car; the decider explains.</span></p>
+  </div>
+  <aside class="notes">
+    <p>Open on the moving strands. The title is the promise of the hour: we will control, simulate and train robots using natural language, with Strands Agents as the spine. Say the safety line early and often: physics stops the car; the decider explains.</p>
+    <p>Logos: the Strands mark and wordmark are the files the Strands README links from strandsagents.com; the badge is the AI Hero badge served by AWS Builder Center.</p>
+  </aside>
+</section>
+
+<!-- Slide 2: speaker -->
+<section class="slide oa-who">
+  <div class="kicker">Part 1 · Who is talking</div>
+  <h2>Vivek Raja P S</h2>
+  <div class="grid c2" style="grid-template-columns: 1.35fr 1fr; align-items: start">
+    <ul style="margin:0; padding-left: 26px">
+      <li class="reveal">AWS AI Hero since 2021. Speaking at re:Invent for the third year running; my 2026 session is <b>COM305</b>.</li>
+      <li class="reveal">Open-source contributor: Strands Agents and Labs, OpenClaw on AgentCore, Lambda durable functions. Author of <b>microvm-ctl</b> and the Curiosity rover example in strands-robots.</li>
+      <li class="reveal">Founder and lead, AWS User Group Madurai. Research papers and patents in agentic and physical AI.</li>
+      <li class="reveal">My shelf: AWS Hero of the Year (APJ) 2024, AWS Think Big (APJ) 2024, Invent and Simplify 2022, and a Guinness World Record, thanks to AWS.</li>
+      <li class="reveal muted">Off the clock: moviebuff, go-kart racer, occasional guitarist, professional reels sender.</li>
+    </ul>
+    <div>
+      <div class="logo-row">
+        <img class="oa-hero" src="assets/logos/aws-hero-ai.svg" alt="AWS AI Hero">
+        <img class="oa-ug" src="assets/logos/aws-ug-madurai.png" alt="AWS User Group Madurai">
+        <img src="assets/logos/guinness-world-records.svg" alt="Guinness World Records">
+        <img src="assets/logos/aws-reinvent.png" alt="AWS re:Invent">
+        <span><img class="oa-invert" src="assets/logos/aws-mark-builder-center.svg" alt="AWS mark" style="height:44px; vertical-align:middle"> <span class="pill on">AWS Builder Center</span></span>
+      </div>
+      <p class="small" style="margin-top:22px">github.com/Vivek0712 &middot; builder.aws.com/community/@vivekraja</p>
+      <p class="small" style="margin-top:10px">Hero, re:Invent, the user group and the papers: on that Builder Center page. Awards, record and session code: my own account, not on a public page.</p>
+      <div style="margin-top:14px">
+        <span class="pill">Strands robots</span><span class="pill">harness-sdk</span><span class="pill">strands-decider</span><span class="pill">OpenClaw</span><span class="pill">durable functions</span><span class="pill">microvm-ctl</span>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Keep this under two minutes. The verified parts: AWS Hero since 2021 (Machine Learning Hero cohort, November 2021; now AI Hero), 80+ conference talks including re:Invent 2024 and 2025 with a 2026 session upcoming, leads AWS User Group Madurai, papers and patents, Strands and OpenClaw contributions. The awards, the Guinness record and COM305 are the speaker's own account, which is why the bullets are in the first person and the footnote says so. Dropped from the slide for length: youngest Hero, Best UG nominations, multi-cloud certifications, IIM-B paper, patent and hackathon counts, mentor/blogger; say them if you like, they are per speaker.</p>
+    <p>Builder Center only publishes the aws mark for its header, so the name is a text badge next to the mark.</p>
+  </aside>
+</section>
+
+<!-- Slide 3: big picture -->
+<section class="slide">
+  <div class="kicker">Part 1 · What is happening in Strands</div>
+  <h2>An open-source SDK where the model drives the agent</h2>
+  <div class="grid c2" style="grid-template-columns: 1.15fr 1fr; align-items: start">
+    <ul style="margin:0; padding-left: 26px">
+      <li class="reveal"><b>Open-sourced by AWS on 16 May 2025</b>, already running inside Amazon Q Developer, AWS Glue and VPC Reachability Analyzer.</li>
+      <li class="reveal"><b>Model-driven:</b> the model plans, calls tools and reflects. You write a prompt and a tool list, not a workflow graph. Two strands, model and tools, like DNA.</li>
+      <li class="reveal"><b>1.0 on 15 July 2025:</b> agents-as-tools, handoffs, swarms, graphs, A2A, sessions. v1.61.1 shipped this week.</li>
+      <li class="reveal"><b>An ecosystem now:</b> Python and TypeScript SDKs, tools, evals, Agent SOPs, Strands Labs (Feb 2026), harness (Sep 2026), Decider and Box (Oct 2026).</li>
+    </ul>
+    <div>
+      <div class="oa-strands-diagram">
+        <div class="card"><h3>Model</h3><p>plans, reasons, reflects<br>Bedrock, Anthropic, OpenAI, Ollama, Gemini, LiteLLM</p></div>
+        <div class="oa-link">&#8646;<small>STRANDS</small></div>
+        <div class="card"><h3>Tools</h3><p>Python functions, MCP servers, other agents, robots</p></div>
+      </div>
+      <div class="figure" style="margin-top:18px; display:flex; align-items:center; gap:18px; padding:14px 18px">
+        <img src="assets/01/strands-agents-github-avatar.png" alt="strands-agents GitHub organisation avatar" style="width:84px; height:84px; image-rendering: pixelated">
+        <div><p style="margin:0; font-size:20px">github.com/strands-agents &middot; github.com/strands-labs</p><p class="small" style="margin:4px 0 0">harness-sdk: 8.8k stars, Apache-2.0, 60 minor releases since 1.0 (17 Oct 2026)</p></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Five minutes for the whole Strands section (this slide and the timeline). The one idea: the model drives the loop and Strands connects the model to tools. Everything else in the hour (robots, harness, decider, box) is a tool, a harness around that loop, or a guard on it.</p>
+    <p>Dates on this slide are from the AWS Open Source Blog (Clare Liguori's launch post; Python v0.1.0 was tagged the same day) and the GitHub release feed; the star count and release count were read from the GitHub API on 17 Oct 2026. Sixty minor releases: v1.1.0 to v1.61.0 with v1.49 never published. TypeScript 1.0 was 30 Apr 2026; the MCP docs server and the tools and evals repos are also under strands-agents.</p>
+  </aside>
+</section>
+
+<!-- Slide 4: timeline -->
+<section class="slide oa-tl">
+  <div class="kicker">Part 1 · Seventeen months of Strands</div>
+  <h2>From a preview SDK to an agent platform</h2>
+  <div class="reveal">
+    <div class="oa-year">2025</div>
+    <div class="timeline">
+      <div class="t"><b>16 May</b><span>Strands Agents open-sourced (v0.1.0)</span></div>
+      <div class="t"><b>11 Jul</b><span>v0.3: typed hooks, Graph orchestrator</span></div>
+      <div class="t"><b>15 Jul</b><span>1.0: swarms, handoffs, A2A, sessions</span></div>
+      <div class="t"><b>17 Oct</b><span>v1.13: interrupts in the tool-call hook</span></div>
+      <div class="t"><b>20 Nov</b><span>Agent SOPs</span></div>
+      <div class="t"><b>3 Dec</b><span>v1.19: BidiAgent voice, steering; TypeScript v0.1</span></div>
+    </div>
+  </div>
+  <div class="reveal">
+    <div class="oa-year" style="margin-top:34px">2026</div>
+    <div class="timeline">
+      <div class="t"><b>23 Feb</b><span>Strands Labs: robots, robots-sim, ai-functions</span></div>
+      <div class="t"><b>25 Feb</b><span>v1.28: plugins</span></div>
+      <div class="t"><b>30 Apr</b><span>TypeScript 1.0</span></div>
+      <div class="t"><b>16 Jun</b><span>v1.44: interventions (HITL, Cedar)</span></div>
+      <div class="t"><b>21 Sep</b><span>Strands harness v0.1</span></div>
+      <div class="t"><b>1 Oct</b><span>Strands Decider 2B</span></div>
+      <div class="t"><b>5 Oct</b><span>Bidi agents GA</span></div>
+      <div class="t"><b>7 Oct</b><span>Strands Box v0.1; robots v0.5.3</span></div>
+    </div>
+  </div>
+  <p class="small" style="margin-top:34px">Every date is a GitHub release tag or a strandsagents.com / AWS blog post date; the list is in the speaker notes.</p>
+  <aside class="notes">
+    <p>Not shown, mention if asked: Harness Optimizer (10 Jul 2026), Strands Evals and ToolSimulator, Decider Gemma 4 models (15 Oct 2026). Walk the top row fast and slow down on 2026: Labs is where robots live, interventions are what the DeepRacer gate uses, the harness is the race engineer, the decider is the explainer, and Box is where we would run untrusted tools. Each of those gets its own section later.</p>
+    <p>Sources: strands-agents/harness-sdk release feed (python/v0.1.0 2025-05-16, v0.3.0 2025-07-11, v1.0.0 2025-07-15, v1.13.0 2025-10-17, v1.19.0 2025-12-03, v1.28.0 2026-02-25, v1.44.0 2026-06-16, harness-python/v0.1.0 2026-09-21), sdk-typescript (v0.1.0 2025-12-03, v1.0.0 2026-04-30), strands-labs/robots v0.5.3 2026-10-07, strands-agents/box v0.1.0 2026-10-07, strandsagents.com/blog post dates (Labs 23 Feb 2026, Agent SOPs 20 Nov 2025, harness 21 Sep 2026, Decider 1 Oct 2026, Bidi GA 5 Oct 2026, Box 7 Oct 2026).</p>
+  </aside>
+</section>
+
+<!-- Slide 5: contributor -->
+<section class="slide oa-prs">
+  <div class="kicker">Part 1 · Skin in the game</div>
+  <h2>I contribute to the code you will see today &mdash; @Vivek0712</h2>
+  <div class="grid c3">
+    <div class="card reveal"><h3>strands-labs/robots</h3><p><b>9 merged PRs</b>: ROS 2 actions (#995), rosbridge transport with the live NASA Curiosity example (#1110), FastTD3 RL (#3206), mesh kill switch (#3205), SimEngine and packaging fixes (#4175&ndash;#4270).</p></div>
+    <div class="card reveal"><h3>strands-labs/strands-decider</h3><p><b>Merged</b>: image input, vision tower kept, no retraining (#10). Open: Gemma 4 image and audio (#67), evals and data (#28, #30).</p></div>
+    <div class="card reveal"><h3>strands-agents/harness-sdk</h3><p><b>Merged</b>: strict caching values (#4631). Open: builtin_tools docs (#4632).</p></div>
+    <div class="card reveal"><h3>aws-samples OpenClaw on AWS</h3><p><b>Merged</b>: AgentCore Runtime support (#16).</p></div>
+    <div class="card reveal"><h3>aws/aws-durable-execution-sdk-python</h3><p><b>Merged</b>: microvm-worker fails a job whose heartbeats cannot start (#771).</p></div>
+    <div class="card reveal"><h3>Vivek0712/microvm-ctl</h3><p>Control plane for Lambda MicroVMs: images, Firecracker fleets, leases. Apache-2.0, on PyPI.</p></div>
+  </div>
+  <p class="small" style="margin-top:20px">GitHub API, 17 Oct 2026. My AckermannRosRobot (DeepRacer) PR #1035 was closed; upstream shipped its own the same day (#2689), which this talk builds on.</p>
+  <aside class="notes">
+    <p>The point is credibility, not a victory lap: when I say how the robots package or the decider behaves, it is because I have read and changed that code. Thirteen merged PRs across five repos (the sixth card is my own project); the NASA Curiosity rosbridge example is the one people remember (the JPL appreciation is per the speaker, not verified).</p>
+    <p>Do not claim stan: the speaker's profile lists it, but the repo is private, so nothing about it is on the slide.</p>
+  </aside>
+</section>
+
+<!-- Slide 6: agenda -->
+<section class="slide">
+  <div class="kicker">Part 1 · The hour</div>
+  <h2>Agenda</h2>
+  <div class="oa-agenda">
+    <div class="row"><div class="min">5</div><div class="what">Strands big picture: model-driven agents, the ecosystem, the timeline</div><div class="bar" style="width:42%"></div></div>
+    <div class="row reveal"><div class="min">12</div><div class="what">Physical AI and strands-robots: control, simulate, train</div><div class="bar" style="width:100%"></div></div>
+    <div class="row reveal"><div class="min">6</div><div class="what">Strands Agents and the Harness SDK: hooks, interventions, the race engineer</div><div class="bar" style="width:50%"></div></div>
+    <div class="row reveal"><div class="min">8</div><div class="what">Strands Decider and Strands Box: fast decisions, sandboxed tools</div><div class="bar" style="width:67%"></div></div>
+    <div class="row reveal"><div class="min">6</div><div class="what">The DeepRacer story and architecture</div><div class="bar" style="width:50%"></div></div>
+    <div class="row reveal"><div class="min">12</div><div class="what">Live demo: a DeepRacer that takes orders in plain English</div><div class="bar" style="width:100%"></div></div>
+    <div class="row reveal"><div class="min">10</div><div class="what">Takeaways, the hackathon, Q&amp;A</div><div class="bar" style="width:83%"></div></div>
+  </div>
+  <p class="small" style="margin-top:22px">59 minutes planned. Bars are proportional to time. Whenever the car appears: <span class="safety">physics stops the car; the decider explains.</span></p>
+  <aside class="notes">
+    <p>Read the agenda as a story: what Strands is, how it reaches hardware, how the harness and the decider wrap the loop, then the car. Tell the room the demo is live and the safety layer is physical (pen, hop cap, on-car deadman, marshal's thumb), so if the car stops mid-sentence that is the design working.</p>
+  </aside>
+</section>

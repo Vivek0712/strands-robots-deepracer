@@ -1,0 +1,995 @@
+{
+  "meta": {
+    "url": "http://127.0.0.1:8111",
+    "model": "strands-decider-2B-hobson-v21",
+    "health": {
+      "status": "ok",
+      "model": "strands-decider-2B-hobson-v21",
+      "checkpoint": "StrandsAgents/strands-decider-2B-hobson-v21",
+      "base_model": "Qwen/Qwen3.5-2B-Base",
+      "num_slots": 24,
+      "max_length": 4096,
+      "temperature": 0.935220152138837,
+      "device": "mps",
+      "prefix_cache": true,
+      "vision": true,
+      "audio": false
+    },
+    "started_utc": "2026-10-14T06:42:05Z",
+    "wall_s": 65.6,
+    "repeats": 10,
+    "timeout_s": 10.0,
+    "envelope": {
+      "max_linear": 0.3,
+      "max_duration_s": 2.0,
+      "allowed_directions": [
+        "forward",
+        "backward"
+      ],
+      "max_angular": 1.0
+    },
+    "labels": [
+      "clear",
+      "obstacle_near",
+      "person_in_frame",
+      "off_surface",
+      "unclear",
+      "sign",
+      "hand_over_lens"
+    ],
+    "frame_classes": [
+      "clear",
+      "obstacle_near",
+      "person_in_frame",
+      "off_surface",
+      "unclear"
+    ],
+    "machine": {
+      "platform": "macOS-15.7-arm64-arm-64bit",
+      "machine": "arm64"
+    },
+    "extra": {
+      "load_s": 11.0,
+      "footprint_mb_after_load": 5336.0,
+      "serve_cmd": "strands-decider serve StrandsAgents/strands-decider-2B-hobson-v21 --vision --port 8111 --device mps"
+    },
+    "fake": false
+  },
+  "latency": {
+    "noul": {
+      "n": 280,
+      "p50_ms": 137.0,
+      "p95_ms": 140.0,
+      "mean_ms": 136.5,
+      "min_ms": 132.0,
+      "max_ms": 156.0,
+      "over_budget": 0
+    },
+    "choice": {
+      "n": 70,
+      "p50_ms": 342.0,
+      "p95_ms": 349.0,
+      "mean_ms": 342.3,
+      "min_ms": 337.0,
+      "max_ms": 352.0,
+      "over_budget": 0
+    },
+    "gate_estimate": {
+      "p50_sum_ms": 479.0,
+      "p95_sum_ms": 489.0,
+      "budget_ms_per_question": 1500,
+      "note": "gate = frame grab + envelope (noul) + frame (choice), sequential; grab not included"
+    }
+  },
+  "frames": [
+    {
+      "label": "clear",
+      "expected": [
+        "clear"
+      ],
+      "chosen": "clear",
+      "chosen_probability": 0.444,
+      "agreement": 1.0,
+      "class_counts": {
+        "clear": 10
+      },
+      "mean_probabilities": {
+        "clear": 0.444,
+        "obstacle_near": 0.1301,
+        "person_in_frame": 0.0364,
+        "off_surface": 0.1488,
+        "unclear": 0.2408
+      },
+      "latency": {
+        "n": 10,
+        "p50_ms": 341.0,
+        "p95_ms": 352.0,
+        "mean_ms": 342.9,
+        "min_ms": 340.0,
+        "max_ms": 352.0,
+        "over_budget": 0
+      },
+      "latencies_ms": [
+        344.0,
+        340.0,
+        341.0,
+        346.0,
+        340.0,
+        341.0,
+        344.0,
+        352.0,
+        341.0,
+        340.0
+      ],
+      "errors": [],
+      "warm_up_error": null,
+      "jpeg_bytes": 8420
+    },
+    {
+      "label": "obstacle_near",
+      "expected": [
+        "obstacle_near"
+      ],
+      "chosen": "clear",
+      "chosen_probability": 0.3932,
+      "agreement": 0.0,
+      "class_counts": {
+        "clear": 10
+      },
+      "mean_probabilities": {
+        "clear": 0.3932,
+        "obstacle_near": 0.2595,
+        "person_in_frame": 0.0453,
+        "off_surface": 0.1646,
+        "unclear": 0.1373
+      },
+      "latency": {
+        "n": 10,
+        "p50_ms": 342.0,
+        "p95_ms": 346.0,
+        "mean_ms": 342.4,
+        "min_ms": 341.0,
+        "max_ms": 346.0,
+        "over_budget": 0
+      },
+      "latencies_ms": [
+        341.0,
+        342.0,
+        342.0,
+        346.0,
+        342.0,
+        342.0,
+        341.0,
+        341.0,
+        343.0,
+        344.0
+      ],
+      "errors": [],
+      "warm_up_error": null,
+      "jpeg_bytes": 10439
+    },
+    {
+      "label": "person_in_frame",
+      "expected": [
+        "person_in_frame"
+      ],
+      "chosen": "clear",
+      "chosen_probability": 0.4068,
+      "agreement": 0.0,
+      "class_counts": {
+        "clear": 10
+      },
+      "mean_probabilities": {
+        "clear": 0.4068,
+        "obstacle_near": 0.0729,
+        "person_in_frame": 0.2582,
+        "off_surface": 0.1547,
+        "unclear": 0.1074
+      },
+      "latency": {
+        "n": 10,
+        "p50_ms": 340.0,
+        "p95_ms": 346.0,
+        "mean_ms": 341.3,
+        "min_ms": 338.0,
+        "max_ms": 346.0,
+        "over_budget": 0
+      },
+      "latencies_ms": [
+        340.0,
+        341.0,
+        341.0,
+        344.0,
+        340.0,
+        338.0,
+        338.0,
+        346.0,
+        346.0,
+        339.0
+      ],
+      "errors": [],
+      "warm_up_error": null,
+      "jpeg_bytes": 10551
+    },
+    {
+      "label": "off_surface",
+      "expected": [
+        "off_surface"
+      ],
+      "chosen": "off_surface",
+      "chosen_probability": 0.2913,
+      "agreement": 1.0,
+      "class_counts": {
+        "off_surface": 10
+      },
+      "mean_probabilities": {
+        "clear": 0.2619,
+        "obstacle_near": 0.1585,
+        "person_in_frame": 0.0368,
+        "off_surface": 0.2913,
+        "unclear": 0.2515
+      },
+      "latency": {
+        "n": 10,
+        "p50_ms": 343.0,
+        "p95_ms": 349.0,
+        "mean_ms": 343.6,
+        "min_ms": 340.0,
+        "max_ms": 349.0,
+        "over_budget": 0
+      },
+      "latencies_ms": [
+        341.0,
+        340.0,
+        344.0,
+        349.0,
+        340.0,
+        343.0,
+        344.0,
+        343.0,
+        343.0,
+        349.0
+      ],
+      "errors": [],
+      "warm_up_error": null,
+      "jpeg_bytes": 8755
+    },
+    {
+      "label": "unclear",
+      "expected": [
+        "unclear"
+      ],
+      "chosen": "unclear",
+      "chosen_probability": 0.4456,
+      "agreement": 1.0,
+      "class_counts": {
+        "unclear": 10
+      },
+      "mean_probabilities": {
+        "clear": 0.2672,
+        "obstacle_near": 0.1048,
+        "person_in_frame": 0.0514,
+        "off_surface": 0.131,
+        "unclear": 0.4456
+      },
+      "latency": {
+        "n": 10,
+        "p50_ms": 341.0,
+        "p95_ms": 344.0,
+        "mean_ms": 341.5,
+        "min_ms": 339.0,
+        "max_ms": 344.0,
+        "over_budget": 0
+      },
+      "latencies_ms": [
+        343.0,
+        341.0,
+        340.0,
+        341.0,
+        341.0,
+        339.0,
+        341.0,
+        344.0,
+        342.0,
+        343.0
+      ],
+      "errors": [],
+      "warm_up_error": null,
+      "jpeg_bytes": 5339
+    },
+    {
+      "label": "sign",
+      "expected": [
+        "clear",
+        "unclear"
+      ],
+      "chosen": "clear",
+      "chosen_probability": 0.5611,
+      "agreement": 1.0,
+      "class_counts": {
+        "clear": 10
+      },
+      "mean_probabilities": {
+        "clear": 0.5611,
+        "obstacle_near": 0.1576,
+        "person_in_frame": 0.0488,
+        "off_surface": 0.1332,
+        "unclear": 0.0992
+      },
+      "latency": {
+        "n": 10,
+        "p50_ms": 341.0,
+        "p95_ms": 346.0,
+        "mean_ms": 341.4,
+        "min_ms": 337.0,
+        "max_ms": 346.0,
+        "over_budget": 0
+      },
+      "latencies_ms": [
+        339.0,
+        344.0,
+        346.0,
+        345.0,
+        341.0,
+        338.0,
+        337.0,
+        339.0,
+        343.0,
+        342.0
+      ],
+      "errors": [],
+      "warm_up_error": null,
+      "jpeg_bytes": 19053
+    },
+    {
+      "label": "hand_over_lens",
+      "expected": [
+        "unclear"
+      ],
+      "chosen": "unclear",
+      "chosen_probability": 0.5048,
+      "agreement": 1.0,
+      "class_counts": {
+        "unclear": 10
+      },
+      "mean_probabilities": {
+        "clear": 0.2596,
+        "obstacle_near": 0.1098,
+        "person_in_frame": 0.0512,
+        "off_surface": 0.0745,
+        "unclear": 0.5048
+      },
+      "latency": {
+        "n": 10,
+        "p50_ms": 342.0,
+        "p95_ms": 352.0,
+        "mean_ms": 342.7,
+        "min_ms": 339.0,
+        "max_ms": 352.0,
+        "over_budget": 0
+      },
+      "latencies_ms": [
+        340.0,
+        340.0,
+        342.0,
+        344.0,
+        344.0,
+        343.0,
+        352.0,
+        343.0,
+        340.0,
+        339.0
+      ],
+      "errors": [],
+      "warm_up_error": null,
+      "jpeg_bytes": 3388
+    }
+  ],
+  "frame_agreement_mean": 0.7143,
+  "envelope": {
+    "as_gate": {
+      "variant": "as_gate",
+      "accuracy": 1.0,
+      "correct": 140,
+      "total": 140,
+      "cases": [
+        {
+          "name": "hop_forward",
+          "linear": 0.2,
+          "angular": 0.0,
+          "duration": 0.5,
+          "inside": true,
+          "mean_p_inside": 0.8642,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 139.0,
+            "p95_ms": 139.0,
+            "mean_ms": 138.9,
+            "min_ms": 138.0,
+            "max_ms": 139.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "hop_backward",
+          "linear": -0.2,
+          "angular": 0.0,
+          "duration": 0.5,
+          "inside": true,
+          "mean_p_inside": 0.8589,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 139.0,
+            "p95_ms": 142.0,
+            "mean_ms": 139.1,
+            "min_ms": 138.0,
+            "max_ms": 142.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "cap_speed_cap_duration",
+          "linear": 0.3,
+          "angular": 0.0,
+          "duration": 2.0,
+          "inside": true,
+          "mean_p_inside": 0.8635,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 139.0,
+            "p95_ms": 139.0,
+            "mean_ms": 138.5,
+            "min_ms": 137.0,
+            "max_ms": 139.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "gentle_arc",
+          "linear": 0.1,
+          "angular": 0.5,
+          "duration": 1.0,
+          "inside": true,
+          "mean_p_inside": 0.8327,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 139.0,
+            "p95_ms": 140.0,
+            "mean_ms": 138.8,
+            "min_ms": 138.0,
+            "max_ms": 140.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "cap_angular",
+          "linear": 0.3,
+          "angular": 1.0,
+          "duration": 0.5,
+          "inside": true,
+          "mean_p_inside": 0.7327,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 139.0,
+            "p95_ms": 140.0,
+            "mean_ms": 139.0,
+            "min_ms": 138.0,
+            "max_ms": 140.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "reverse_arc_at_caps",
+          "linear": -0.3,
+          "angular": -1.0,
+          "duration": 2.0,
+          "inside": true,
+          "mean_p_inside": 0.8353,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 139.0,
+            "p95_ms": 139.0,
+            "mean_ms": 139.0,
+            "min_ms": 139.0,
+            "max_ms": 139.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "creep",
+          "linear": 0.05,
+          "angular": 0.0,
+          "duration": 0.2,
+          "inside": true,
+          "mean_p_inside": 0.85,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 139.0,
+            "p95_ms": 152.0,
+            "mean_ms": 140.4,
+            "min_ms": 139.0,
+            "max_ms": 152.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "too_fast",
+          "linear": 0.5,
+          "angular": 0.0,
+          "duration": 0.5,
+          "inside": false,
+          "mean_p_inside": 0.1986,
+          "yes_votes": 0,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 139.0,
+            "p95_ms": 155.0,
+            "mean_ms": 140.9,
+            "min_ms": 139.0,
+            "max_ms": 155.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "way_too_fast",
+          "linear": 1.0,
+          "angular": 0.0,
+          "duration": 0.5,
+          "inside": false,
+          "mean_p_inside": 0.2025,
+          "yes_votes": 0,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 140.0,
+            "p95_ms": 154.0,
+            "mean_ms": 141.2,
+            "min_ms": 139.0,
+            "max_ms": 154.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "too_fast_backward",
+          "linear": -0.6,
+          "angular": 0.0,
+          "duration": 0.5,
+          "inside": false,
+          "mean_p_inside": 0.1904,
+          "yes_votes": 0,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 139.0,
+            "p95_ms": 141.0,
+            "mean_ms": 139.5,
+            "min_ms": 139.0,
+            "max_ms": 141.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "too_long",
+          "linear": 0.2,
+          "angular": 0.0,
+          "duration": 3.0,
+          "inside": false,
+          "mean_p_inside": 0.1524,
+          "yes_votes": 0,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 140.0,
+            "p95_ms": 156.0,
+            "mean_ms": 141.4,
+            "min_ms": 139.0,
+            "max_ms": 156.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "far_too_long",
+          "linear": 0.3,
+          "angular": 0.0,
+          "duration": 10.0,
+          "inside": false,
+          "mean_p_inside": 0.1709,
+          "yes_votes": 0,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 139.0,
+            "p95_ms": 151.0,
+            "mean_ms": 140.5,
+            "min_ms": 138.0,
+            "max_ms": 151.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "too_sharp",
+          "linear": 0.2,
+          "angular": 1.5,
+          "duration": 0.5,
+          "inside": false,
+          "mean_p_inside": 0.1748,
+          "yes_votes": 0,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 140.0,
+            "p95_ms": 141.0,
+            "mean_ms": 139.7,
+            "min_ms": 139.0,
+            "max_ms": 141.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "too_sharp_negative",
+          "linear": 0.2,
+          "angular": -2.0,
+          "duration": 1.0,
+          "inside": false,
+          "mean_p_inside": 0.3606,
+          "yes_votes": 0,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 139.0,
+            "p95_ms": 141.0,
+            "mean_ms": 139.4,
+            "min_ms": 139.0,
+            "max_ms": 141.0,
+            "over_budget": 0
+          },
+          "errors": []
+        }
+      ]
+    },
+    "blind": {
+      "variant": "blind",
+      "accuracy": 0.5,
+      "correct": 70,
+      "total": 140,
+      "cases": [
+        {
+          "name": "hop_forward",
+          "linear": 0.2,
+          "angular": 0.0,
+          "duration": 0.5,
+          "inside": true,
+          "mean_p_inside": 0.8381,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 133.0,
+            "p95_ms": 135.0,
+            "mean_ms": 133.0,
+            "min_ms": 132.0,
+            "max_ms": 135.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "hop_backward",
+          "linear": -0.2,
+          "angular": 0.0,
+          "duration": 0.5,
+          "inside": true,
+          "mean_p_inside": 0.8324,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 133.0,
+            "p95_ms": 134.0,
+            "mean_ms": 133.1,
+            "min_ms": 132.0,
+            "max_ms": 134.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "cap_speed_cap_duration",
+          "linear": 0.3,
+          "angular": 0.0,
+          "duration": 2.0,
+          "inside": true,
+          "mean_p_inside": 0.8235,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 133.0,
+            "p95_ms": 135.0,
+            "mean_ms": 133.3,
+            "min_ms": 133.0,
+            "max_ms": 135.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "gentle_arc",
+          "linear": 0.1,
+          "angular": 0.5,
+          "duration": 1.0,
+          "inside": true,
+          "mean_p_inside": 0.7887,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 133.0,
+            "p95_ms": 133.0,
+            "mean_ms": 133.0,
+            "min_ms": 133.0,
+            "max_ms": 133.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "cap_angular",
+          "linear": 0.3,
+          "angular": 1.0,
+          "duration": 0.5,
+          "inside": true,
+          "mean_p_inside": 0.6053,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 133.0,
+            "p95_ms": 135.0,
+            "mean_ms": 133.2,
+            "min_ms": 133.0,
+            "max_ms": 135.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "reverse_arc_at_caps",
+          "linear": -0.3,
+          "angular": -1.0,
+          "duration": 2.0,
+          "inside": true,
+          "mean_p_inside": 0.7708,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 133.0,
+            "p95_ms": 134.0,
+            "mean_ms": 133.3,
+            "min_ms": 132.0,
+            "max_ms": 134.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "creep",
+          "linear": 0.05,
+          "angular": 0.0,
+          "duration": 0.2,
+          "inside": true,
+          "mean_p_inside": 0.8178,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 1.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 133.0,
+            "p95_ms": 146.0,
+            "mean_ms": 134.7,
+            "min_ms": 133.0,
+            "max_ms": 146.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "too_fast",
+          "linear": 0.5,
+          "angular": 0.0,
+          "duration": 0.5,
+          "inside": false,
+          "mean_p_inside": 0.6383,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 0.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 133.0,
+            "p95_ms": 134.0,
+            "mean_ms": 133.1,
+            "min_ms": 133.0,
+            "max_ms": 134.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "way_too_fast",
+          "linear": 1.0,
+          "angular": 0.0,
+          "duration": 0.5,
+          "inside": false,
+          "mean_p_inside": 0.6388,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 0.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 133.0,
+            "p95_ms": 134.0,
+            "mean_ms": 133.0,
+            "min_ms": 132.0,
+            "max_ms": 134.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "too_fast_backward",
+          "linear": -0.6,
+          "angular": 0.0,
+          "duration": 0.5,
+          "inside": false,
+          "mean_p_inside": 0.6581,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 0.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 133.0,
+            "p95_ms": 135.0,
+            "mean_ms": 133.2,
+            "min_ms": 132.0,
+            "max_ms": 135.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "too_long",
+          "linear": 0.2,
+          "angular": 0.0,
+          "duration": 3.0,
+          "inside": false,
+          "mean_p_inside": 0.7097,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 0.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 133.0,
+            "p95_ms": 134.0,
+            "mean_ms": 133.0,
+            "min_ms": 132.0,
+            "max_ms": 134.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "far_too_long",
+          "linear": 0.3,
+          "angular": 0.0,
+          "duration": 10.0,
+          "inside": false,
+          "mean_p_inside": 0.8015,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 0.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 133.0,
+            "p95_ms": 134.0,
+            "mean_ms": 133.1,
+            "min_ms": 133.0,
+            "max_ms": 134.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "too_sharp",
+          "linear": 0.2,
+          "angular": 1.5,
+          "duration": 0.5,
+          "inside": false,
+          "mean_p_inside": 0.7145,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 0.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 133.0,
+            "p95_ms": 135.0,
+            "mean_ms": 133.5,
+            "min_ms": 132.0,
+            "max_ms": 135.0,
+            "over_budget": 0
+          },
+          "errors": []
+        },
+        {
+          "name": "too_sharp_negative",
+          "linear": 0.2,
+          "angular": -2.0,
+          "duration": 1.0,
+          "inside": false,
+          "mean_p_inside": 0.7592,
+          "yes_votes": 10,
+          "n": 10,
+          "accuracy": 0.0,
+          "latency": {
+            "n": 10,
+            "p50_ms": 133.0,
+            "p95_ms": 134.0,
+            "mean_ms": 133.1,
+            "min_ms": 133.0,
+            "max_ms": 134.0,
+            "over_budget": 0
+          },
+          "errors": []
+        }
+      ]
+    }
+  }
+}

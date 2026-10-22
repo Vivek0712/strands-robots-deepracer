@@ -1,0 +1,738 @@
+{
+  "mode": "nova-sonic",
+  "model": "amazon.nova-2-5-sonic",
+  "env": {
+    "DEEPRACER_BODY": "sim",
+    "DEEPRACER_HOST": "127.0.0.1",
+    "DEEPRACER_ROSBRIDGE_PORT": "9491",
+    "DEEPRACER_CONSOLE_URL": "http://127.0.0.1:8490",
+    "DEEPRACER_SIM_CONTROL_URL": "http://127.0.0.1:8492",
+    "DECIDER_URL": "http://127.0.0.1:8511",
+    "AWS_PROFILE": "heisenberg",
+    "AWS_DEFAULT_REGION": "us-east-1",
+    "AWS_REGION": "us-east-1",
+    "STRANDS_ROS2_COMMAND_ALLOW": "/manual_drive,/vehicle_state,/enable_state"
+  },
+  "pregrant": "/manual_drive,/vehicle_state,/enable_state",
+  "auto_approve": true,
+  "audio": {
+    "hop": "<scratch>/voice/audio/hop.wav",
+    "roll": "<scratch>/voice/audio/roll.wav",
+    "stop": "<scratch>/voice/audio/stop.wav"
+  },
+  "steps": [
+    {
+      "label": "Nova Sonic connection open",
+      "ok": true,
+      "detail": "3 ms"
+    },
+    {
+      "label": "preflight (arms the heartbeat)",
+      "ok": true,
+      "detail": "go"
+    },
+    {
+      "label": "hop utterance streamed while pressed",
+      "ok": true,
+      "detail": "24 frames, 2.323 s"
+    },
+    {
+      "label": "hop: rover finished speaking before the next press",
+      "ok": true,
+      "detail": "1.68 s heard"
+    },
+    {
+      "label": "hop: user transcript heard",
+      "ok": true,
+      "detail": "hop forward twenty centimeters."
+    },
+    {
+      "label": "hop: gated drive produced motion events",
+      "ok": true,
+      "detail": "2 motion events, verdicts ['Confirm', 'Proceed'], tools ['drive_deepracer']"
+    },
+    {
+      "label": "roll: the rover called a tool for the roll",
+      "ok": true,
+      "detail": "drive_deepracer"
+    },
+    {
+      "label": "roll: rover is narrating (new spoken response)",
+      "ok": true,
+      "detail": "audio starts 1 -> 2, 1.84 s heard"
+    },
+    {
+      "label": "stop: BidiBargeInEvent reached BargeInStop",
+      "ok": true,
+      "detail": "press -> barge-in 971 ms (voice clock), BargeInStop {'t_ms': 969, 'stop_t_ms': 971, 'latency_ms': 1, 'error': None}"
+    },
+    {
+      "label": "stop: stop event with cause barge_in logged",
+      "ok": true,
+      "detail": "{\"request_id\": null, \"cause\": \"barge_in\", \"latency_ms\": 1}"
+    }
+  ],
+  "errors": [],
+  "run_dir": "<scratch>/voice/live/run",
+  "hop": {
+    "play": {
+      "label": "hop",
+      "frames": 24,
+      "bytes": 74350,
+      "duration_s": 2.323,
+      "elapsed_s": 2.301,
+      "ptt_down_t_ms": 0,
+      "ptt_up_t_ms": 2302
+    },
+    "transcripts": [
+      "hop forward twenty centimeters."
+    ],
+    "verdicts": [
+      {
+        "request_id": "chatcmpl-tool-b4ea46ce1d8417ac",
+        "stage": "envelope",
+        "action": "Confirm",
+        "reason": "outside envelope: |linear| 0.4 > 0.3 m/s",
+        "class": null,
+        "probability": 0.05,
+        "latency_ms": 5,
+        "frame_ref": "frames/000001.jpg"
+      },
+      {
+        "request_id": "chatcmpl-tool-b4ea46ce1d8417ac",
+        "stage": "frame",
+        "action": "Proceed",
+        "reason": "clear (p=0.93)",
+        "class": "clear",
+        "probability": 0.93,
+        "latency_ms": 1,
+        "frame_ref": "frames/000001.jpg"
+      }
+    ],
+    "motions": [
+      {
+        "request_id": "r-a7c8692f",
+        "state": "start",
+        "angle": 0.0,
+        "throttle": 0.3,
+        "duration_s": 0.5,
+        "messages": 10
+      },
+      {
+        "request_id": "r-a7c8692f",
+        "state": "end",
+        "angle": 0.0,
+        "throttle": 0.3,
+        "duration_s": 0.504,
+        "messages": 10
+      }
+    ],
+    "tool_uses": [
+      {
+        "name": "drive_deepracer",
+        "input": {
+          "angular": 0,
+          "duration": 0.5,
+          "linear": 0.4
+        }
+      }
+    ],
+    "rover_said": [
+      "I moved forward for half a second."
+    ]
+  },
+  "red_light": {
+    "play_roll": {
+      "label": "roll",
+      "frames": 36,
+      "bytes": 112966,
+      "duration_s": 3.53,
+      "elapsed_s": 3.501,
+      "ptt_down_t_ms": 0,
+      "ptt_up_t_ms": 3502
+    },
+    "play_stop": {
+      "label": "stop",
+      "frames": 10,
+      "bytes": 29610,
+      "duration_s": 0.925,
+      "elapsed_s": 0.901,
+      "ptt_down_t_ms": 0,
+      "ptt_up_t_ms": 902
+    },
+    "press_to_barge_in_ms": 971,
+    "press_to_barge_in_wall_ms": 972,
+    "barge_in_to_stop_all_ms": 1,
+    "press_to_stop_ms": 971,
+    "voice_barge_in_events": [
+      {
+        "event": "barge_in",
+        "text": null,
+        "t_ms": 969
+      }
+    ],
+    "stop_events": [
+      {
+        "request_id": null,
+        "cause": "barge_in",
+        "latency_ms": 1
+      }
+    ],
+    "transcripts": [
+      "roll forward slowly for two seconds and describe the pen.",
+      "stop."
+    ],
+    "tool_uses": [
+      {
+        "name": "drive_deepracer",
+        "input": {
+          "angular": 0,
+          "duration": 2,
+          "linear": 0.1
+        }
+      },
+      {
+        "name": "look",
+        "input": {
+          "question": "Describe the pen."
+        }
+      },
+      {
+        "name": "stop_deepracer",
+        "input": {}
+      }
+    ],
+    "motions": [
+      {
+        "request_id": "r-a7c8692f",
+        "state": "start",
+        "angle": 0.0,
+        "throttle": 0.1,
+        "duration_s": 2.0,
+        "messages": 40
+      },
+      {
+        "request_id": "r-a7c8692f",
+        "state": "end",
+        "angle": 0.0,
+        "throttle": 0.1,
+        "duration_s": 2.006,
+        "messages": 40
+      }
+    ],
+    "rover_said": [
+      "I am rolling forward and I see two faint white lines on a dark background.",
+      "I have stopped."
+    ]
+  },
+  "transcript": [
+    "you> hop forward twenty centimeters.",
+    "rover> I moved forward for half a second.",
+    "you> roll forward slowly for two seconds and describe the pen.",
+    "rover> I am rolling forward and I see two faint white lines on a dark background.",
+    "you> stop.",
+    "rover> I have stopped."
+  ],
+  "console": [
+    "you> hop forward twenty centimeters.",
+    "tool> drive_deepracer {\"angular\":0,\"duration\":0.5,\"linear\":0.4}",
+    "rover> I moved forward for half a second.",
+    "you> roll forward slowly for two seconds and describe the pen.",
+    "tool> drive_deepracer {\"angular\":0,\"duration\":2,\"linear\":0.1}",
+    "tool> look {\"question\":\"Describe the pen.\"}",
+    "-- barge-in --",
+    "rover> I am rolling forward and I see two faint white lines on a dark background.",
+    "you> stop.",
+    "tool> stop_deepracer {}",
+    "rover> I have stopped."
+  ],
+  "bidi_events": [
+    {
+      "t": 2014953.267,
+      "event": "BidiConnectionStartEvent",
+      "voice_t_ms": 1791994230422
+    },
+    {
+      "t": 2014954.438,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 1791994231594
+    },
+    {
+      "t": 2014954.464,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 1791994231620
+    },
+    {
+      "t": 2014954.465,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 1791994231621
+    },
+    {
+      "t": 2014954.554,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 1791994231710
+    },
+    {
+      "t": 2014958.317,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 2708
+    },
+    {
+      "t": 2014958.317,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 2708
+    },
+    {
+      "t": 2014958.42,
+      "event": "BidiResponseStartEvent",
+      "voice_t_ms": 2810
+    },
+    {
+      "t": 2014958.421,
+      "event": "BidiTranscriptStartEvent",
+      "voice_t_ms": 2811
+    },
+    {
+      "t": 2014958.422,
+      "event": "BidiTranscriptDeltaEvent",
+      "voice_t_ms": 2812
+    },
+    {
+      "t": 2014958.422,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 2812
+    },
+    {
+      "t": 2014958.443,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 2833
+    },
+    {
+      "t": 2014958.765,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 3156
+    },
+    {
+      "t": 2014958.766,
+      "event": "BidiTranscriptStopEvent",
+      "voice_t_ms": 3156
+    },
+    {
+      "t": 2014958.766,
+      "event": "BidiTranscriptBlockEvent",
+      "voice_t_ms": 3157
+    },
+    {
+      "t": 2014958.848,
+      "event": "BidiToolUseBlocksEvent",
+      "voice_t_ms": 3238,
+      "tools": [
+        "drive_deepracer"
+      ]
+    },
+    {
+      "t": 2014958.851,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 3241
+    },
+    {
+      "t": 2014959.563,
+      "event": "ToolResultEvent",
+      "voice_t_ms": 3954
+    },
+    {
+      "t": 2014959.564,
+      "event": "ToolResultMessageEvent",
+      "voice_t_ms": 3954
+    },
+    {
+      "t": 2014959.781,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 4172
+    },
+    {
+      "t": 2014959.782,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 4172
+    },
+    {
+      "t": 2014959.943,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 4333
+    },
+    {
+      "t": 2014959.956,
+      "event": "BidiTranscriptStartEvent",
+      "voice_t_ms": 4346
+    },
+    {
+      "t": 2014959.956,
+      "event": "BidiTranscriptDeltaEvent",
+      "voice_t_ms": 4346
+    },
+    {
+      "t": 2014960.041,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 4431
+    },
+    {
+      "t": 2014960.096,
+      "event": "BidiAudioStartEvent",
+      "voice_t_ms": 4487
+    },
+    {
+      "t": 2014960.308,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 4698
+    },
+    {
+      "t": 2014960.568,
+      "event": "BidiAudioStopEvent",
+      "voice_t_ms": 4959
+    },
+    {
+      "t": 2014960.568,
+      "event": "BidiTranscriptStopEvent",
+      "voice_t_ms": 4959
+    },
+    {
+      "t": 2014960.568,
+      "event": "BidiTranscriptBlockEvent",
+      "voice_t_ms": 4959
+    },
+    {
+      "t": 2014960.569,
+      "event": "BidiResponseStopEvent",
+      "voice_t_ms": 4959
+    },
+    {
+      "t": 2014965.275,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 3470
+    },
+    {
+      "t": 2014965.276,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 3471
+    },
+    {
+      "t": 2014965.334,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 3530
+    },
+    {
+      "t": 2014965.438,
+      "event": "BidiResponseStartEvent",
+      "voice_t_ms": 3633
+    },
+    {
+      "t": 2014965.438,
+      "event": "BidiTranscriptStartEvent",
+      "voice_t_ms": 3634
+    },
+    {
+      "t": 2014965.441,
+      "event": "BidiTranscriptDeltaEvent",
+      "voice_t_ms": 3636
+    },
+    {
+      "t": 2014965.441,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 3637
+    },
+    {
+      "t": 2014965.798,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 3993
+    },
+    {
+      "t": 2014965.799,
+      "event": "BidiTranscriptStopEvent",
+      "voice_t_ms": 3994
+    },
+    {
+      "t": 2014965.799,
+      "event": "BidiTranscriptBlockEvent",
+      "voice_t_ms": 3995
+    },
+    {
+      "t": 2014965.886,
+      "event": "BidiToolUseBlocksEvent",
+      "voice_t_ms": 4081,
+      "tools": [
+        "drive_deepracer"
+      ]
+    },
+    {
+      "t": 2014965.888,
+      "event": "BidiToolUseBlocksEvent",
+      "voice_t_ms": 4084,
+      "tools": [
+        "look"
+      ]
+    },
+    {
+      "t": 2014965.892,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 4088
+    },
+    {
+      "t": 2014967.43,
+      "event": "ToolResultEvent",
+      "voice_t_ms": 5625
+    },
+    {
+      "t": 2014967.431,
+      "event": "ToolResultMessageEvent",
+      "voice_t_ms": 5626
+    },
+    {
+      "t": 2014967.647,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 5842
+    },
+    {
+      "t": 2014967.647,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 5842
+    },
+    {
+      "t": 2014967.899,
+      "event": "ToolResultEvent",
+      "voice_t_ms": 6095
+    },
+    {
+      "t": 2014967.9,
+      "event": "ToolResultMessageEvent",
+      "voice_t_ms": 6095
+    },
+    {
+      "t": 2014967.91,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 6106
+    },
+    {
+      "t": 2014967.926,
+      "event": "BidiTranscriptStartEvent",
+      "voice_t_ms": 6122
+    },
+    {
+      "t": 2014967.927,
+      "event": "BidiTranscriptDeltaEvent",
+      "voice_t_ms": 6122
+    },
+    {
+      "t": 2014967.974,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 6169
+    },
+    {
+      "t": 2014968.056,
+      "event": "BidiAudioStartEvent",
+      "voice_t_ms": 6251
+    },
+    {
+      "t": 2014968.116,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 6312
+    },
+    {
+      "t": 2014968.132,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 6327
+    },
+    {
+      "t": 2014968.493,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 121
+    },
+    {
+      "t": 2014968.706,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 335
+    },
+    {
+      "t": 2014968.921,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 550
+    },
+    {
+      "t": 2014969.339,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 968
+    },
+    {
+      "t": 2014969.342,
+      "event": "BidiBargeInEvent",
+      "voice_t_ms": 971
+    },
+    {
+      "t": 2014969.343,
+      "event": "BidiAudioStopEvent",
+      "voice_t_ms": 971
+    },
+    {
+      "t": 2014969.343,
+      "event": "BidiTranscriptStopEvent",
+      "voice_t_ms": 971
+    },
+    {
+      "t": 2014969.343,
+      "event": "BidiTranscriptBlockEvent",
+      "voice_t_ms": 972
+    },
+    {
+      "t": 2014969.344,
+      "event": "BidiResponseStopEvent",
+      "voice_t_ms": 972
+    },
+    {
+      "t": 2014969.344,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 973
+    },
+    {
+      "t": 2014969.344,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 973
+    },
+    {
+      "t": 2014969.545,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 1174
+    },
+    {
+      "t": 2014969.546,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 1174
+    },
+    {
+      "t": 2014969.623,
+      "event": "BidiResponseStartEvent",
+      "voice_t_ms": 1252
+    },
+    {
+      "t": 2014969.623,
+      "event": "BidiTranscriptStartEvent",
+      "voice_t_ms": 1252
+    },
+    {
+      "t": 2014969.624,
+      "event": "BidiTranscriptDeltaEvent",
+      "voice_t_ms": 1252
+    },
+    {
+      "t": 2014969.624,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 1253
+    },
+    {
+      "t": 2014969.838,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 1466
+    },
+    {
+      "t": 2014969.838,
+      "event": "BidiTranscriptStopEvent",
+      "voice_t_ms": 1467
+    },
+    {
+      "t": 2014969.839,
+      "event": "BidiTranscriptBlockEvent",
+      "voice_t_ms": 1467
+    },
+    {
+      "t": 2014969.839,
+      "event": "BidiToolUseBlocksEvent",
+      "voice_t_ms": 1468,
+      "tools": [
+        "stop_deepracer"
+      ]
+    },
+    {
+      "t": 2014969.84,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 1468
+    },
+    {
+      "t": 2014969.84,
+      "event": "ToolResultEvent",
+      "voice_t_ms": 1469
+    },
+    {
+      "t": 2014969.84,
+      "event": "ToolResultMessageEvent",
+      "voice_t_ms": 1469
+    },
+    {
+      "t": 2014970.057,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 1685
+    },
+    {
+      "t": 2014970.057,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 1686
+    },
+    {
+      "t": 2014970.101,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 1729
+    },
+    {
+      "t": 2014970.209,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 1837
+    },
+    {
+      "t": 2014970.221,
+      "event": "BidiTranscriptStartEvent",
+      "voice_t_ms": 1849
+    },
+    {
+      "t": 2014970.221,
+      "event": "BidiTranscriptDeltaEvent",
+      "voice_t_ms": 1850
+    },
+    {
+      "t": 2014970.346,
+      "event": "BidiAudioStartEvent",
+      "voice_t_ms": 1975
+    },
+    {
+      "t": 2014970.391,
+      "event": "BidiUsageEvent",
+      "voice_t_ms": 2019
+    },
+    {
+      "t": 2014970.631,
+      "event": "BidiAudioStopEvent",
+      "voice_t_ms": 2260
+    },
+    {
+      "t": 2014970.631,
+      "event": "BidiTranscriptStopEvent",
+      "voice_t_ms": 2260
+    },
+    {
+      "t": 2014970.631,
+      "event": "BidiTranscriptBlockEvent",
+      "voice_t_ms": 2260
+    },
+    {
+      "t": 2014970.632,
+      "event": "BidiResponseStopEvent",
+      "voice_t_ms": 2260
+    }
+  ],
+  "pcm": {
+    "fed_bytes": 216926,
+    "dropped_bytes": 0,
+    "frames_out": 70,
+    "silence_frames_out": 108,
+    "presses": 3,
+    "pressed": false
+  },
+  "rover_audio_s": 6.68,
+  "passed": true
+}

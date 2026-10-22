@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-label="Safety ladder: pen and hop cap, upstream command gate, on-car deadman, STOP ALL and operator stop, decider gate, marshal&#x27;s thumb, each with its measured latency">
+<rect width="1600" height="1000" fill="#0b0b10"/>
+<defs></defs>
+<text x="40" y="58" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="28" font-weight="700" fill="#f2f2f7" text-anchor="start">Six layers between a spoken word and the wheels</text>
+<text x="40" y="88" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#a2a2b3" text-anchor="start">Red layers are physics or the car&#x27;s own code: they stop the car without the laptop. The violet layer explains; it is never the safety layer.</text>
+<rect x="40" y="120" width="1520" height="128" rx="12" fill="#1a0e0f" stroke="#ff4d4f" stroke-width="1.5"/>
+<rect x="40" y="120" width="10" height="128" rx="5" fill="#ff4d4f" stroke="#ff4d4f" stroke-width="0"/>
+<rect x="44" y="120" width="6" height="128" rx="0" fill="#ff4d4f" stroke="#ff4d4f" stroke-width="0"/>
+<text x="80" y="170" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="40" font-weight="800" fill="#ff4d4f" text-anchor="start">1</text>
+<text x="150" y="162" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="24" font-weight="700" fill="#f2f2f7" text-anchor="start">Pen and hop cap</text>
+<text x="150" y="184" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#ff4d4f" text-anchor="start">physics</text>
+<text x="150" y="212" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#a2a2b3" text-anchor="start"><tspan x="150" dy="0">2×2 m low-lipped pen; |linear| ≤ 0.3 m/s and every hop ≤ 2 s in the driver, so one hop is at most 60 cm and the</tspan><tspan x="150" dy="21">lip catches the rest. Bounded travel with no software in the loop.</tspan></text>
+<text x="1530" y="184" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="44" font-weight="800" fill="#f2f2f7" text-anchor="end">0.3 m/s</text>
+<text x="1530" y="212" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="13" font-weight="600" fill="#ff4d4f" text-anchor="end">max speed · hop ≤ 2 s</text>
+<line x1="800" y1="248" x2="800" y2="260" stroke="#3a3a4a" stroke-width="2"/>
+<rect x="40" y="260" width="1520" height="128" rx="12" fill="#1b120e" stroke="#ff6b3d" stroke-width="1.5"/>
+<rect x="40" y="260" width="10" height="128" rx="5" fill="#ff6b3d" stroke="#ff6b3d" stroke-width="0"/>
+<rect x="44" y="260" width="6" height="128" rx="0" fill="#ff6b3d" stroke="#ff6b3d" stroke-width="0"/>
+<text x="80" y="310" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="40" font-weight="800" fill="#ff6b3d" text-anchor="start">2</text>
+<text x="150" y="302" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="24" font-weight="700" fill="#f2f2f7" text-anchor="start">strands-robots command gate</text>
+<text x="150" y="324" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#ff6b3d" text-anchor="start">laptop · upstream</text>
+<text x="150" y="352" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#a2a2b3" text-anchor="start"><tspan x="150" dy="0">_command_gate allow-list for /manual_drive, /vehicle_state and /enable_state; every publish audited; persistent</tspan><tspan x="150" dy="21">publishers so the first ServoCtrlMsg reaches the PWM fast; a trailing zero pair ends every drive.</tspan></text>
+<text x="1530" y="324" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="44" font-weight="800" fill="#f2f2f7" text-anchor="end">47 ms</text>
+<text x="1530" y="352" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="13" font-weight="600" fill="#ff6b3d" text-anchor="end">first publish → PWM</text>
+<line x1="800" y1="388" x2="800" y2="400" stroke="#3a3a4a" stroke-width="2"/>
+<rect x="40" y="400" width="1520" height="128" rx="12" fill="#1a0e0f" stroke="#ff4d4f" stroke-width="1.5"/>
+<rect x="40" y="400" width="10" height="128" rx="5" fill="#ff4d4f" stroke="#ff4d4f" stroke-width="0"/>
+<rect x="44" y="400" width="6" height="128" rx="0" fill="#ff4d4f" stroke="#ff4d4f" stroke-width="0"/>
+<text x="80" y="450" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="40" font-weight="800" fill="#ff4d4f" text-anchor="start">3</text>
+<text x="150" y="442" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="24" font-weight="700" fill="#f2f2f7" text-anchor="start">On-car deadman node</text>
+<text x="150" y="464" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#ff4d4f" text-anchor="start">car · root</text>
+<text x="150" y="492" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#a2a2b3" text-anchor="start"><tspan x="150" dy="0">No heartbeat for 300 ms → ten zero servo pairs at 20 Hz and the tail LED turns red. Survives a laptop crash,</tspan><tspan x="150" dy="21">Wi-Fi loss or the router being pulled. Re-arms after a steady second of heartbeats.</tspan></text>
+<text x="1530" y="464" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="44" font-weight="800" fill="#f2f2f7" text-anchor="end">278 ms</text>
+<text x="1530" y="492" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="13" font-weight="600" fill="#ff4d4f" text-anchor="end">heartbeat cut → PWM neutral (rule: 300 ms)</text>
+<line x1="800" y1="528" x2="800" y2="540" stroke="#3a3a4a" stroke-width="2"/>
+<rect x="40" y="540" width="1520" height="128" rx="12" fill="#1a150e" stroke="#ffb347" stroke-width="1.5"/>
+<rect x="40" y="540" width="10" height="128" rx="5" fill="#ffb347" stroke="#ffb347" stroke-width="0"/>
+<rect x="44" y="540" width="6" height="128" rx="0" fill="#ffb347" stroke="#ffb347" stroke-width="0"/>
+<text x="80" y="590" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="40" font-weight="800" fill="#ffb347" text-anchor="start">4</text>
+<text x="150" y="582" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="24" font-weight="700" fill="#f2f2f7" text-anchor="start">STOP ALL and the operator&#x27;s stop</text>
+<text x="150" y="604" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#ffb347" text-anchor="start">laptop</text>
+<text x="150" y="632" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#a2a2b3" text-anchor="start"><tspan x="150" dy="0">A barge-in word over Nova Sonic fires stop_all: 22 ms to PWM neutral. The operator&#x27;s stop() lands in 35 ms (234</tspan><tspan x="150" dy="21">ms before the persistent publishers). Both beat the deadman gap, so the laptop&#x27;s own stop arrives first.</tspan></text>
+<text x="1530" y="604" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="44" font-weight="800" fill="#f2f2f7" text-anchor="end">22 ms</text>
+<text x="1530" y="632" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="13" font-weight="600" fill="#ffb347" text-anchor="end">barge-in → PWM · operator stop 35 ms</text>
+<line x1="800" y1="668" x2="800" y2="680" stroke="#3a3a4a" stroke-width="2"/>
+<rect x="40" y="680" width="1520" height="128" rx="12" fill="#15122a" stroke="#7c5cff" stroke-width="1.5"/>
+<rect x="40" y="680" width="10" height="128" rx="5" fill="#7c5cff" stroke="#7c5cff" stroke-width="0"/>
+<rect x="44" y="680" width="6" height="128" rx="0" fill="#7c5cff" stroke="#7c5cff" stroke-width="0"/>
+<text x="80" y="730" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="40" font-weight="800" fill="#7c5cff" text-anchor="start">5</text>
+<text x="150" y="722" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="24" font-weight="700" fill="#f2f2f7" text-anchor="start">Decider gate</text>
+<text x="150" y="744" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#7c5cff" text-anchor="start">laptop · explains</text>
+<text x="150" y="772" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#a2a2b3" text-anchor="start"><tspan x="150" dy="0">Two typed questions per hop to a local Strands Decider 2B: is the command inside the envelope (225–252 ms), what</tspan><tspan x="150" dy="21">is in the frame (429–475 ms). Proceed, Guide, Confirm or Deny, with a reason the rover can say out loud.</tspan></text>
+<text x="1530" y="744" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="44" font-weight="800" fill="#f2f2f7" text-anchor="end">681–727 ms</text>
+<text x="1530" y="772" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="13" font-weight="600" fill="#7c5cff" text-anchor="end">per hop · a person denied in 456 ms</text>
+<line x1="800" y1="808" x2="800" y2="820" stroke="#3a3a4a" stroke-width="2"/>
+<rect x="40" y="820" width="1520" height="128" rx="12" fill="#1a0e0f" stroke="#ff4d4f" stroke-width="1.5"/>
+<rect x="40" y="820" width="10" height="128" rx="5" fill="#ff4d4f" stroke="#ff4d4f" stroke-width="0"/>
+<rect x="44" y="820" width="6" height="128" rx="0" fill="#ff4d4f" stroke="#ff4d4f" stroke-width="0"/>
+<text x="80" y="870" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="40" font-weight="800" fill="#ff4d4f" text-anchor="start">6</text>
+<text x="150" y="862" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="24" font-weight="700" fill="#f2f2f7" text-anchor="start">The marshal&#x27;s thumb</text>
+<text x="150" y="884" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#ff4d4f" text-anchor="start">physics</text>
+<text x="150" y="912" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#a2a2b3" text-anchor="start"><tspan x="150" dy="0">Drive-battery switch on the car and a human beside the pen for every live beat. Immediate, independent of every</tspan><tspan x="150" dy="21">line of code above.</tspan></text>
+<text x="1530" y="884" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="44" font-weight="800" fill="#f2f2f7" text-anchor="end">0 ms</text>
+<text x="1530" y="912" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="13" font-weight="600" fill="#ff4d4f" text-anchor="end">of software</text>
+<rect x="40" y="962" width="16" height="8" rx="2" fill="#ff4d4f" stroke="#ff4d4f" stroke-width="1.5"/>
+<text x="64" y="972" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#a2a2b3" text-anchor="start">physics or the car&#x27;s own code: stops the car</text>
+<rect x="420" y="962" width="16" height="8" rx="2" fill="#ff6b3d" stroke="#ff6b3d" stroke-width="1.5"/>
+<text x="444" y="972" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#a2a2b3" text-anchor="start">upstream strands-robots gate</text>
+<rect x="720" y="962" width="16" height="8" rx="2" fill="#ffb347" stroke="#ffb347" stroke-width="1.5"/>
+<text x="744" y="972" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#a2a2b3" text-anchor="start">laptop stop paths</text>
+<rect x="920" y="962" width="16" height="8" rx="2" fill="#7c5cff" stroke="#7c5cff" stroke-width="1.5"/>
+<text x="944" y="972" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#a2a2b3" text-anchor="start">decider: explains, never the safety layer</text>
+<text x="1560" y="993" font-family="Inter, 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#6b6b80" text-anchor="end" font-style="italic">wheels-off bench, car on the stand, 2026-10-14 evening and the 2026-10-15 person-gate run</text>
+</svg>
