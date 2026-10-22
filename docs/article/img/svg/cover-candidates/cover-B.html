@@ -1,0 +1,61 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Cover B Seen</title><style>
+/* Cover candidate B, "Seen": a cone of cyan light from the car's camera; it turns red on the figure. */
+html,body{margin:0;background:#0b0b10}
+.c{position:relative;width:1200px;height:675px;overflow:hidden;background:#0b0b10}
+.abs{position:absolute}
+.floor{left:0;top:0;width:1200px;height:675px;background:
+  radial-gradient(420px 300px at 860px 240px,rgba(61,220,255,.10),transparent 70%),
+  radial-gradient(520px 110px at 850px 520px,rgba(170,190,215,.08),transparent 70%),
+  linear-gradient(180deg,#0b0b10 0%,#0b0b10 50%,#0f0f16 75%,#0c0c12 100%)}
+.car{left:470px;top:62px;width:727px}
+.shadow{left:470px;top:62px;width:727px;opacity:.9}
+svg{position:absolute;left:0;top:0}
+
+</style></head><body><div class="c">
+<div class="abs floor"></div>
+<img class="abs shadow" src="car-shadow.png">
+<img class="abs car" src="car-cut.png">
+<svg class="beam" width="1200" height="675" viewBox="0 0 1200 675">
+ <defs>
+  <!-- one gradient along the beam axis: cyan from the lens, red where it reaches the figure -->
+  <linearGradient id="beam" gradientUnits="userSpaceOnUse" x1="763" y1="198" x2="150" y2="548">
+   <stop offset="0" stop-color="#3ddcff" stop-opacity=".50"/>
+   <stop offset=".16" stop-color="#3ddcff" stop-opacity=".24"/>
+   <stop offset=".52" stop-color="#3ddcff" stop-opacity=".16"/>
+   <stop offset=".70" stop-color="#ff4d4f" stop-opacity=".26"/>
+   <stop offset=".84" stop-color="#ff4d4f" stop-opacity=".30"/>
+   <stop offset="1" stop-color="#ff4d4f" stop-opacity=".10"/>
+  </linearGradient>
+  <linearGradient id="pool" gradientUnits="userSpaceOnUse" x1="640" y1="560" x2="120" y2="620">
+   <stop offset="0" stop-color="#3ddcff" stop-opacity="0"/>
+   <stop offset=".35" stop-color="#3ddcff" stop-opacity=".22"/>
+   <stop offset=".62" stop-color="#ff4d4f" stop-opacity=".40"/>
+   <stop offset=".85" stop-color="#ff4d4f" stop-opacity=".25"/>
+   <stop offset="1" stop-color="#ff4d4f" stop-opacity="0"/>
+  </linearGradient>
+  <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="13"/></filter>
+  <filter id="soft2" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="22"/></filter>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+ </defs>
+ <!-- light on the floor, from the car's nose to the figure's feet -->
+ <path d="M600 520 C 480 560, 120 560, 70 610 C 120 660, 470 650, 640 560 Z" fill="url(#pool)" filter="url(#soft2)"/>
+ <!-- the cone -->
+ <path d="M763 198 L250 290 A 125 195 0 0 0 300 668 Z" fill="url(#beam)" filter="url(#soft)"/>
+ <path d="M763 198 L250 390 A 60 110 0 0 0 268 600 Z" fill="url(#beam)" filter="url(#soft)" opacity=".5"/>
+</svg>
+<svg width="1200" height="675" viewBox="0 0 1200 675">
+ <defs><filter id="glowF" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter></defs>
+ <!-- the drawn figure from the Pit Wall, a faint outline -->
+ <g fill="none" stroke="#ff8a8c" stroke-linecap="round" stroke-linejoin="round">
+  <g filter="url(#glowF)" stroke-width="6" opacity=".35">
+   <circle cx="262" cy="392" r="26"/><path d="M262 418 V520 M214 444 H310 M262 520 L230 612 M262 520 L294 612"/>
+  </g>
+  <g stroke-width="2.5" opacity=".62">
+   <circle cx="262" cy="392" r="26"/><path d="M262 418 V520 M214 444 H310 M262 520 L230 612 M262 520 L294 612"/>
+  </g>
+ </g>
+ <!-- the lens -->
+ <circle cx="763" cy="198" r="18" fill="#3ddcff" opacity=".35" filter="url(#glowF)"/>
+ <circle cx="763" cy="198" r="3.5" fill="#d6f8ff" opacity=".9"/>
+</svg>
+</div></body></html>

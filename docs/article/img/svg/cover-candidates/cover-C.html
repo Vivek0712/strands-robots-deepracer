@@ -1,0 +1,69 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Cover C Strands</title><style>
+/* Cover candidate C, "Strands": three ribbons from the Strands mark into the car's camera and wheels,
+   a night grid with depth of field (sharp near the car, soft at the edges), bloom on the light only. */
+html,body{margin:0;background:#0b0b10}
+.c{position:relative;width:1200px;height:675px;overflow:hidden;background:#0b0b10}
+.abs{position:absolute}
+.sky{left:0;top:0;width:1200px;height:675px;background:
+  radial-gradient(640px 200px at 760px 300px,rgba(61,220,255,.10),transparent 70%),
+  radial-gradient(420px 260px at 790px 250px,rgba(61,220,255,.08),transparent 70%),
+  linear-gradient(180deg,#0b0b10 0%,#0d0e16 40%,#0b0b10 46%,#0e0e15 100%)}
+svg{position:absolute;left:0;top:0}
+.gridSoft{filter:blur(4.5px)}
+.gridSharp{-webkit-mask-image:radial-gradient(470px 105px at 780px 482px,#000 35%,transparent 100%)}
+.car{left:430px;top:52px;width:746px}
+.shadow{left:430px;top:52px;width:746px;opacity:.95}
+.mark{left:84px;top:226px;height:206px}
+.halo{left:-20px;top:150px;width:340px;height:360px;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(63,185,80,.20),rgba(63,185,80,.06) 55%,transparent)}
+</style></head><body><div class="c">
+<div class="abs sky"></div>
+<!-- the grid: a soft copy everywhere, a sharp copy only where the car stands -->
+<svg class="gridSoft" width="1200" height="675" viewBox="0 0 1200 675"><defs>
+ <linearGradient id="gf" x1="0" y1="300" x2="0" y2="675" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#3ddcff" stop-opacity="0"/><stop offset=".25" stop-color="#3ddcff" stop-opacity=".16"/><stop offset="1" stop-color="#3ddcff" stop-opacity=".30"/></linearGradient></defs>
+ <path d="M-50 677.9 H1250 M-50 609.8 H1250 M-50 553.9 H1250 M-50 508.1 H1250 M-50 470.6 H1250 M-50 439.8 H1250 M-50 414.6 H1250 M-50 393.9 H1250 M-50 377.0 H1250 M-50 363.1 H1250 M-50 351.7 H1250 M-50 342.4 H1250 M-50 334.8 H1250 M-50 328.5 H1250 M-50 323.4 H1250 M-50 319.1 H1250 M-50 315.7 H1250 M-19040.0 1200.0 L512.5 311.2 M-18545.0 1200.0 L518.7 311.2 M-18050.0 1200.0 L524.9 311.2 M-17555.0 1200.0 L531.1 311.2 M-17060.0 1200.0 L537.2 311.2 M-16565.0 1200.0 L543.4 311.2 M-16070.0 1200.0 L549.6 311.2 M-15575.0 1200.0 L555.8 311.2 M-15080.0 1200.0 L562.0 311.2 M-14585.0 1200.0 L568.2 311.2 M-14090.0 1200.0 L574.4 311.2 M-13595.0 1200.0 L580.6 311.2 M-13100.0 1200.0 L586.8 311.2 M-12605.0 1200.0 L592.9 311.2 M-12110.0 1200.0 L599.1 311.2 M-11615.0 1200.0 L605.3 311.2 M-11120.0 1200.0 L611.5 311.2 M-10625.0 1200.0 L617.7 311.2 M-10130.0 1200.0 L623.9 311.2 M-9635.0 1200.0 L630.1 311.2 M-9140.0 1200.0 L636.2 311.2 M-8645.0 1200.0 L642.4 311.2 M-8150.0 1200.0 L648.6 311.2 M-7655.0 1200.0 L654.8 311.2 M-7160.0 1200.0 L661.0 311.2 M-6665.0 1200.0 L667.2 311.2 M-6170.0 1200.0 L673.4 311.2 M-5675.0 1200.0 L679.6 311.2 M-5180.0 1200.0 L685.8 311.2 M-4685.0 1200.0 L691.9 311.2 M-4190.0 1200.0 L698.1 311.2 M-3695.0 1200.0 L704.3 311.2 M-3200.0 1200.0 L710.5 311.2 M-2705.0 1200.0 L716.7 311.2 M-2210.0 1200.0 L722.9 311.2 M-1715.0 1200.0 L729.1 311.2 M-1220.0 1200.0 L735.2 311.2 M-725.0 1200.0 L741.4 311.2 M-230.0 1200.0 L747.6 311.2 M265.0 1200.0 L753.8 311.2 M760.0 1200.0 L760.0 311.2 M1255.0 1200.0 L766.2 311.2 M1750.0 1200.0 L772.4 311.2 M2245.0 1200.0 L778.6 311.2 M2740.0 1200.0 L784.8 311.2 M3235.0 1200.0 L790.9 311.2 M3730.0 1200.0 L797.1 311.2 M4225.0 1200.0 L803.3 311.2 M4720.0 1200.0 L809.5 311.2 M5215.0 1200.0 L815.7 311.2 M5710.0 1200.0 L821.9 311.2 M6205.0 1200.0 L828.1 311.2 M6700.0 1200.0 L834.2 311.2 M7195.0 1200.0 L840.4 311.2 M7690.0 1200.0 L846.6 311.2 M8185.0 1200.0 L852.8 311.2 M8680.0 1200.0 L859.0 311.2 M9175.0 1200.0 L865.2 311.2 M9670.0 1200.0 L871.4 311.2 M10165.0 1200.0 L877.6 311.2 M10660.0 1200.0 L883.8 311.2 M11155.0 1200.0 L889.9 311.2 M11650.0 1200.0 L896.1 311.2 M12145.0 1200.0 L902.3 311.2 M12640.0 1200.0 L908.5 311.2 M13135.0 1200.0 L914.7 311.2 M13630.0 1200.0 L920.9 311.2 M14125.0 1200.0 L927.1 311.2 M14620.0 1200.0 L933.2 311.2 M15115.0 1200.0 L939.4 311.2 M15610.0 1200.0 L945.6 311.2 M16105.0 1200.0 L951.8 311.2 M16600.0 1200.0 L958.0 311.2 M17095.0 1200.0 L964.2 311.2 M17590.0 1200.0 L970.4 311.2 M18085.0 1200.0 L976.6 311.2 M18580.0 1200.0 L982.8 311.2 M19075.0 1200.0 L988.9 311.2 M19570.0 1200.0 L995.1 311.2 M20065.0 1200.0 L1001.3 311.2 M20560.0 1200.0 L1007.5 311.2" stroke="url(#gf)" stroke-width="1.2" fill="none"/></svg>
+<svg class="gridSharp" width="1200" height="675" viewBox="0 0 1200 675"><defs>
+ <linearGradient id="gs" x1="0" y1="300" x2="0" y2="675" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#3ddcff" stop-opacity="0"/><stop offset=".25" stop-color="#3ddcff" stop-opacity=".22"/><stop offset="1" stop-color="#3ddcff" stop-opacity=".38"/></linearGradient></defs>
+ <path d="M-50 677.9 H1250 M-50 609.8 H1250 M-50 553.9 H1250 M-50 508.1 H1250 M-50 470.6 H1250 M-50 439.8 H1250 M-50 414.6 H1250 M-50 393.9 H1250 M-50 377.0 H1250 M-50 363.1 H1250 M-50 351.7 H1250 M-50 342.4 H1250 M-50 334.8 H1250 M-50 328.5 H1250 M-50 323.4 H1250 M-50 319.1 H1250 M-50 315.7 H1250 M-19040.0 1200.0 L512.5 311.2 M-18545.0 1200.0 L518.7 311.2 M-18050.0 1200.0 L524.9 311.2 M-17555.0 1200.0 L531.1 311.2 M-17060.0 1200.0 L537.2 311.2 M-16565.0 1200.0 L543.4 311.2 M-16070.0 1200.0 L549.6 311.2 M-15575.0 1200.0 L555.8 311.2 M-15080.0 1200.0 L562.0 311.2 M-14585.0 1200.0 L568.2 311.2 M-14090.0 1200.0 L574.4 311.2 M-13595.0 1200.0 L580.6 311.2 M-13100.0 1200.0 L586.8 311.2 M-12605.0 1200.0 L592.9 311.2 M-12110.0 1200.0 L599.1 311.2 M-11615.0 1200.0 L605.3 311.2 M-11120.0 1200.0 L611.5 311.2 M-10625.0 1200.0 L617.7 311.2 M-10130.0 1200.0 L623.9 311.2 M-9635.0 1200.0 L630.1 311.2 M-9140.0 1200.0 L636.2 311.2 M-8645.0 1200.0 L642.4 311.2 M-8150.0 1200.0 L648.6 311.2 M-7655.0 1200.0 L654.8 311.2 M-7160.0 1200.0 L661.0 311.2 M-6665.0 1200.0 L667.2 311.2 M-6170.0 1200.0 L673.4 311.2 M-5675.0 1200.0 L679.6 311.2 M-5180.0 1200.0 L685.8 311.2 M-4685.0 1200.0 L691.9 311.2 M-4190.0 1200.0 L698.1 311.2 M-3695.0 1200.0 L704.3 311.2 M-3200.0 1200.0 L710.5 311.2 M-2705.0 1200.0 L716.7 311.2 M-2210.0 1200.0 L722.9 311.2 M-1715.0 1200.0 L729.1 311.2 M-1220.0 1200.0 L735.2 311.2 M-725.0 1200.0 L741.4 311.2 M-230.0 1200.0 L747.6 311.2 M265.0 1200.0 L753.8 311.2 M760.0 1200.0 L760.0 311.2 M1255.0 1200.0 L766.2 311.2 M1750.0 1200.0 L772.4 311.2 M2245.0 1200.0 L778.6 311.2 M2740.0 1200.0 L784.8 311.2 M3235.0 1200.0 L790.9 311.2 M3730.0 1200.0 L797.1 311.2 M4225.0 1200.0 L803.3 311.2 M4720.0 1200.0 L809.5 311.2 M5215.0 1200.0 L815.7 311.2 M5710.0 1200.0 L821.9 311.2 M6205.0 1200.0 L828.1 311.2 M6700.0 1200.0 L834.2 311.2 M7195.0 1200.0 L840.4 311.2 M7690.0 1200.0 L846.6 311.2 M8185.0 1200.0 L852.8 311.2 M8680.0 1200.0 L859.0 311.2 M9175.0 1200.0 L865.2 311.2 M9670.0 1200.0 L871.4 311.2 M10165.0 1200.0 L877.6 311.2 M10660.0 1200.0 L883.8 311.2 M11155.0 1200.0 L889.9 311.2 M11650.0 1200.0 L896.1 311.2 M12145.0 1200.0 L902.3 311.2 M12640.0 1200.0 L908.5 311.2 M13135.0 1200.0 L914.7 311.2 M13630.0 1200.0 L920.9 311.2 M14125.0 1200.0 L927.1 311.2 M14620.0 1200.0 L933.2 311.2 M15115.0 1200.0 L939.4 311.2 M15610.0 1200.0 L945.6 311.2 M16105.0 1200.0 L951.8 311.2 M16600.0 1200.0 L958.0 311.2 M17095.0 1200.0 L964.2 311.2 M17590.0 1200.0 L970.4 311.2 M18085.0 1200.0 L976.6 311.2 M18580.0 1200.0 L982.8 311.2 M19075.0 1200.0 L988.9 311.2 M19570.0 1200.0 L995.1 311.2 M20065.0 1200.0 L1001.3 311.2 M20560.0 1200.0 L1007.5 311.2" stroke="url(#gs)" stroke-width="1" fill="none"/></svg>
+<div class="abs halo"></div>
+<img class="abs shadow" src="car-shadow.png">
+<img class="abs car" src="car-cut.png">
+<!-- the three strands: cyan into the camera, orange and green into the front wheels -->
+<svg width="1200" height="675" viewBox="0 0 1200 675"><defs>
+ <filter id="bloom" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="11"/></filter>
+ <filter id="glow" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="3"/></filter>
+ <filter id="dot" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="6"/></filter>
+ <linearGradient id="gcy" gradientUnits="userSpaceOnUse" x1="140" y1="0" x2="731" y2="0"><stop offset="0" stop-color="#3ddcff" stop-opacity="0"/><stop offset=".22" stop-color="#3ddcff" stop-opacity=".9"/><stop offset="1" stop-color="#3ddcff"/></linearGradient>
+ <linearGradient id="tcy" gradientUnits="userSpaceOnUse" x1="140" y1="0" x2="731" y2="0"><stop offset="0" stop-color="#c8f5ff" stop-opacity="0"/><stop offset=".3" stop-color="#c8f5ff" stop-opacity=".8"/><stop offset="1" stop-color="#c8f5ff"/></linearGradient>
+ <linearGradient id="gor" gradientUnits="userSpaceOnUse" x1="140" y1="0" x2="578" y2="0"><stop offset="0" stop-color="#ff6b3d" stop-opacity="0"/><stop offset=".22" stop-color="#ff6b3d" stop-opacity=".9"/><stop offset="1" stop-color="#ff6b3d"/></linearGradient>
+ <linearGradient id="tor" gradientUnits="userSpaceOnUse" x1="140" y1="0" x2="578" y2="0"><stop offset="0" stop-color="#ffc3ad" stop-opacity="0"/><stop offset=".3" stop-color="#ffc3ad" stop-opacity=".8"/><stop offset="1" stop-color="#ffc3ad"/></linearGradient>
+ <linearGradient id="ggr" gradientUnits="userSpaceOnUse" x1="140" y1="0" x2="936" y2="0"><stop offset="0" stop-color="#3fb950" stop-opacity="0"/><stop offset=".22" stop-color="#3fb950" stop-opacity=".9"/><stop offset="1" stop-color="#3fb950"/></linearGradient>
+ <linearGradient id="tgr" gradientUnits="userSpaceOnUse" x1="140" y1="0" x2="936" y2="0"><stop offset="0" stop-color="#b6f0c0" stop-opacity="0"/><stop offset=".3" stop-color="#b6f0c0" stop-opacity=".8"/><stop offset="1" stop-color="#b6f0c0"/></linearGradient>
+</defs>
+ <g fill="none" stroke-linecap="round">
+  <path d="M150 300 C 300 200, 430 330, 560 250 S 690 182, 731 190" stroke="url(#gcy)" stroke-width="16" opacity=".40" filter="url(#bloom)"/>
+  <path d="M150 300 C 300 200, 430 330, 560 250 S 690 182, 731 190" stroke="url(#gcy)" stroke-width="6" opacity=".9" filter="url(#glow)"/>
+  <path d="M150 300 C 300 200, 430 330, 560 250 S 690 182, 731 190" stroke="url(#gcy)" stroke-width="4"/>
+  <path d="M150 300 C 300 200, 430 330, 560 250 S 690 182, 731 190" stroke="url(#tcy)" stroke-width="1.6"/>
+  <path d="M150 312 C 300 216, 432 344, 562 264 S 690 196, 728 194" stroke="url(#gcy)" stroke-width="1.2" opacity=".55"/>
+ </g>
+ <circle cx="731" cy="190" r="15" fill="#3ddcff" opacity=".55" filter="url(#dot)"/><circle cx="731" cy="190" r="3.5" fill="#c8f5ff"/>
+ <g fill="none" stroke-linecap="round">
+  <path d="M150 334 C 280 330, 380 450, 470 420 S 545 400, 578 408" stroke="url(#gor)" stroke-width="16" opacity=".40" filter="url(#bloom)"/>
+  <path d="M150 334 C 280 330, 380 450, 470 420 S 545 400, 578 408" stroke="url(#gor)" stroke-width="6" opacity=".9" filter="url(#glow)"/>
+  <path d="M150 334 C 280 330, 380 450, 470 420 S 545 400, 578 408" stroke="url(#gor)" stroke-width="4"/>
+  <path d="M150 334 C 280 330, 380 450, 470 420 S 545 400, 578 408" stroke="url(#tor)" stroke-width="1.6"/>
+  <path d="M150 346 C 282 344, 380 466, 472 434 S 546 414, 576 412" stroke="url(#gor)" stroke-width="1.2" opacity=".55"/>
+ </g>
+ <circle cx="578" cy="408" r="15" fill="#ff6b3d" opacity=".55" filter="url(#dot)"/><circle cx="578" cy="408" r="3.5" fill="#ffc3ad"/>
+ <g fill="none" stroke-linecap="round">
+  <path d="M150 366 C 260 470, 420 540, 600 512 S 850 486, 936 460" stroke="url(#ggr)" stroke-width="16" opacity=".40" filter="url(#bloom)"/>
+  <path d="M150 366 C 260 470, 420 540, 600 512 S 850 486, 936 460" stroke="url(#ggr)" stroke-width="6" opacity=".9" filter="url(#glow)"/>
+  <path d="M150 366 C 260 470, 420 540, 600 512 S 850 486, 936 460" stroke="url(#ggr)" stroke-width="4"/>
+  <path d="M150 366 C 260 470, 420 540, 600 512 S 850 486, 936 460" stroke="url(#tgr)" stroke-width="1.6"/>
+  <path d="M150 378 C 262 486, 420 556, 602 526 S 852 498, 932 466" stroke="url(#ggr)" stroke-width="1.2" opacity=".55"/>
+ </g>
+ <circle cx="936" cy="460" r="15" fill="#3fb950" opacity=".55" filter="url(#dot)"/><circle cx="936" cy="460" r="3.5" fill="#b6f0c0"/>
+</svg>
+<img class="abs mark" src="strands-mark.svg">
+</div></body></html>

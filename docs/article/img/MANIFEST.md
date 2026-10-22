@@ -50,3 +50,6 @@ afterwards; ports 8765 and 8111 were never touched.
 | fig-deepracer-strands.png | 1600x900 | the stock car with seven Strands callouts (camera: Decider; drive: strands-robots; servos: deadman; compute: Harness; loop: Agents; voice: Bidi; process: Box); source img/svg/fig-deepracer-strands.html over the official product render | section 1 |
 
 | cover.png (v2) | 1200x675, no text | the stock car large on a perspective grid, lit cyan and orange, with three Strands ribbons flowing from the Strands mark into the car; source img/svg/cover.html; the first cover is kept as cover-v1.png |
+| `cover.png` (v3, "Seen") | The car facing the viewer; a cyan beam from its camera sweeps the floor and turns red on a drawn figure. No text. 1200x675. | Made for this article from the official render and the Pit Wall stick figure; source `svg/cover-candidates/cover-B.html`. |
+| `cover-v2.png` | Previous cover (car on a grid with Strands ribbons). | Kept for reference. |
+| `cover-options/cover-judged.png`, `cover-options/cover-strands.png` | The two other v3 candidates. | Sources in `svg/cover-candidates/`. |
