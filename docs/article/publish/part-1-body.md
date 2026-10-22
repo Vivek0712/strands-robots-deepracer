@@ -215,7 +215,7 @@ Alt text: The full hall at AWS Community Day Mumbai watching the Strands Agents 
 
 *The room, watching the interventions slide: Proceed, Guide, Confirm and Deny on the big screen.*
 
-[TESTIMONIALS: paste 2-3 quotes from the LinkedIn posts here]
+Two attendees wrote about the session on LinkedIn the next day. Tanvi Patil, Associate Software Engineer at Accenture: "Went to AWS Community Day Mumbai 2026 for the tech. Left thinking about robots." She called it "easily my favourite session" and said that "watching AI extend beyond screens and into the physical world made me think about how much more there is to discover in this space." Ajay Kumar Yadav, AWS Community Builder and Associate Architect, listed the talk first among the sessions that "really caught my attention" in his write-up of the day.
 
 ## A pattern you can drop into your own agent
 

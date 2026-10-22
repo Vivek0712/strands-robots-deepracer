@@ -211,3 +211,4 @@ benchmark, the limits and originality paragraphs.
 - Whether Strands Box ran around the agent process on the stage laptop (`docs/context/12-architecture.md` line 21 records it as optional).
 - A recorded Proceed hop on the real car under the gate (see Limits).
 | Project repository URL `https://github.com/Vivek0712/strands-robots-deepracer` (public snapshot pushed 2026-10-22) | `git remote -v`; GitHub |
+| Testimonials: Tanvi Patil (Associate Software Engineer, Accenture) and Ajay Kumar Yadav (AWS Community Builder, Associate Architect), LinkedIn posts of 2026-10-18 about the Mumbai session | Post text supplied by the author on 2026-10-22; activity ids 7518550541090885632 and 7518315061879328769 |
