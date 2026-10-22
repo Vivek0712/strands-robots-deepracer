@@ -7796,7 +7796,7 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=8039ec2d">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=3c66a398">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7809,7 +7809,8 @@ is in front of the camera right now. The decider answers typed questions with ca
 probabilities; a few lines of plain Python turn those probabilities into one of the four Strands
 intervention actions (<code>Proceed</code>, <code>Guide</code>, <code>Confirm</code>, <code>Deny</code>). You need no car and no GPU to run it.</p>
 <p>The declared hackathon pattern is <strong>Guardrails</strong> (<code>#strands-decider-2b</code>, <code>#guardrails</code>): before a
-tool call, verify the arguments are grounded in what the user actually said. The typed questions
+tool call, verify the arguments are grounded in what the user actually said. The repository is
+<a href="https://github.com/Vivek0712/strands-robots-deepracer">https://github.com/Vivek0712/strands-robots-deepracer</a>. The typed questions
 are <code>inside_envelope</code> (yes/no), <code>args_grounded</code> (yes/no) and <code>intent</code> (five-way choice) over the
 words, and <code>person</code> (yes/no) and <code>frame</code> (five-way choice) over the camera frame.</p>
 <p>What you will learn:</p>
@@ -7829,6 +7830,74 @@ real model.</li>
 (the pen lip, the hop cap, the on-car deadman, the marshal's thumb on the battery switch); the
 decider explains.</strong> Nothing in this notebook is a safety layer. It is the layer that gives every
 stop a reason a person can read.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=2416207d">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="0.-The-whole-solution-in-one-picture">0. The whole solution in one picture<a class="anchor-link" href="#0.-The-whole-solution-in-one-picture">¶</a></h2><p>The gate this notebook walks through is one piece of a rover. Here is the rest of it, so the
+decision has its context.</p>
+<p><img alt="Architecture: Amazon Bedrock with Nova Pro and Nova Sonic; the laptop with the Strands agent, the decider gate, strands-robots and the Pit Wall; a travel router; the DeepRacer with rosbridge, the ctrl and servo nodes, the deadman node and the camera" src="../docs/article/img/fig-architecture.png"/></p>
+<p><img alt="The stock AWS DeepRacer with seven callouts: Strands Decider on the camera, strands-robots on the drive, the deadman on the servos, Strands Harness on the compute, Strands Agents as the loop, Strands Bidi as the voice, Strands Box around the process" src="../docs/article/img/fig-deepracer-strands.png"/></p>
+<p><strong>strands-robots</strong> drives the car. <code>DeepRacerRobot</code> subclasses upstream <code>MobileBaseRobot</code> over one
+rosbridge WebSocket on port 9090, so the laptop needs no ROS installation: arming sets
+<code>vehicle_state</code> 0 then <code>enable_state</code> true, a bicycle model turns linear and angular velocity into
+the servo pair the car understands, servo pairs go out at 20 Hz with a heartbeat beside them, and
+the upstream command gate puts a human in front of every motion topic and audits every command.</p>
+<p><strong>Strands Agents on Amazon Bedrock</strong> is the planner and narrator. Amazon Nova Pro
+(<code>us.amazon.nova-pro-v1:0</code>) turns "go forward 20 centimetres" into one bounded hop at up to
+0.3 m/s through plain <code>@tool</code> functions: <code>drive_deepracer(linear, angular, duration)</code>,
+<code>stop_deepracer()</code> (never gated), <code>plan_deepracer</code>, <code>look(question)</code> and <code>why_stopped()</code>, which
+reads the event log and speaks the last stop with its class, probability and time.</p>
+<p><strong>Strands Decider 2B</strong> judges every move before the wheels turn. The local
+<code>StrandsAgents/strands-decider-2B-qwen3.5-v1-2610</code>, served with <code>--vision</code>, answers five typed
+questions in two requests: three over the words (envelope, grounding, intent) and two over the
+live camera frame (person, frame class). Code maps the probabilities to <code>Proceed</code>, <code>Guide</code>,
+<code>Confirm</code> or <code>Deny</code>. This is the decision I handed to the decider and what the rest of this
+notebook walks through.</p>
+<p><strong>Strands Bidi</strong> gives the rover a push-to-talk voice. A <code>BidiAgent</code> on Amazon Nova Sonic calls
+the same gated tools as the text console; a "stop" spoken over the rover's narration registers as
+a barge-in and a hook calls <code>stop_all</code> directly, 22 ms to the throttle PWM at neutral on the car.</p>
+<p><strong>Strands Harness</strong> is the race engineer, never the driving loop. <code>create_harness</code> gives a plain
+agent whose shell, read, write and edit tools run inside an SSH sandbox on the car under a Cedar
+policy: commands that touch a motion topic are forbidden, and writes need the operator's
+confirmation for the session. It reads the car's calibration, compares the steering centre with
+what it remembers and proposes the edit.</p>
+<p><strong>Strands Box</strong> is the fence around the agent process, and around the race engineer in
+particular as the one process with shell access to the car: egress is allowed to the car and to
+Amazon Bedrock and nowhere else, with every decision recorded and shown as the egress panel.</p>
+<p>What runs where:</p>
+<ul>
+<li>Amazon Bedrock, us-east-1: Nova Pro (the agent's language model and the vision model behind
+<code>look</code>) and Nova Sonic (the voice).</li>
+<li>The laptop: everything that reasons. The Strands Agents runtime and its tools, the decider gate
+with the local Strands Decider 2B, the strands-robots layer, one shared camera stream and the
+Pit Wall portal. A pocket travel router carries the car and the laptop as its only clients.</li>
+<li>The car: rosbridge, the stock ctrl and servo nodes, the camera, and the deadman node, the one
+stop that survives the laptop, the link or the router (ten zero servo pairs when the heartbeat
+gap exceeds 300 ms, latched until heartbeats are steady again).</li>
+</ul>
+<p>Physics stops the car (pen, hop cap, on-car deadman, marshal's thumb); the decider explains.</p>
+<ul>
+<li>The project README: <a href="../README.md">README.md</a></li>
+<li>The article: <a href="../docs/article/article.md">docs/article/article.md</a></li>
+<li>The demo video (2 minutes 57 seconds): <a href="https://youtu.be/oMHml_LT_tY">https://youtu.be/oMHml_LT_tY</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f3793791">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h2 id="Setup:-find-or-start-a-decider">Setup: find or start a decider<a class="anchor-link" href="#Setup:-find-or-start-a-decider">¶</a></h2><p>The cell below honours <code>DECIDER_URL</code>. When it is not set, the notebook uses a port of its own,
 <code>http://127.0.0.1:8113</code>, and starts the project's fake decider there
 (<code>python -m harness.fake_decider --port 8113</code>) when nothing answers. The fake speaks the same wire
@@ -7840,7 +7909,7 @@ output below says what produced it.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=916995e7">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=1b970aa9">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7948,7 +8017,7 @@ IN USE          : fake decider (harness/fake_decider.py)
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=06983b5d">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=0f7361a3">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7972,7 +8041,7 @@ and the briefed envelope, with one question of each type.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=aa2bcbf1">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=11df9548">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8042,7 +8111,7 @@ and the briefed envelope, with one question of each type.</p>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>answered by fake decider (harness/fake_decider.py) in 1.4 ms (client round trip)
+<pre>answered by fake decider (harness/fake_decider.py) in 1.3 ms (client round trip)
 
 {
   "model": "StrandsAgents/strands-decider-2B-qwen3.5-v1-2610",
@@ -8082,7 +8151,7 @@ and the briefed envelope, with one question of each type.</p>
     "input_tokens": 199,
     "output_tokens": 0
   },
-  "latency_ms": 0.75
+  "latency_ms": 0.78
 }
 </pre>
 </div>
@@ -8090,7 +8159,7 @@ and the briefed envelope, with one question of each type.</p>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6a411154">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=d3e3df4d">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8121,7 +8190,7 @@ recorded ones are in section 5.</p>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f727f91a">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=da8e34f3">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8144,7 +8213,7 @@ the gate denies.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=c3fc485c">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=b70696f2">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8217,7 +8286,7 @@ frame classes : clear, obstacle_near, person_in_frame, off_surface, unclear
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=2bb1aa6c">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=8b7b7185">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8300,7 +8369,7 @@ of the shared thirteen-row table in the project README; the frame rows of sectio
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=a3abbf59">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=251b49c0">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8382,15 +8451,15 @@ deterministic_check : distance_m 2 &gt; 0.5
   -&gt; Guide  {"feedback": "Outside the briefed envelope (distance_m &lt;= 0.5 per call, |heading_deg| &lt;= 90): distance_m 2 &gt; 0.5. Re-plan within it.", "reason": "outside envelope: distance_m 2 &gt; 0.5"}
 
 the gate's own log (one record per decision):
-{"tool": "move", "arguments": {"distance_m": 0.2, "heading_deg": 0.0}, "deterministic_check": "ok", "inside_envelope": 0.95, "args_grounded": 0.95, "intent": "move_forward", "intent_p": 0.6, "verdict": "Proceed", "reason": "inside envelope p=0.95, grounded p=0.95", "latency_ms": 1.5}
-{"tool": "move", "arguments": {"distance_m": 2.0, "heading_deg": 0.0}, "deterministic_check": "distance_m 2 &gt; 0.5", "inside_envelope": 0.05, "args_grounded": 0.05, "intent": "move_forward", "intent_p": 0.6, "verdict": "Guide", "reason": "outside envelope: distance_m 2 &gt; 0.5", "latency_ms": 0.6}
+{"tool": "move", "arguments": {"distance_m": 0.2, "heading_deg": 0.0}, "deterministic_check": "ok", "inside_envelope": 0.95, "args_grounded": 0.95, "intent": "move_forward", "intent_p": 0.6, "verdict": "Proceed", "reason": "inside envelope p=0.95, grounded p=0.95", "latency_ms": 1.1}
+{"tool": "move", "arguments": {"distance_m": 2.0, "heading_deg": 0.0}, "deterministic_check": "distance_m 2 &gt; 0.5", "inside_envelope": 0.05, "args_grounded": 0.05, "intent": "move_forward", "intent_p": 0.6, "verdict": "Guide", "reason": "outside envelope: distance_m 2 &gt; 0.5", "latency_ms": 0.5}
 </pre>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=c0dd6e2f">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f96c9fc1">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8411,7 +8480,7 @@ band edge: 0.35 exactly is a <code>Confirm</code>, not a confident no.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=388241f6">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=8174b764">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8576,7 +8645,7 @@ band edge: 0.35 exactly is a <code>Confirm</code>, not a confident no.</p>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=e3766810">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=7f5ec066">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8596,7 +8665,7 @@ each frame I set that label first with <code>/control?label=</code>. The real se
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=a64db7cf">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=4ec883c8">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8663,7 +8732,7 @@ each frame I set that label first with <code>/control?label=</code>. The real se
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=d14728aa">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=0d0ef354">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8682,7 +8751,7 @@ called a real person at desk distance <code>unclear</code> on eleven of eleven f
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=7e5a7814">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=4e4a6345">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8813,7 +8882,7 @@ called a real person at desk distance <code>unclear</code> on eleven of eleven f
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=1038bc1b">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6ee9e5d5">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8830,7 +8899,7 @@ fall through to <code>Proceed</code>.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=4522c3ec">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=82472ed6">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8965,7 +9034,7 @@ ServerUnavailable: no strands-decider at http://127.0.0.1:9 (&lt;urlopen error [
 <td>Deny</td>
 <td>decider unavailable: failing closed, no motion</td>
 <td>no strands-decider at http://127.0.0.1:8113 (HTTP Error 500: Internal</td>
-<td>0.8</td>
+<td>0.6</td>
 </tr>
 <tr>
 <th>fail=1: HTTP 500, frame questions</th>
@@ -8973,7 +9042,7 @@ ServerUnavailable: no strands-decider at http://127.0.0.1:9 (&lt;urlopen error [
 <td>Deny</td>
 <td>vision unavailable</td>
 <td>no strands-decider at http://127.0.0.1:8113 (HTTP Error 500: Internal</td>
-<td>0.7</td>
+<td>0.5</td>
 </tr>
 <tr>
 <th>latency_ms=3000: 3 s answer, 1.5 s budget, text questions</th>
@@ -8981,7 +9050,7 @@ ServerUnavailable: no strands-decider at http://127.0.0.1:9 (&lt;urlopen error [
 <td>Deny</td>
 <td>decider unavailable: failing closed, no motion</td>
 <td>TimeoutError</td>
-<td>1501.2</td>
+<td>1501.0</td>
 </tr>
 <tr>
 <th>latency_ms=3000: 3 s answer, 1.5 s budget, frame questions</th>
@@ -8989,7 +9058,7 @@ ServerUnavailable: no strands-decider at http://127.0.0.1:9 (&lt;urlopen error [
 <td>Deny</td>
 <td>vision unavailable</td>
 <td>TimeoutError</td>
-<td>1501.3</td>
+<td>1501.1</td>
 </tr>
 <tr>
 <th>no frame at all</th>
@@ -9005,7 +9074,7 @@ ServerUnavailable: no strands-decider at http://127.0.0.1:9 (&lt;urlopen error [
 <td>Deny</td>
 <td>decider unavailable: failing closed, no motion</td>
 <td>no strands-decider at http://127.0.0.1:9 (&lt;urlopen error [Errno 61] Co</td>
-<td>0.6</td>
+<td>0.5</td>
 </tr>
 <tr>
 <th>nothing listens on port 9, frame questions</th>
@@ -9013,7 +9082,7 @@ ServerUnavailable: no strands-decider at http://127.0.0.1:9 (&lt;urlopen error [
 <td>Deny</td>
 <td>vision unavailable</td>
 <td>no strands-decider at http://127.0.0.1:9 (&lt;urlopen error [Errno 61] Co</td>
-<td>0.6</td>
+<td>0.3</td>
 </tr>
 </tbody>
 </table>
@@ -9023,7 +9092,7 @@ ServerUnavailable: no strands-decider at http://127.0.0.1:9 (&lt;urlopen error [
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f98d0740">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=bf3ca0c0">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9047,7 +9116,7 @@ slower than that is a <code>Deny</code>.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=425c4755">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=8bb9123e">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9145,7 +9214,7 @@ slower than that is a <code>Deny</code>.</p>
 <th>live: fake decider (harness/fake_decider.py), 3 text questions</th>
 <td>0.4</td>
 <td>0.6</td>
-<td>0.4</td>
+<td>0.5</td>
 <td>20.0</td>
 </tr>
 <tr>
@@ -9190,7 +9259,7 @@ slower than that is a <code>Deny</code>.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=77455d42">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=d4d5fb83">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9286,7 +9355,7 @@ slower than that is a <code>Deny</code>.</p>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=719826b6">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=fcb9dbe2">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9309,7 +9378,7 @@ for the local model after the laptop. The same file is where <code>YES = 0.65</c
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=a0dcb4a9">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=63df9d08">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9433,7 +9502,7 @@ for the local model after the laptop. The same file is where <code>YES = 0.65</c
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=934cd3e8">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=547117df">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9454,7 +9523,7 @@ truth.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=8edb5623">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=7e565daf">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9518,7 +9587,7 @@ truth.</p>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b7636e56">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=5d0dd6ee">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9537,7 +9606,7 @@ the yes/no fixed the class on 10 of 11 and weakened nothing. The study's summary
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=3f9806e5">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=b7567079">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9654,7 +9723,7 @@ the yes/no fixed the class on 10 of 11 and weakened nothing. The study's summary
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=0b9b21ec">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=8c8cf872">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9711,7 +9780,7 @@ the yes/no fixed the class on 10 of 11 and weakened nothing. The study's summary
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b2d50044">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=267334f6">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9741,7 +9810,7 @@ a failed call on a machine without AWS credentials.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=5d6d1c91">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=cba5fc87">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9817,7 +9886,7 @@ then jupyter lab notebooks/ (or DECIDER_URL=&lt;real decider&gt; for the real mo
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=323e79c4">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=530d116e">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9868,7 +9937,7 @@ gate log:
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=19d3bbb7">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=fd3f354a">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9914,7 +9983,7 @@ and the two-question frame stage.</li>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=39163bff">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=e9152ac6">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9925,7 +9994,7 @@ alone, with its knobs reset.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=a8849213">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=60d9a773">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
