@@ -53,3 +53,5 @@ afterwards; ports 8765 and 8111 were never touched.
 | `cover.png` (v3, "Seen") | The car facing the viewer; a cyan beam from its camera sweeps the floor and turns red on a drawn figure. No text. 1200x675. | Made for this article from the official render and the Pit Wall stick figure; source `svg/cover-candidates/cover-B.html`. |
 | `cover-v2.png` | Previous cover (car on a grid with Strands ribbons). | Kept for reference. |
 | `cover-options/cover-judged.png`, `cover-options/cover-strands.png` | The two other v3 candidates. | Sources in `svg/cover-candidates/`. |
+| `cover.png` (v3 final, "Judged") | The car lit from front and above, a red tail light, a floor-projected probability scale in red, cyan and green with ticks at 0.35 and 0.65 and a green marker in the proceed zone. No text. 1200x675. | Made for this article from the official render; source `svg/cover-candidates/gen_A2.py` and `cover-A2.html`. |
+| `cover-options/cover-seen.png` | The "Seen" candidate, previously the cover. | Source `svg/cover-candidates/cover-B.html`. |
