@@ -7,6 +7,7 @@
 <p align="center"><strong>A rover that drives on natural language, judges every move, and answers to your voice.</strong></p>
 
 <p align="center">
+  <a href="https://github.com/Vivek0712/strands-robots-deepracer/actions/workflows/ci.yml"><img src="https://github.com/Vivek0712/strands-robots-deepracer/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white" alt="Python 3.12">
   <img src="https://img.shields.io/badge/strands--agents-%3E%3D%201.57.2-7c5cff" alt="strands-agents >= 1.57.2">
   <a href="https://huggingface.co/StrandsAgents/strands-decider-2B-qwen3.5-v1-2610"><img src="https://img.shields.io/badge/Strands%20Decider-2B%20qwen3.5--v1--2610-ff6b3d" alt="Strands Decider 2B"></a>

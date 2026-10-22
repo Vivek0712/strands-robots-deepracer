@@ -210,3 +210,4 @@ benchmark, the limits and originality paragraphs.
 - The public URL of this project repository, the Builder Center URL and the video URL.
 - Whether Strands Box ran around the agent process on the stage laptop (`docs/context/12-architecture.md` line 21 records it as optional).
 - A recorded Proceed hop on the real car under the gate (see Limits).
+| Project repository URL `https://github.com/Vivek0712/strands-robots-deepracer` (public snapshot pushed 2026-10-22) | `git remote -v`; GitHub |

@@ -237,7 +237,7 @@ agent = Agent(
 )
 ```
 
-The pattern runs offline. make fake-decider starts a stand-in server on port 8111 that answers /v1/systemone from a label, and make pattern-demo sends three calls through MotionGate and prints three rows: a grounded command that proceeds, a command outside the envelope that the deterministic check turns into a Guide, and a call against a dead port that is denied. make pattern-demo-frame runs the drawn frames in harness/frames/ through FrameGate. The fake decider speaks the wire protocol but is not a model, so a Proceed from it proves the wiring and nothing more. The notebook notebooks/decider_gate_walkthrough.ipynb walks the same calls one cell at a time; both are at [REPO URL: author to confirm before publishing].
+The pattern runs offline. make fake-decider starts a stand-in server on port 8111 that answers /v1/systemone from a label, and make pattern-demo sends three calls through MotionGate and prints three rows: a grounded command that proceeds, a command outside the envelope that the deterministic check turns into a Guide, and a call against a dead port that is denied. make pattern-demo-frame runs the drawn frames in harness/frames/ through FrameGate. The fake decider speaks the wire protocol but is not a model, so a Proceed from it proves the wiring and nothing more. The notebook notebooks/decider_gate_walkthrough.ipynb walks the same calls one cell at a time; both are at https://github.com/Vivek0712/strands-robots-deepracer.
 
 ## Limits
 
@@ -249,7 +249,7 @@ Three things changed how I build agents. A decision is not a generation: when a 
 
 ## Try it
 
-The upstream projects are open: strands-labs/robots, strands-labs/strands-decider (including the --vision path from PR #10), strands-agents/harness-sdk for the Agents SDK, strands.bidi and create_harness, and strands-agents/box. The project described here is strands-robots-deepracer [REPO URL: author to confirm before publishing], and its beats run against a fake car and a fake decider, so the whole spine works with no DeepRacer on the desk.
+The upstream projects are open: strands-labs/robots, strands-labs/strands-decider (including the --vision path from PR #10), strands-agents/harness-sdk for the Agents SDK, strands.bidi and create_harness, and strands-agents/box. The project described here is strands-robots-deepracer https://github.com/Vivek0712/strands-robots-deepracer, and its beats run against a fake car and a fake decider, so the whole spine works with no DeepRacer on the desk.
 
 This agent is new. I built it from 14 October 2026 in a private repository for AWS Community Day Mumbai and for this hackathon, and it is first published with this submission. Two earlier public repositories of mine are its seeds: Vivek0712/aws_deepracer_control_v2, an HTTP client for the DeepRacer console from 2021, and Vivek0712/strands-agentic-deepracer, a Strands and Nova planner over that client from March 2026. The measured motion constants, the plan validator and the MJPEG parser carried over from them. Neither has the strands-robots body, the Decider gate, the Bidi voice or the Harness race engineer, and none of this agent appeared in public before the hackathon window opened on 16 October 2026.
 

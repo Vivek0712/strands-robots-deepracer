@@ -75,3 +75,8 @@ pattern-demo:    ## guardrails recipe offline: patterns/strands/tool_call_interv
 
 pattern-demo-frame: ## vision recipe offline: the drawn frames in harness/frames/ through patterns/strands/frame_intervention.py
 	$(PY) patterns/strands/frame_intervention.py
+
+.PHONY: publish
+publish:         ## push a fresh snapshot of HEAD's tree to the public repo (history stays local): make publish MSG="what changed"
+	@test -n "$(MSG)" || (echo "usage: make publish MSG=\"what changed\"" && exit 2)
+	@snap=$$(git commit-tree HEAD^{tree} -p public -m "$(MSG)") && git branch -f public $$snap && git push origin public:main && git log --oneline -1 public
