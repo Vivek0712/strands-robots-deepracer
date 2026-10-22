@@ -253,7 +253,7 @@ The upstream projects are open: strands-labs/robots, strands-labs/strands-decide
 
 This agent is new. I built it from 14 October 2026 in a private repository for AWS Community Day Mumbai and for this hackathon, and it is first published with this submission. Two earlier public repositories of mine are its seeds: Vivek0712/aws_deepracer_control_v2, an HTTP client for the DeepRacer console from 2021, and Vivek0712/strands-agentic-deepracer, a Strands and Nova planner over that client from March 2026. The measured motion constants, the plan validator and the MJPEG parser carried over from them. Neither has the strands-robots body, the Decider gate, the Bidi voice or the Harness race engineer, and none of this agent appeared in public before the hackathon window opened on 16 October 2026.
 
-Demo video: [VIDEO URL: under three minutes, author to add before publishing]
+Demo video (2 minutes 57 seconds): https://youtu.be/oMHml_LT_tY
 
 This article is also my entry to the Agent Experience Hackathon: Strands Decider on AWS Builder Center, which asks for a working agent on AWS built with Strands Decider 2B; it runs from 16 to 23 October 2026, with three winners each receiving 5,000 dollars in AWS credits.
 

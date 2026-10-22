@@ -644,7 +644,8 @@ def cues_for(
         for sent, on, d in zip(split_sentences(text), onsets, sent_durs, strict=True):
             for piece in split_cue(sent):
                 cues.append((start + on, start + on + d, piece))
-        # long sentences split into pieces share their window proportionally
+        # long sentences split into pieces share their measured speech window by character
+        # count, and no piece is shorter than MIN_CUE seconds (a 0.3 s cue flashes on YouTube)
         out: list[tuple[float, float, str]] = []
         i = 0
         while i < len(cues):
@@ -652,12 +653,7 @@ def cues_for(
             while j + 1 < len(cues) and cues[j + 1][0] == cues[i][0]:
                 j += 1
             group = cues[i : j + 1]
-            total = sum(len(g[2]) for g in group) or 1
-            t0, t1 = group[0][0], group[0][1]
-            for g in group:
-                d = (t1 - t0) * len(g[2]) / total
-                out.append((t0, t0 + d, g[2]))
-                t0 += d
+            out += share_window(group[0][0], group[0][1], [g[2] for g in group])
             i = j + 1
         return out
     pieces = split_cue(text)
@@ -671,6 +667,40 @@ def cues_for(
     return cues
 
 
+MIN_CUE = 1.0  # seconds; the shortest caption piece written to the SRT
+
+
+def share_window(t0: float, t1: float, pieces: list[str]) -> list[tuple[float, float, str]]:
+    """Cue times for ``pieces`` inside [t0, t1]: proportional to their character counts, every
+    piece at least ``MIN_CUE`` long when the window allows it (the longer pieces give way)."""
+    if not pieces:
+        return []
+    window = max(0.0, t1 - t0)
+    n = len(pieces)
+    if window <= MIN_CUE * n:
+        d = window / n
+        return [(t0 + k * d, t0 + (k + 1) * d, p) for k, p in enumerate(pieces)]
+    total = sum(len(p) for p in pieces) or 1
+    durs = [window * len(p) / total for p in pieces]
+    for _ in range(n):
+        short = [k for k, d in enumerate(durs) if d < MIN_CUE]
+        if not short:
+            break
+        deficit = sum(MIN_CUE - durs[k] for k in short)
+        for k in short:
+            durs[k] = MIN_CUE
+        donors = [k for k, d in enumerate(durs) if d > MIN_CUE]
+        spare = sum(durs[k] - MIN_CUE for k in donors)
+        for k in donors:
+            durs[k] -= deficit * (durs[k] - MIN_CUE) / spare
+    out: list[tuple[float, float, str]] = []
+    t = t0
+    for d, p in zip(durs, pieces, strict=True):
+        out.append((t, t + d, p))
+        t += d
+    return out
+
+
 def srt_time(t: float) -> str:
     ms = round(t * 1000)
     h, ms = divmod(ms, 3600000)
@@ -680,10 +710,16 @@ def srt_time(t: float) -> str:
 
 
 def write_srt(path: Path, cues: list[tuple[float, float, str]]) -> None:
+    """Cues hold for at least ``MIN_CUE`` seconds when the next cue leaves room (a short
+    sentence or split piece otherwise flashes), and never run into the next cue."""
     lines: list[str] = []
     for i, (a, b, text) in enumerate(cues, 1):
+        end = max(b, a + MIN_CUE)
+        if i < len(cues):
+            end = min(end, cues[i][0] - 0.05)
+        end = max(end, a + 0.3)
         wrapped = wrap_caption(text)
-        lines += [str(i), f"{srt_time(a)} --> {srt_time(max(a + 0.3, b - 0.05))}", wrapped, ""]
+        lines += [str(i), f"{srt_time(a)} --> {srt_time(end)}", wrapped, ""]
     path.write_text("\n".join(lines), encoding="utf-8")
 
 

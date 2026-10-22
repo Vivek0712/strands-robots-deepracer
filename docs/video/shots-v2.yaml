@@ -1,0 +1,783 @@
+# Shot list for the hackathon demo video, version 2: the production design pass of
+# docs/video/STORYBOARD-v2.md (revision 2) on the design system in docs/video/DESIGN.md.
+# Ids, durations, VO text, vo_* settings, sentence anchors and the min/fixed timings are copied
+# from docs/video/shots.yaml (v1) and do not move; everything visual is new.
+# Coordinates are 1920x1080 frame units; times are seconds from the shot's own start.
+# Render: .venv/bin/python -m docs.video.render build docs/video/shots-v2.yaml --out docs/video/build/deepracer-decider-demo-v2.mp4
+
+title: "This car can refuse an order"
+voice: Matthew
+engine: generative     # generative ignores <prosody rate>; sentences are synthesised one by one instead
+vo_sentences: true     # one Polly call per sentence, stitched with vo_gap_ms of silence; onsets measured
+vo_gap_ms: 600         # 600 ms of real silence between sentences (tails kept to 120 ms past -50 dBFS)
+auto_pad: 0.5          # picture = max(min, vo_offset + VO length + 0.5 s)
+fade_out: 0            # the only dip to black is inside shot 14 (black_out 0.72 on the camera curve)
+# DESIGN.md section 5: vignette 18 percent at the corners, zero inside r 0.60; grain sigma 3 levels
+vignette: 0.18
+vignette_inner: 0.60
+grain: 0.01176         # 3 / 255
+grain_size: 2
+grain_cap: 16
+rules:                 # `check` extensions (DESIGN 15 and 3.1)
+  caption_zone: [940, 1040]
+  one_accent: true
+  accent: orange
+defaults:
+  transition: cut
+
+# ---------------------------------------------------------------------------- tokens (YAML anchors)
+# DESIGN.md section 17. Colours are the renderer palette names (bg, surface, surface2, ink, ink-dim,
+# ink-mute, orange, cyan, green, amber, red); a colour or a size changes here, once.
+snippets:
+  type:
+    display: &t_display {font: sans_bold, size: 96, leading: 104, track: -0.02}
+    display_m: &t_display_m {font: sans_bold, size: 72, leading: 80, track: -0.015}
+    title: &t_title {font: sans_bold, size: 56, leading: 64, track: -0.015}
+    title_s: &t_title_s {font: sans_bold, size: 48, leading: 56, track: -0.01}
+    heading: &t_heading {font: sans_medium, size: 40, leading: 48, track: -0.01}
+    label_l: &t_label_l {font: sans_medium, size: 36, leading: 44, track: -0.005}
+    body: &t_body {font: sans, size: 32, leading: 42}
+    body_s: &t_body_s {font: sans, size: 28, leading: 36}
+    body_xs: &t_body_xs {font: sans, size: 26, leading: 34}
+    lower_third: &t_lt {font: sans_medium, size: 32, leading: 40}
+    caption: &t_caption {font: sans_medium, size: 22, leading: 28, track: 0.02}
+    mono: &t_mono {font: mono, size: 28, leading: 44}
+    mono_code: &t_mono_code {font: mono, size: 26, leading: 38}
+    mono_s: &t_mono_s {font: mono, size: 22, leading: 30}
+    mono_xs: &t_mono_xs {font: mono, size: 20, leading: 26}
+    url: &t_url {font: mono, size: 32, leading: 40}
+  motion:
+    enter: &m_enter {anim: rise, travel: 16, anim_ms: 480, ease: enter}
+    enter_left: &m_enter_left {anim: rise_left, travel: 16, anim_ms: 480, ease: enter}
+    enter_right: &m_enter_right {anim: rise_right, travel: 16, anim_ms: 480, ease: enter}
+    exit: &m_exit {out_ms: 240, out_ease: exit}
+    chip_in: &m_chip {anim: scale_in, scale_from: 0.92, anim_ms: 480, ease: enter}
+    draw_bar: &m_draw_bar {anim: grow_down, anim_ms: 240, ease: draw}
+    recolor_dim: &m_recolor_dim {color: ink-dim, over_ms: 240, ease: move}
+  surfaces:
+    panel: &panel_v2 {kind: panel, color: surface, alpha: 1.0, radius: 12, border: {color: ink, alpha: 0.12}, shadow: {blur: 40, alpha: 0.5, dy: 12}, inner_shadow: true}
+    panel_hollow: &panel_hollow {kind: panel, hollow: true, radius: 12, border: {color: ink, alpha: 0.12}, shadow: {blur: 40, alpha: 0.5, dy: 12}, z: 20}
+    plate: &plate_over_footage {color: bg, alpha: 0.72, radius: 8}
+    pill_plate: &pill_plate {color: surface, alpha: 0.85, radius: 20, pad: 18, border: {color: ink, alpha: 0.12}}
+  chrome:
+    rail: &rail
+      kind: progress_rail
+      segments: [[0, 144], [150, 382], [388, 1335], [1341, 1687], [1693, 1920]]
+      chapters: [[0.0, 13.5], [13.5, 35.2], [35.2, 123.73], [123.73, 156.07], [156.07, 176.31]]
+      y: [0, 3]
+      track_color: ink-mute
+      track_alpha: 0.35
+      fill_color: ink-dim
+      head_color: orange
+      head_px: 16
+      draw_on: {at: 1.06, ms: 720, ease: draw}
+      chrome: true
+      z: 97
+    kicker: &kicker {kind: mono, size: 22, leading: 28, color: orange, pos: [96, 72], caps: true, track: 0.08, middot: true, chrome: true, z: 95}
+    pill: &pill {kind: mono, size: 22, leading: 28, color: ink-dim, caps: true, track: 0.06, pos: [1806, 72], anchor: tr, plate: {<<: *pill_plate, y: [62, 102]}, z: 96}
+    pill2: &pill2 {kind: mono, size: 22, leading: 28, color: ink-dim, caps: true, track: 0.06, pos: [1806, 120], anchor: tr, plate: {<<: *pill_plate, y: [110, 150]}, z: 96}
+    badge: &badge {kind: mono, size: 22, leading: 30, color: ink-dim, text: "Agent: Amazon Nova Pro on Bedrock\nJudge: Strands Decider 2B, local", pos: [1824, 866], anchor: tr, align: right, z: 94}
+    badge_plated: &badge_plated {kind: mono, size: 22, leading: 30, color: ink-dim, text: "Agent: Amazon Nova Pro on Bedrock\nJudge: Strands Decider 2B, local", pos: [1824, 866], anchor: tr, align: right, plate: {color: bg, alpha: 0.72, radius: 8, pad: 16, pad_y: 6}, z: 94}
+    # lower-third (DESIGN 9): bar 96..99 x 872..908 draws top to bottom over 240 ms, text at +60 ms
+    lt_bar: &lt_bar {kind: line, from: [97.5, 872], to: [97.5, 908], width: 3, color: orange, draw_ms: 240, ease: draw, chrome: true, z: 93}
+    lt_bar_static: &lt_bar_static {kind: panel, box: [96, 872, 99, 908], color: orange, alpha: 1.0, radius: 0, chrome: true, z: 93}
+    lt_text: &lt_text {kind: label, <<: *t_lt, color: ink, pos: [116, 878], <<: *m_enter_left, z: 93}
+    lt_plate: &lt_plate {kind: panel, <<: *plate_over_footage, anim_ms: 240, ease: enter, z: 92}
+    divider: &divider {kind: panel, box: [1106, 200, 1107, 848], color: ink, alpha: 0.12, radius: 0, z: 30}
+    chip: &chip {kind: chip, size: 24, track: 0.04, <<: *m_chip, z: 60}
+    safety_line: &safety "Physics stops the car. The decider explains."
+
+shots:
+  # ---------------------------------------------------------------- 1  HOOK A: the Deny, then the title
+  - id: s01-hook-a
+    kind: clip
+    src: docs/results/portal/pitwall-sim.webm
+    start: 2.5
+    end: 3.2                       # then hold the 3.2 s frame (DENY, LED red)
+    crop: [0, 40, 910, 455]        # live view + verdict and thought panels, 1.60x into the panel
+    place: [232, 160, 1688, 824]
+    subject_zoom: {from: 1.0, to: 1.03, start: 0.7, end: 4.0, center: [1205, 360], ease: drift}
+    mute: true
+    duration: auto
+    min: 4.0
+    vo_offset: 1.0
+    vo: "This car can refuse an order."
+    text:
+      - {<<: *panel_hollow, box: [232, 160, 1688, 824]}
+      - {kind: bloom, center: [1556, 188], r: 24, color: red, alpha_peak: 0.60, alpha_floor: 0.15, pulses: 2, period_ms: 330, in: 0.4, ease: enter, z: 30}
+      - kind: spotlight
+        dim: 0.6
+        feather: 48
+        radius: 12
+        regions:
+          - {at: 0.7, box: [1040, 280, 1370, 440], fade_ms: 480, ease: enter}
+          - {at: 0.7, box: [1540, 164, 1680, 212], fade_ms: 480, ease: enter}
+        z: 40
+      - {kind: title, <<: *t_display, text: "This car can refuse an order.", color: ink, pos: [960, 560], anchor: tc, in: 1.06, <<: *m_enter, z: 50}
+      - {<<: *pill, text: "SIM, FAKE DECIDER, DRAWN FIGURE"}
+      - *rail
+
+  # ---------------------------------------------------------------- 1b THE CAR (phase-3 recording, two parts, 4.0 s)
+  - id: s01b-feed
+    kind: clip
+    src: docs/video/build/clips/phase3-replan-1080p.mp4
+    start: 2.8
+    end: 4.4
+    crop: [391, 27, 1524, 1060]    # the feed image and its log plate
+    place: [564, 120, 1357, 843]   # 0.70x in a panel
+    fill: blur
+    fill_blur: 32
+    fill_brightness: 0.25
+    mute: true
+    duration: 1.6
+    vo_offset: 0.5
+    vo: "This is a stock AWS DeepRacer."
+    text:
+      - {<<: *panel_hollow, box: [564, 120, 1357, 843]}
+      - {<<: *lt_plate, box: [80, 860, 509, 920], in: 0.56}
+      - {<<: *lt_text, text: "A stock AWS DeepRacer", in: 0.62}
+      - {<<: *pill, text: "REAL CAR, PHASE-3 VISION PLANNER, PRE-DECIDER", plate: {<<: *pill_plate, alpha: 1.0, y: [62, 102]}}
+      - *rail
+    pointers:
+      - {<<: *lt_bar, in: 0.56}
+  - id: s01b-car
+    kind: clip
+    src: docs/video/build/clips/phase3-thirdperson-1080p.mp4
+    start: 4.6
+    end: 7.0
+    place: [0, 0, 1920, 1080]      # the phone column fitted to 1080 over its own darkened blur
+    mute: true
+    duration: 2.4
+    text:
+      - {kind: panel, <<: *plate_over_footage, box: [80, 860, 509, 920], z: 92}
+      - {<<: *lt_bar_static}
+      - {kind: label, <<: *t_lt, color: ink, pos: [116, 878], text: "A stock AWS DeepRacer", z: 93}
+      - {<<: *pill, text: "REAL CAR, PHASE-3 VISION PLANNER, PRE-DECIDER", plate: {<<: *pill_plate, alpha: 1.0, y: [62, 102]}}
+      - *rail
+
+  # ---------------------------------------------------------------- 2  HOOK B: here is why
+  # VO sentences: s1 "A person in the frame."  s2 "The hop was refused."  s3 "Here is why."
+  - id: s02-hook-b
+    kind: still
+    src: docs/results/portal/pitwall-sim.webm
+    at: 3.2                        # the shot 1 freeze frame
+    crop: [0, 40, 910, 455]
+    place: [232, 160, 1688, 824]
+    duration: auto
+    min: 5.5
+    vo_offset: 0.3
+    vo: "A person in the frame. The hop was refused. Here is why."
+    text:
+      - {<<: *panel_hollow, box: [232, 160, 1688, 824]}
+      - kind: spotlight
+        dim: 0.6
+        feather: 48
+        radius: 12
+        regions:
+          - {at: "s1", shape: ellipse, center: [640, 533], rx: 200, ry: 260, fade_ms: 480, ease: enter}
+          - {at: "s1%60", box: [272, 709, 544, 789], fade_ms: 480, ease: enter}
+          - {at: "s1%60+0.06", box: [851, 709, 1006, 789], fade_ms: 480, ease: enter}
+          - {at: "s2", box: [1062, 296, 1346, 424], fade_ms: 480, ease: enter}
+        lift: [{at: "s3", dim: 0.3, over_ms: 480, ease: move}]
+        z: 40
+      - {kind: title, <<: *t_title_s, text: "Here is why.", color: ink, pos: [232, 92], in: "s3", <<: *m_enter, z: 50}
+      - {kind: label, <<: *t_body_s, color: ink-dim, text: *safety, pos: [1688, 852], anchor: tr, z: 55}
+      - {<<: *pill, text: "SIM, FAKE DECIDER, DRAWN FIGURE"}
+      - *rail
+    pointers:
+      - {kind: box, from: [272, 709], to: [544, 789], color: cyan, width: 2, radius: 8, in: "s1%60", draw_ms: 480, ease: draw, z: 45}
+      - {kind: box, from: [851, 709], to: [1006, 789], color: cyan, width: 2, radius: 8, in: "s1%60+0.06", draw_ms: 480, ease: draw, z: 45}
+      - {kind: box, from: [1062, 296], to: [1346, 424], color: red, width: 2, radius: 8, in: "s2", draw_ms: 480, ease: draw, z: 46}
+
+  # ---------------------------------------------------------------- 3  WHAT IT IS: driven as a Strands robot
+  # VO sentences: s1 "I am Vivek Raja."  s2 "A Strands agent on Bedrock turns my words into hops; a local
+  # Decider two B judges each one before the wheels turn."  The car points out its parts: dot, leader, label.
+  - id: s03-what-it-is
+    kind: still
+    src: docs/video/build/clips/layers/base.png     # the figure's HTML rendered with the callouts hidden
+    crop: [200, 100, 1600, 860]    # below the figure's baked title; the dots below are in frame units
+    place: [260, 160, 1660, 920]   # the same source-to-frame offset (+60, +60) as crop 60..860 at 120
+    subject_zoom: {from: 1.0, to: 1.04, center: [998, 400], ease: drift, clip: true}
+    duration: auto
+    min: 9.5
+    vo_offset: 0.4
+    vo: "I am Vivek Raja. A Strands agent on Bedrock turns my words into hops; a local Decider two B judges each one before the wheels turn."
+    transition: {kind: push_left, duration: 0.72, ease: camera, inside: true}
+    text:
+      - {<<: *kicker, text: "THE SYSTEM  .  1 OF 2"}
+      - {kind: title, <<: *t_title, text: "Driven as a Strands robot", color: ink, pos: [96, 104], z: 92}
+      # labels land at the leader's end: anchor + 240 ms dot + 360 ms leader
+      - {kind: label, <<: *t_label_l, color: ink, text: "Agents as the loop", pos: [1360, 330], in: "s2+0.6", <<: *m_enter_left, settle: [{at: 8.5, alpha: 0.7, over_ms: 240}], z: 40}
+      - {kind: label, <<: *t_label_l, color: ink, text: "Bidi as the voice", pos: [1360, 440], in: "s2%25+0.6", <<: *m_enter_left, settle: [{at: 8.5, alpha: 0.7, over_ms: 240}], z: 40}
+      - {kind: label, <<: *t_label_l, color: ink, text: "strands-robots on the drive", pos: [640, 500], anchor: tr, in: "s2%40+0.6", <<: *m_enter_right, settle: [{at: 8.5, alpha: 0.7, over_ms: 240}], z: 40}
+      - {kind: label, <<: *t_label_l, color: orange, text: "Decider on the camera", pos: [640, 270], anchor: tr, in: "s2%50+0.6", <<: *m_enter_right, accent_group: decider, z: 40}
+      - {kind: label, <<: *t_label_l, color: ink, text: "The deadman on the servos", pos: [640, 620], anchor: tr, in: "s2%85+0.6", <<: *m_enter_right, settle: [{at: 8.5, alpha: 0.7, over_ms: 240}], z: 40}
+      - {kind: label, <<: *t_label_l, color: ink, alpha: 0.7, text: "Harness on the compute", pos: [1360, 220], in: 7.40, <<: *m_enter_left, z: 40}
+      - {kind: label, <<: *t_label_l, color: ink, alpha: 0.7, text: "Box around the process", pos: [1360, 640], in: 7.46, <<: *m_enter_left, z: 40}
+      - {<<: *lt_text, text: "Vivek Raja, AWS AI Hero", in: "s1+0.30"}
+      - {<<: *badge_plated, in: "s2", anim_ms: 480, ease: enter}
+      - *rail
+    pointers:
+      - {<<: *lt_bar, in: "s1+0.24"}
+      # dot, then the leader outward to the label's edge; only the Decider pings
+      - {kind: leader, from: [1108, 361], to: [1344, 352], dot_at: start, dot_ms: 240, width: 1.5, dot: 5, color: ink, alpha: 0.7, in: "s2", draw_ms: 360, ease: draw, attach: true, z: 30}
+      - {kind: leader, from: [1244, 393], to: [1344, 462], dot_at: start, dot_ms: 240, width: 1.5, dot: 5, color: ink, alpha: 0.7, in: "s2%25", draw_ms: 360, ease: draw, attach: true, z: 30}
+      - {kind: leader, from: [762, 529], to: [656, 522], dot_at: start, dot_ms: 240, width: 1.5, dot: 5, color: ink, alpha: 0.7, in: "s2%40", draw_ms: 360, ease: draw, attach: true, z: 30}
+      - {kind: leader, from: [966, 297], to: [656, 292], dot_at: start, dot_ms: 240, width: 1.5, dot: 5, color: orange, alpha: 0.7, in: "s2%50", draw_ms: 360, ease: draw, ping: true, attach: true, accent_group: decider, z: 30}
+      - {kind: leader, from: [1046, 563], to: [656, 642], dot_at: start, dot_ms: 240, width: 1.5, dot: 5, color: ink, alpha: 0.7, in: "s2%85", draw_ms: 360, ease: draw, attach: true, z: 30}
+      - {kind: leader, from: [1069, 236], to: [1344, 242], dot_at: start, dot_ms: 1, width: 1.5, dot: 5, color: ink, alpha: 0.7, in: 7.40, draw_ms: 480, ease: enter, attach: true, z: 30}
+      - {kind: leader, from: [964, 639], to: [1344, 662], dot_at: start, dot_ms: 1, width: 1.5, dot: 5, color: ink, alpha: 0.7, in: 7.46, draw_ms: 480, ease: enter, attach: true, z: 30}
+
+  # ---------------------------------------------------------------- 4  ARCHITECTURE: the guided zoom, re-keyed to the voice
+  # VO sentences: s1 "Nova Pro proposes the move."  s2 "A Strands intervention handler asks the decider before
+  # the tool runs."  s3 "The on-car deadman needs none of it."  Stops: Bedrock (0.80), Strands Agents +
+  # strands-robots (s2), DeciderGate + Decider 2B (s2%45), the deadman node (s3), pull-back (10.90).
+  - id: s04-architecture
+    kind: still
+    src: docs/video/build/clips/figs/fig-architecture-v2-3840.png   # the article SVG with its command arrows and 20 Hz labels in ink-dim, legend and footer stripped
+    camera:
+      - {at: 0.0, view: [0.5, 0.5, 1.0]}
+      - {at: 0.8, view: [0.269, 0.25, 2.0], ease: camera, over: 0.72}
+      - {at: "s2", view: [0.272, 0.53, 1.8], ease: camera, over: 0.72}
+      - {at: "s2%45", view: [0.366, 0.367, 3.0], ease: camera, over: 0.72}
+      - {at: "s3", view: [0.790, 0.620, 2.4], ease: camera, over: 0.72}
+      - {at: 10.9, view: [0.5, 0.5, 1.0], ease: camera, over: 0.72}
+    duration: auto
+    min: 12.2
+    vo_offset: 0.3
+    vo: "Nova Pro proposes the move. A Strands intervention handler asks the decider before the tool runs. The on-car deadman needs none of it."
+    text:
+      - {<<: *lt_bar_static}
+      - {<<: *kicker, text: "THE SYSTEM  .  2 OF 2", plate: {color: bg, alpha: 0.72, radius: 8, pad: 16, pad_y: 10}}
+      - kind: spotlight
+        dim: 0.6
+        feather: 48
+        radius: 8
+        regions:
+          - {at: 1.40, box: [24, 68, 1896, 374], fade_ms: 480, ease: enter, out: "s2", out_ms: 480}
+          - {at: "s2+0.6", box: [173, 99, 1706, 827], fade_ms: 480, ease: enter, out: "s2%45", out_ms: 480}
+          - {at: "s2%45+0.6", box: [223, 335, 1699, 745], fade_ms: 480, ease: enter, out: "s3", out_ms: 480}
+          - {at: "s3+0.6", box: [488, 200, 1756, 646], fade_ms: 480, ease: enter, out: 10.9, out_ms: 480}
+        z: 40
+      # the step panel grows upward as rows arrive; rows ride up with it (pitch 40, top + 24)
+      - {kind: panel, box: [1272, 780, 1824, 848], color: surface, alpha: 0.92, radius: 12, border: {color: ink, alpha: 0.12}, in: 1.40, anim_ms: 240, ease: enter, move: [{at: "s2+0.6", box: [1272, 740, 1824, 848], over_ms: 240, ease: move}, {at: "s2%45+0.6", box: [1272, 700, 1824, 848], over_ms: 240, ease: move}, {at: "s3+0.6", box: [1272, 660, 1824, 848], over_ms: 240, ease: move}], z: 60}
+      - {kind: label, <<: *t_body_xs, color: orange, text: "1 Nova Pro proposes the move", pos: [1296, 804], in: 1.40, <<: *m_enter_left, recolor: [{at: "s2+0.6", <<: *m_recolor_dim}], move: [{at: "s2+0.6", pos: [1296, 764], over_ms: 240, ease: move}, {at: "s2%45+0.6", pos: [1296, 724], over_ms: 240, ease: move}, {at: "s3+0.6", pos: [1296, 684], over_ms: 240, ease: move}], z: 62}
+      - {kind: label, <<: *t_body_xs, color: orange, text: "2 Strands Agents runs the tools", pos: [1296, 804], in: "s2+0.6", <<: *m_enter_left, recolor: [{at: "s2%45+0.6", <<: *m_recolor_dim}], move: [{at: "s2%45+0.6", pos: [1296, 764], over_ms: 240, ease: move}, {at: "s3+0.6", pos: [1296, 724], over_ms: 240, ease: move}], z: 62}
+      - {kind: label, <<: *t_body_xs, color: orange, text: "3 Decider 2B judges, before the tool runs", pos: [1296, 804], in: "s2%45+0.6", <<: *m_enter_left, recolor: [{at: "s3+0.6", <<: *m_recolor_dim}], move: [{at: "s3+0.6", pos: [1296, 764], over_ms: 240, ease: move}], z: 62}
+      - {kind: label, <<: *t_body_xs, color: orange, text: "4 On-car deadman: stops without the laptop", pos: [1296, 804], in: "s3+0.6", <<: *m_enter_left, z: 62}
+      - {<<: *lt_plate, box: [80, 860, 321, 920], in: 0}
+      - {kind: label, <<: *t_lt, color: ink, pos: [116, 878], text: "Architecture", z: 93}
+      - *badge_plated
+      - *rail
+    pointers:
+      # focus frames: cyan, the deadman node red (the physical layer); each exits as the next move begins
+      - {kind: box, from: [24, 68], to: [1896, 374], color: cyan, width: 2, radius: 8, in: 1.40, draw_ms: 480, ease: draw, out: "s2", <<: *m_exit, z: 45}
+      - {kind: box, from: [173, 99], to: [778, 345], color: cyan, width: 2, radius: 8, in: "s2+0.6", draw_ms: 480, ease: draw, out: "s2%45", <<: *m_exit, z: 45}
+      - {kind: box, from: [173, 380], to: [1706, 827], color: cyan, width: 2, radius: 8, in: "s2+0.66", draw_ms: 480, ease: draw, out: "s2%45", <<: *m_exit, z: 45}
+      - {kind: box, from: [223, 335], to: [1699, 745], color: cyan, width: 2, radius: 8, in: "s2%45+0.6", draw_ms: 480, ease: draw, out: "s3", <<: *m_exit, z: 45}
+      - {kind: box, from: [488, 200], to: [1756, 646], color: red, width: 2, radius: 8, in: "s3+0.6", draw_ms: 480, ease: draw, out: 10.9, <<: *m_exit, z: 45}
+      # number badges: disc ink, digit bg, at the group box's top-left plus (24, 24)
+      - {kind: badge, from: [96, 96], r: 18, color: ink, label: "1", label_color: bg, label_font: sans_medium, size: 22, in: 1.46, draw_ms: 240, ease: draw, out: "s2", <<: *m_exit, z: 46}
+      - {kind: badge, from: [197, 123], r: 18, color: ink, label: "2", label_color: bg, label_font: sans_medium, size: 22, in: "s2+0.72", draw_ms: 240, ease: draw, out: "s2%45", <<: *m_exit, z: 46}
+      - {kind: badge, from: [247, 359], r: 18, color: ink, label: "3", label_color: bg, label_font: sans_medium, size: 22, in: "s2%45+0.66", draw_ms: 240, ease: draw, out: "s3", <<: *m_exit, z: 46}
+      - {kind: badge, from: [512, 224], r: 18, color: ink, label: "4", label_color: bg, label_font: sans_medium, size: 22, in: "s3+0.66", draw_ms: 240, ease: draw, out: 10.9, <<: *m_exit, z: 46}
+      - {kind: badge, from: [120, 96], r: 18, color: ink, label: "1", label_color: bg, label_font: sans_medium, size: 22, in: 11.40, draw_ms: 240, ease: draw, z: 46}
+      - {kind: badge, from: [120, 352], r: 18, color: ink, label: "2", label_color: bg, label_font: sans_medium, size: 22, in: 11.46, draw_ms: 240, ease: draw, z: 46}
+      - {kind: badge, from: [480, 352], r: 18, color: ink, label: "3", label_color: bg, label_font: sans_medium, size: 22, in: 11.52, draw_ms: 240, ease: draw, z: 46}
+      - {kind: badge, from: [1344, 552], r: 18, color: ink, label: "4", label_color: bg, label_font: sans_medium, size: 22, in: 11.58, draw_ms: 240, ease: draw, z: 46}
+      # the command's path across the full figure; the last 60 px and the end dot are red (the physical layer)
+      - {kind: path, points: [[398, 184], [253, 327], [421, 396], [457, 396], [948, 396], [1320, 396], [1320, 621]], width: 2, color: cyan, in: 11.40, draw_ms: 720, ease: draw, tail: {px: 60, color: red}, end_dot: {r: 5, color: red}, z: 47}
+
+  # ---------------------------------------------------------------- 5  THE DECISION 1 OF 4: what is asked, and what comes back
+  # VO sentences: s1 "Five typed questions."  s2 "A noul is a yes or no, answered as a probability, so code can
+  # compare it to a number."  s3 "Three are about the words: inside the envelope, grounded in what the user
+  # said, and what was asked."  s4 "Two are about the frame: a person visible, and what is ahead."
+  - id: s05-questions
+    kind: card
+    duration: auto
+    min: 18.6
+    vo_offset: 1.0
+    vo: "Five typed questions. A noul is a yes or no, answered as a probability, so code can compare it to a number. Three are about the words: inside the envelope, grounded in what the user said, and what was asked. Two are about the frame: a person visible, and what is ahead."
+    transition: {kind: push_left, duration: 0.72, ease: camera, inside: true}
+    text:
+      - {<<: *kicker, text: "THE DECISION  .  1 OF 4"}
+      - {kind: title, <<: *t_title, text: "Five typed questions, two requests", color: ink, pos: [96, 104], in: "s1", <<: *m_enter, z: 92}
+      - *divider
+      # the skeleton: five names, a count of five, recolouring in place on their rows
+      - {kind: mono, <<: *t_mono_code, color: ink-mute, text: "inside_envelope", pos: [120, 248], in: "s1", <<: *m_enter_left, recolor: [{at: "s3%28+0.06", color: ink, over_ms: 240, ease: move}], z: 40}
+      - {kind: mono, <<: *t_mono_code, color: ink-mute, text: "args_grounded", pos: [120, 348], in: "s1+0.06", <<: *m_enter_left, recolor: [{at: "s3%44+0.06", color: orange, over_ms: 240, ease: move}], accent_group: grounded, z: 40}
+      - {kind: mono, <<: *t_mono_code, color: ink-mute, text: "intent", pos: [120, 448], in: "s1+0.12", <<: *m_enter_left, recolor: [{at: "s3%78+0.06", color: ink, over_ms: 240, ease: move}], z: 40}
+      - {kind: mono, <<: *t_mono_code, color: ink-mute, text: "person", pos: [120, 604], in: "s1+0.18", <<: *m_enter_left, recolor: [{at: "s4%42+0.06", color: ink, over_ms: 240, ease: move}], z: 40}
+      - {kind: mono, <<: *t_mono_code, color: ink-mute, text: "frame", pos: [120, 672], in: "s1+0.24", <<: *m_enter_left, recolor: [{at: "s4%67+0.06", color: ink, over_ms: 240, ease: move}], z: 40}
+      # request 1
+      - {kind: label, <<: *t_caption, color: ink-dim, text: "Request 1: the words", pos: [96, 200], in: "s3", <<: *m_enter_left, z: 50}
+      - {kind: panel, box: [96, 244, 98, 316], color: cyan, alpha: 1.0, radius: 0, in: "s3%28", <<: *m_draw_bar, z: 50}
+      - {kind: label, <<: *t_body_s, color: ink, text: "Is the proposed movement inside the envelope the operator briefed?", pos: [420, 244], width: 674, in: "s3%28+0.06", <<: *m_enter_left, z: 50}
+      - {kind: panel, box: [96, 344, 98, 416], color: orange, alpha: 1.0, radius: 0, in: "s3%44", <<: *m_draw_bar, accent_group: grounded, z: 50}
+      - {kind: label, <<: *t_body_s, color: ink, text: "Are the tool's argument values grounded in what the user actually said?", pos: [420, 344], width: 674, in: "s3%44+0.06", <<: *m_enter_left, z: 50}
+      - {kind: panel, box: [96, 444, 98, 516], color: cyan, alpha: 1.0, radius: 0, in: "s3%78", <<: *m_draw_bar, z: 50}
+      - {kind: label, <<: *t_body_s, color: ink, text: "What did the user most recently ask the robot to do?", pos: [420, 444], width: 674, in: "s3%78+0.06", <<: *m_enter_left, z: 50}
+      # request 2
+      - {kind: label, <<: *t_caption, color: ink-dim, text: "Request 2: the frame, 480x360 JPEG", pos: [96, 556], in: "s4", <<: *m_enter_left, z: 50}
+      - {kind: panel, box: [96, 600, 98, 636], color: cyan, alpha: 1.0, radius: 0, in: "s4%42", <<: *m_draw_bar, z: 50}
+      - {kind: label, <<: *t_body_s, color: ink, text: "Is a person visible in the frame?", pos: [420, 600], width: 674, in: "s4%42+0.06", <<: *m_enter_left, z: 50}
+      - {kind: panel, box: [96, 668, 98, 740], color: cyan, alpha: 1.0, radius: 0, in: "s4%67", <<: *m_draw_bar, z: 50}
+      - {kind: label, <<: *t_body_s, color: ink, text: "What is directly in front of the car in this camera frame?", pos: [420, 668], width: 674, in: "s4%67+0.06", <<: *m_enter_left, z: 50}
+      # what comes back
+      - {kind: label, <<: *t_caption, color: ink-dim, text: "What comes back", pos: [1118, 200], in: "s2", <<: *m_enter_right, z: 60}
+      - {kind: label, <<: *t_body, color: ink, text: "noul = a yes/no question", pos: [1118, 244], in: "s2", <<: *m_enter_right, z: 60}
+      - {kind: label, <<: *t_body, color: ink, text: "answered as a probability, 0 to 1, not a sentence", pos: [1118, 316], width: 706, in: "s2%37", <<: *m_enter_right, z: 60}
+      - {kind: label, <<: *t_body, color: ink, text: "so code can compare it to a number", pos: [1118, 424], in: "s2%58", <<: *m_enter_right, z: 60}
+      # the probability scale, met for the first time
+      - {kind: mono, <<: *t_mono_s, color: ink-dim, text: "0.0", pos: [1118, 504], in: "s2%58+0.3", <<: *m_enter, z: 65}
+      - {kind: mono, <<: *t_mono_s, color: ink-dim, text: "1.0", pos: [1824, 504], anchor: tr, in: "s2%58+0.3", <<: *m_enter, z: 65}
+      - {kind: panel, box: [1118, 538, 1824, 542], color: ink-mute, alpha: 1.0, radius: 0, in: "s2%58+0.3", anim: grow_right, anim_ms: 720, ease: draw, z: 65}
+      - *badge
+      - *rail
+
+  # ---------------------------------------------------------------- 6  THE DECISION 2 OF 4: from a probability to an action
+  # VO sentences: s1 "Two thresholds make the action."  s2 "0.65 or above: a confident yes."  s3 "0.35 or below:
+  # a confident no."  s4 "Between them, the operator is asked."  s5 "A person in frame: Deny."  s6 "An invented
+  # distance: Guide, re-plan."  s7 "Unsure: Confirm."  s8 "Otherwise: Proceed."  s9 "A late or missing decider
+  # is a Deny: the gate never fails open."
+  - id: s06-rows
+    kind: card
+    duration: auto
+    min: 22.0
+    vo_offset: 0.3
+    vo: "Two thresholds make the action. Zero point six five or above: a confident yes. Zero point three five or below: a confident no. Between them, the operator is asked. A person in frame: Deny. An invented distance: Guide, re-plan. Unsure: Confirm. Otherwise: Proceed. A late or missing decider is a Deny: the gate never fails open."
+    text:
+      - {<<: *kicker, text: "THE DECISION  .  2 OF 4"}
+      - {kind: title, <<: *t_title, text: "From a probability to an action", color: ink, pos: [96, 104], z: 92}
+      - {<<: *divider, move: [{at: "s1", box: [1106, 340, 1107, 848], over_ms: 720, ease: move}]}
+      # the scale carried over from shot 5 travels to full width; the zones recolour it on their words
+      - {kind: mono, <<: *t_mono_s, color: ink-dim, text: "0.0", pos: [1118, 504], move: [{at: "s1", pos: [96, 222], over_ms: 720, ease: move}], z: 40}
+      - {kind: mono, <<: *t_mono_s, color: ink-dim, text: "1.0", pos: [1824, 504], anchor: tr, move: [{at: "s1", pos: [1824, 222], over_ms: 720, ease: move}], z: 40}
+      - {kind: panel, box: [1118, 538, 1824, 542], color: ink-mute, alpha: 1.0, radius: 0, move: [{at: "s1", box: [96, 259, 1824, 265], over_ms: 720, ease: move}], recolor: [{at: "s1", color: ink-mute, alpha: 0.35, over_ms: 720, ease: move}], z: 40}
+      - {kind: panel, box: [1219, 259, 1824, 265], color: green, alpha: 0.0, radius: 0, recolor: [{at: "s2%60", color: green, alpha: 1.0, over_ms: 240, ease: move}], z: 41}
+      - {kind: panel, box: [96, 259, 701, 265], color: red, alpha: 0.0, radius: 0, recolor: [{at: "s3%60", color: red, alpha: 1.0, over_ms: 240, ease: move}], z: 41}
+      - {kind: panel, box: [701, 259, 1219, 265], color: cyan, alpha: 0.0, radius: 0, recolor: [{at: "s4%50", color: cyan, alpha: 1.0, over_ms: 240, ease: move}], z: 41}
+      # ticks and values, then the zone labels
+      - {kind: panel, box: [1218, 252, 1220, 272], color: green, alpha: 1.0, radius: 0, in: "s2", <<: *m_draw_bar, move: [{at: "s4", box: [1218, 252, 1220, 280], over_ms: 240, ease: draw}, {at: "s4+0.24", box: [1218, 252, 1220, 272], over_ms: 240, ease: move}], recolor: [{at: "s4", color: cyan, over_ms: 240, ease: move}, {at: "s4+0.24", color: green, over_ms: 240, ease: move}], z: 42}
+      - {kind: mono, <<: *t_mono_s, color: green, text: "0.65", pos: [1219, 222], anchor: tc, in: "s2", <<: *m_enter, z: 42}
+      - {kind: label, <<: *t_body, color: green, text: "0.65 or above: confident yes", pos: [1521, 288], anchor: tc, in: "s2%60", <<: *m_enter, z: 42}
+      - {kind: mono, <<: *t_mono_s, color: green, caps: true, track: 0.04, text: "Proceed", pos: [1521, 334], anchor: tc, in: "s2%60+0.06", <<: *m_enter, z: 42}
+      - {kind: panel, box: [700, 252, 702, 272], color: red, alpha: 1.0, radius: 0, in: "s3", <<: *m_draw_bar, move: [{at: "s4", box: [700, 252, 702, 280], over_ms: 240, ease: draw}, {at: "s4+0.24", box: [700, 252, 702, 272], over_ms: 240, ease: move}], recolor: [{at: "s4", color: cyan, over_ms: 240, ease: move}, {at: "s4+0.24", color: red, over_ms: 240, ease: move}], z: 42}
+      - {kind: mono, <<: *t_mono_s, color: red, text: "0.35", pos: [701, 222], anchor: tc, in: "s3", <<: *m_enter, z: 42}
+      - {kind: label, <<: *t_body, color: red, text: "0.35 or below: confident no", pos: [398, 288], anchor: tc, in: "s3%60", <<: *m_enter, z: 42}
+      - {kind: mono, <<: *t_mono_s, color: red, caps: true, track: 0.04, text: "Deny", pos: [398, 334], anchor: tc, in: "s3%60+0.06", <<: *m_enter, z: 42}
+      - {kind: label, <<: *t_body, color: cyan, text: "between: ask the operator", pos: [960, 288], anchor: tc, in: "s4%50", <<: *m_enter, z: 42}
+      - {kind: mono, <<: *t_mono_s, color: cyan, caps: true, track: 0.04, text: "Confirm", pos: [960, 334], anchor: tc, in: "s4%50+0.06", <<: *m_enter, z: 42}
+      # the rows, pitch 84: bar, case from the left, chip from the right, consequence
+      - {kind: panel, box: [96, 370, 98, 410], color: red, alpha: 1.0, radius: 0, in: "s5", <<: *m_draw_bar, z: 50}
+      - {kind: label, <<: *t_body, color: ink, text: "a person in frame", pos: [120, 372], in: "s5+0.06", <<: *m_enter_left, z: 50}
+      - {<<: *chip, text: "DENY", verdict: Deny, pos: [1132, 376], plate: {pad: 14, y: [370, 410]}, in: "s5+0.06", glow: {color: red, radius: 18, strength: 0.45, settle: {to: 0.2, over_ms: 480}}}
+      - {kind: panel, box: [96, 454, 98, 494], color: amber, alpha: 1.0, radius: 0, in: "s6", <<: *m_draw_bar, z: 50}
+      - {kind: label, <<: *t_body, color: ink, text: "an invented distance", pos: [120, 456], in: "s6+0.06", <<: *m_enter_left, z: 50}
+      - {<<: *chip, text: "GUIDE", verdict: Guide, pos: [1132, 460], plate: {pad: 14, y: [454, 494]}, in: "s6+0.06", glow: {color: amber, radius: 18, strength: 0.45, settle: {to: 0.2, over_ms: 480}}}
+      - {kind: label, <<: *t_body_s, color: ink-dim, text: "re-plan", pos: [1244, 460], in: "s6+0.12", <<: *m_enter_right, z: 50}
+      - {kind: panel, box: [96, 538, 98, 578], color: cyan, alpha: 1.0, radius: 0, in: "s7", <<: *m_draw_bar, z: 50}
+      - {kind: label, <<: *t_body, color: ink, text: "unsure, in the band", pos: [120, 540], in: "s7+0.06", <<: *m_enter_left, z: 50}
+      - {<<: *chip, text: "CONFIRM", verdict: Confirm, pos: [1132, 544], plate: {pad: 14, y: [538, 578]}, in: "s7+0.06", glow: {color: cyan, radius: 18, strength: 0.45, settle: {to: 0.2, over_ms: 480}}}
+      - {kind: label, <<: *t_body_s, color: ink-dim, text: "ask the operator", pos: [1274, 544], in: "s7+0.12", <<: *m_enter_right, z: 50}
+      - {kind: panel, box: [96, 622, 98, 662], color: green, alpha: 1.0, radius: 0, in: "s8", <<: *m_draw_bar, z: 50}
+      - {kind: label, <<: *t_body, color: ink, text: "otherwise", pos: [120, 624], in: "s8+0.06", <<: *m_enter_left, z: 50}
+      - {<<: *chip, text: "PROCEED", verdict: Proceed, pos: [1132, 628], plate: {pad: 14, y: [622, 662]}, in: "s8+0.06", glow: {color: green, radius: 18, strength: 0.45, settle: {to: 0.2, over_ms: 480}}}
+      - {kind: panel, box: [96, 706, 98, 746], color: red, alpha: 1.0, radius: 0, in: "s9", <<: *m_draw_bar, z: 50}
+      - {kind: label, <<: *t_body, color: ink, text: "a late or missing decider", pos: [120, 708], in: "s9+0.06", <<: *m_enter_left, z: 50}
+      - {<<: *chip, text: "DENY", verdict: Deny, pos: [1132, 712], plate: {pad: 14, y: [706, 746]}, in: "s9+0.06", glow: {color: red, radius: 18, strength: 0.45, settle: {to: 0.2, over_ms: 480}}}
+      - {kind: label, <<: *t_body_s, color: ink, text: "The gate never fails open.", pos: [1118, 764], in: "s9%62", <<: *m_enter_right, z: 60}
+      - {kind: label, <<: *t_body_xs, color: ink-dim, text: "Row 7 on the car: Confirm (the marshal may approve\na bigger hop); in the library: Guide.", pos: [120, 780], width: 974, nowrap: true, in: "s9%62+0.24", <<: *m_enter_left, z: 60}
+      - *badge
+      - *rail
+
+  # ---------------------------------------------------------------- 7  THE DECISION 3 OF 4: one real request, one real answer
+  # VO sentences: s1 "The user said twenty centimetres; the tool call says zero point two."  s2 "Grounded: 0.91."
+  # s3 "Inside the envelope: 0.95."  s4 "Intent: move forward."  s5 "A Proceed, in 583 ms."
+  - id: s07-one-request
+    kind: card
+    duration: auto
+    min: 13.0
+    vo_offset: 0.3
+    vo: "The user said twenty centimetres; the tool call says zero point two. Grounded: zero point nine one. Inside the envelope: zero point nine five. Intent: move forward. A Proceed, in five hundred eighty three milliseconds."
+    text:
+      - {<<: *kicker, text: "THE DECISION  .  3 OF 4"}
+      - {kind: title, <<: *t_title, text: "One real request, one real answer", color: ink, pos: [96, 104], in: "s1", <<: *m_enter, z: 92}
+      - *divider
+      # the request: keys ink-dim, values ink; Mono 28 / 44 from y 248
+      - {kind: mono, <<: *t_mono_s, color: ink-dim, text: "REQUEST (state)", pos: [96, 200], in: "s1", <<: *m_enter_left, z: 40}
+      - {kind: mono, <<: *t_mono, color: ink-dim, text: "\"conversation\": ", pos: [96, 248], in: "s1", <<: *m_enter_left, z: 40}
+      - {kind: mono, <<: *t_mono, color: ink, text: "\"user: Move forward 20 centimetres.\"", pos: [368, 248], in: "s1", <<: *m_enter_left, highlight: [{match: "20 centimetres.", color: cyan, style: underline, at: "s1%35", draw_ms: 240, ease: draw}], z: 40}
+      - {kind: mono, <<: *t_mono, color: ink-dim, text: "\"command\": ", pos: [96, 292], in: "s1%42", <<: *m_enter_left, z: 40}
+      - {kind: mono, <<: *t_mono, color: ink, text: "{\"tool\": \"move\",", pos: [283, 292], in: "s1%42", <<: *m_enter_left, z: 40}
+      - {kind: mono, <<: *t_mono, color: ink-dim, text: "  \"arguments\": ", pos: [96, 336], in: "s1%42+0.06", <<: *m_enter_left, z: 40}
+      - {kind: mono, <<: *t_mono, color: ink, text: "{\"heading_deg\": 0, \"distance_m\": 0.2}},", pos: [351, 336], in: "s1%42+0.06", <<: *m_enter_left, highlight: [{match: "0.2", color: cyan, style: underline, at: "s1%80", draw_ms: 240, ease: draw}], z: 40}
+      - {kind: mono, <<: *t_mono, color: ink-dim, text: "\"envelope\": ", pos: [96, 380], in: "s3", <<: *m_enter_left, z: 40}
+      - {kind: mono, <<: *t_mono, color: ink, text: "\"distance_m <= 0.5 per call,", pos: [300, 380], in: "s3", <<: *m_enter_left, z: 40}
+      - {kind: mono, <<: *t_mono, color: ink, text: "  |heading_deg| <= 90\",", pos: [96, 424], in: "s3+0.06", <<: *m_enter_left, z: 40}
+      - {kind: mono, <<: *t_mono, color: ink-dim, text: "\"deterministic_check\": ", pos: [96, 468], in: "s3+0.12", <<: *m_enter_left, z: 40}
+      - {kind: mono, <<: *t_mono, color: ink, text: "\"ok\"", pos: [487, 468], in: "s3+0.12", <<: *m_enter_left, z: 40}
+      # the answer: a quiet setup beat, then rows on their words
+      - {kind: mono, <<: *t_mono_s, color: ink-dim, text: "ANSWER", pos: [1118, 200], in: "s1%80+0.3", <<: *m_enter_right, z: 50}
+      - {kind: mono, <<: *t_mono_xs, color: green, text: "0.65", pos: [1604, 222], anchor: tc, in: "s1%80+0.3", <<: *m_enter, z: 58}
+      # bar tracks tinted with the three zones (red, cyan, green at 10 percent)
+      - {kind: panel, box: [1370, 262, 1496, 290], color: red, alpha: 0.10, radius: 0, in: "s1%80+0.3", anim_ms: 480, ease: enter, z: 50}
+      - {kind: panel, box: [1496, 262, 1604, 290], color: cyan, alpha: 0.10, radius: 0, in: "s1%80+0.3", anim_ms: 480, ease: enter, z: 50}
+      - {kind: panel, box: [1604, 262, 1730, 290], color: green, alpha: 0.10, radius: 0, in: "s1%80+0.3", anim_ms: 480, ease: enter, z: 50}
+      - {kind: panel, box: [1370, 362, 1496, 390], color: red, alpha: 0.10, radius: 0, in: "s1%80+0.3", anim_ms: 480, ease: enter, z: 50}
+      - {kind: panel, box: [1496, 362, 1604, 390], color: cyan, alpha: 0.10, radius: 0, in: "s1%80+0.3", anim_ms: 480, ease: enter, z: 50}
+      - {kind: panel, box: [1604, 362, 1730, 390], color: green, alpha: 0.10, radius: 0, in: "s1%80+0.3", anim_ms: 480, ease: enter, z: 50}
+      - {kind: panel, box: [1370, 462, 1496, 490], color: red, alpha: 0.10, radius: 0, in: "s1%80+0.3", anim_ms: 480, ease: enter, z: 50}
+      - {kind: panel, box: [1496, 462, 1604, 490], color: cyan, alpha: 0.10, radius: 0, in: "s1%80+0.3", anim_ms: 480, ease: enter, z: 50}
+      - {kind: panel, box: [1604, 462, 1730, 490], color: green, alpha: 0.10, radius: 0, in: "s1%80+0.3", anim_ms: 480, ease: enter, z: 50}
+      - {kind: mono, <<: *t_mono_code, color: ink, text: "args_grounded", pos: [1118, 272], in: "s2", <<: *m_enter_right, z: 50}
+      - {kind: mono, <<: *t_mono_code, color: ink, text: "0.907", pos: [1824, 272], anchor: tr, in: "s2%20+0.6", <<: *m_enter, z: 55}
+      - {kind: mono, <<: *t_mono_code, color: ink, text: "inside_envelope", pos: [1118, 372], in: "s3", <<: *m_enter_right, z: 50}
+      - {kind: mono, <<: *t_mono_code, color: ink, text: "0.948", pos: [1824, 372], anchor: tr, in: "s3%43+0.6", <<: *m_enter, z: 55}
+      - {kind: mono, <<: *t_mono_code, color: ink, text: "intent", pos: [1118, 472], in: "s4", <<: *m_enter_right, z: 50}
+      - {kind: mono, <<: *t_mono_s, color: ink-dim, text: "move_forward", pos: [1118, 508], in: "s4", <<: *m_enter_right, z: 50}
+      - {kind: mono, <<: *t_mono_code, color: ink, text: "0.959", pos: [1824, 472], anchor: tr, in: "s4%33+0.6", <<: *m_enter, z: 55}
+      - {<<: *chip, text: "PROCEED", verdict: Proceed, pos: [1132, 590], plate: {pad: 14, y: [584, 624]}, in: "s5", glow: {color: green, radius: 18, strength: 0.45, settle: {to: 0.2, over_ms: 480}}, z: 70}
+      - {kind: counter, <<: *t_title_s, color: ink, text: "{n}", pos: [1470, 580], anchor: tr, in: "s5%38", count: {from: 0, to: 583, over: 0.6}, ease: count, count_alpha: 0.55, z: 70}
+      - {kind: label, <<: *t_body, color: ink-dim, text: "ms", pos: [1484, 592], in: "s5%38", <<: *m_enter, z: 70}
+      - {<<: *pill, text: "RECORDED 2026-10-22, REAL DECIDER + NOVA PRO"}
+      - *badge
+      - *rail
+    pointers:
+      - {kind: dotted, from: [1604, 252], to: [1604, 548], color: green, width: 1, dash: 4, in: "s1%80+0.3", z: 58}
+      - {kind: bar, from: [1370, 262], to: [1697, 290], color: ink-dim, color_after: green, threshold_x: 1604, grow: 0.6, ease: draw, radius: 4, in: "s2%20", z: 55}
+      - {kind: bar, from: [1370, 362], to: [1711, 390], color: ink-dim, color_after: green, threshold_x: 1604, grow: 0.6, ease: draw, radius: 4, in: "s3%43", z: 55}
+      - {kind: bar, from: [1370, 462], to: [1715, 490], color: ink-dim, color_after: green, threshold_x: 1604, grow: 0.6, ease: draw, radius: 4, in: "s4%33", z: 55}
+      # the evidence leader from "0.2" to the grounded bar; it crosses the divider on purpose
+      - {kind: leader, from: [984, 370], to: [1360, 276], width: 1.5, dot: 5, color: cyan, alpha: 0.7, in: "s2", draw_ms: 360, ease: draw, ping: true, z: 60}
+
+  # ---------------------------------------------------------------- 8  THE DECISION 4 OF 4: the recorded run, step by step
+  # VO sentences: s1 "I type: Go."  s2 "Go carries no distance, so Nova Pro guesses two metres."  s3 "The arithmetic
+  # check fails, grounded reads 0.18: Guide, re-plan."  s4 "Nova Pro proposes half a metre."  s5 "Grounded reads
+  # 0.40, inside the unsure band: Confirm, the operator is asked."  s6 "The scripted operator says no."
+  # s7 "The car never moved on a guessed number."  The step label is the only orange; the terminal's
+  # underlines take the evidence (cyan), zone (red, cyan) and verdict (amber, cyan) colours.
+  - id: s08-recorded-run
+    kind: terminal
+    chrome: false
+    panel: {box: [96, 200, 1094, 848], color: surface, radius: 12, header: {h: 32, color: surface2, dots: true}, shadow: {blur: 40, alpha: 0.5, dy: 12}, border: {color: ink, alpha: 0.12}, inner_shadow: true}
+    pos: [120, 256]
+    width: 950
+    bottom: 836
+    size: 24
+    leading: 32
+    cps: 80                        # machine rows; the two human lines are 24 cps with a 120 ms pause
+    line_pause: 0.05
+    start: 0.3
+    cursor: true
+    cursor_hold: true
+    cursor_hide_fast: 60
+    cursor_blink_ms: 530
+    cursor_w: 13
+    cursor_h: 26
+    schedule:                      # each line types from its clause; later lines wait for the earlier ones
+      - {line: 0, at: "s1%67", cps: 24, delay: 0.12}
+      - {line: 1, at: "s2%40"}
+      - {line: 2, at: "s3"}
+      - {line: 3, at: "s3%33"}
+      - {line: 4, at: "s3%83"}
+      - {line: 5, at: "s4"}
+      - {line: 6, at: "s5"}
+      - {line: 7, at: "s5%67"}
+      - {line: 12, at: "s6", cps: 24, delay: 0.12}
+      - {line: 13, at: "s7"}
+    lines:
+      - "USER : Go."
+      - '{"arguments": {"heading_deg": 0, "distance_m": 2},'
+      - ' "deterministic_check": "distance_m 2 > 0.5",'
+      - ' "args_grounded": 0.18, "verdict": "Guide",'
+      - ' "reason": "outside envelope: distance_m 2 > 0.5"}'
+      - '{"arguments": {"heading_deg": 0, "distance_m": 0.5},'
+      - ' "deterministic_check": "ok", "args_grounded": 0.404,'
+      - ' "verdict": "Confirm",'
+      - ' "reason": "unclear: inside=0.88 grounded=0.40"}'
+      - "CONFIRM (operator asked): The decider is unsure about"
+      - "  this move (inside envelope p=0.88, grounded p=0.40)."
+      - "  Allow it?"
+      - "OPERATOR: no (this cell auto-answers False)"
+      - "AGENT: (thinking omitted) The move could not be"
+      - "  completed because the decider is unsure about it,"
+      - "  despite it being within the allowed envelope."
+      - "  Please provide further instructions or"
+      - "  clarification."
+    highlight:                     # underlines 2 px, 6 px under the baseline, drawing on over 240 ms
+      - {match: '"distance_m": 2', line: 1, color: cyan, style: underline, at: "s2%40+0.4", settle_at: "s3+0.4", settle_to: 0.5}
+      - {match: '"distance_m 2 > 0.5"', line: 2, color: cyan, style: underline, at: "s3+0.4", settle_at: "s4+0.4", settle_to: 0.5}
+      - {match: "0.18", line: 3, color: red, style: underline, at: "s3%33+0.4", settle_at: "s3%83", settle_to: 0.5}
+      - {match: '"Guide"', line: 3, color: amber, style: underline, at: "s3%83"}
+      - {match: '"distance_m": 0.5', line: 5, color: cyan, style: underline, at: "s4+0.4", settle_at: "s5+0.4", settle_to: 0.5}
+      - {match: "0.404", line: 6, color: cyan, style: underline, at: "s5+0.4", settle_at: "s5%67+0.4", settle_to: 0.5}
+      - {match: '"deterministic_check": "ok"', line: 6, color: ink, alpha: 0.6, style: underline, at: "s5%40", recolor: false}
+      - {match: '"Confirm"', line: 7, color: cyan, style: underline, at: "s5%67+0.4"}
+      - {match: "OPERATOR: no (this cell auto-answers False)", line: 12, color: cyan}
+    duration: auto
+    min: 26.5
+    vo_offset: 0.3
+    vo: "I type: Go. Go carries no distance, so Nova Pro guesses two metres. The arithmetic check fails, grounded reads zero point one eight: Guide, re-plan. Nova Pro proposes half a metre. Grounded reads zero point four zero, inside the unsure band: Confirm, the operator is asked. The scripted operator says no. The car never moved on a guessed number."
+    text:
+      - {<<: *lt_bar_static}
+      - {<<: *kicker, text: "THE DECISION  .  4 OF 4"}
+      - *divider
+      # the step timeline: one orange at a time (the node and its label are one step)
+      - {kind: label, <<: *t_body, color: orange, text: "\"Go.\" carries no distance", pos: [1160, 236], in: "s2", <<: *m_enter_left, recolor: [{at: "s2%40", <<: *m_recolor_dim}], accent_group: step1, z: 62}
+      - {kind: label, <<: *t_body, color: orange, text: "Nova Pro guesses 2 m", pos: [1160, 296], in: "s2%40", <<: *m_enter_left, recolor: [{at: "s3", <<: *m_recolor_dim}], accent_group: step2, z: 62}
+      - {kind: label, <<: *t_body, color: orange, text: "check fails: 2 > 0.5; grounded 0.18", pos: [1160, 356], in: "s3", <<: *m_enter_left, recolor: [{at: "s3%83", <<: *m_recolor_dim}], accent_group: step3, z: 62}
+      - {kind: label, <<: *t_body, color: orange, text: "GUIDE: re-plan", pos: [1160, 416], in: "s3%83", <<: *m_enter_left, recolor: [{at: "s4", <<: *m_recolor_dim}], accent_group: step4, z: 62}
+      - {kind: label, <<: *t_body, color: orange, text: "Nova Pro proposes 0.5 m", pos: [1160, 476], in: "s4", <<: *m_enter_left, recolor: [{at: "s5", <<: *m_recolor_dim}], accent_group: step5, z: 62}
+      - {kind: label, <<: *t_body, color: orange, text: "grounded 0.40: the unsure band", pos: [1160, 536], in: "s5", <<: *m_enter_left, recolor: [{at: "s5%67", <<: *m_recolor_dim}], accent_group: step6, z: 62}
+      - {kind: label, <<: *t_body, color: orange, text: "CONFIRM: the operator is asked", pos: [1160, 596], in: "s5%67", <<: *m_enter_left, recolor: [{at: "s6", <<: *m_recolor_dim}], accent_group: step7, z: 62}
+      - {kind: label, <<: *t_body, color: orange, text: "scripted operator: no", pos: [1160, 656], in: "s6", <<: *m_enter_left, recolor: [{at: "s7+0.7", <<: *m_recolor_dim}], accent_group: step8, z: 62}
+      - {kind: panel, box: [1118, 740, 1121, 776], color: orange, alpha: 1.0, radius: 0, in: "s7+0.7", <<: *m_draw_bar, accent_group: caption, z: 70}
+      - {kind: label, <<: *t_label_l, color: ink, text: "A guessed distance moved nothing.", pos: [1140, 736], in: "s7+0.76", <<: *m_enter_left, z: 70}
+      - {kind: label, <<: *t_lt, color: ink, pos: [116, 878], text: "Recorded run, 2026-10-22: the real decider judges Nova Pro", z: 93}
+      - {<<: *pill, text: "RECORDED 2026-10-22, REAL DECIDER + NOVA PRO"}
+      - *badge
+      - *rail
+    pointers:
+      - {kind: line, from: [1134, 256], to: [1134, 256], width: 2, color: ink, alpha: 0.12, in: "s2", draw_ms: 240, ease: draw, stages: [{to: [1134, 316], at: "s2%40"}, {to: [1134, 376], at: "s3"}, {to: [1134, 436], at: "s3%83"}, {to: [1134, 496], at: "s4"}, {to: [1134, 556], at: "s5"}, {to: [1134, 616], at: "s5%67"}, {to: [1134, 676], at: "s6"}], z: 60}
+      - {kind: node, from: [1134, 256], r: 6, color: orange, in: "s2", draw_ms: 240, ease: draw, ring: {r: 12, alpha: 0.5, width: 1}, recolor: [{at: "s2%40", <<: *m_recolor_dim}], accent_group: step1, z: 61}
+      - {kind: node, from: [1134, 316], r: 6, color: orange, in: "s2%40", draw_ms: 240, ease: draw, ring: {r: 12, alpha: 0.5, width: 1}, recolor: [{at: "s3", <<: *m_recolor_dim}], accent_group: step2, z: 61}
+      - {kind: node, from: [1134, 376], r: 6, color: orange, in: "s3", draw_ms: 240, ease: draw, ring: {r: 12, alpha: 0.5, width: 1}, recolor: [{at: "s3%83", <<: *m_recolor_dim}], accent_group: step3, z: 61}
+      - {kind: node, from: [1134, 436], r: 6, color: orange, in: "s3%83", draw_ms: 240, ease: draw, ring: {r: 12, alpha: 0.5, width: 1}, recolor: [{at: "s4", <<: *m_recolor_dim}], accent_group: step4, z: 61}
+      - {kind: node, from: [1134, 496], r: 6, color: orange, in: "s4", draw_ms: 240, ease: draw, ring: {r: 12, alpha: 0.5, width: 1}, recolor: [{at: "s5", <<: *m_recolor_dim}], accent_group: step5, z: 61}
+      - {kind: node, from: [1134, 556], r: 6, color: orange, in: "s5", draw_ms: 240, ease: draw, ring: {r: 12, alpha: 0.5, width: 1}, recolor: [{at: "s5%67", <<: *m_recolor_dim}], accent_group: step6, z: 61}
+      - {kind: node, from: [1134, 616], r: 6, color: orange, in: "s5%67", draw_ms: 240, ease: draw, ring: {r: 12, alpha: 0.5, width: 1}, recolor: [{at: "s6", <<: *m_recolor_dim}], accent_group: step7, z: 61}
+      - {kind: node, from: [1134, 676], r: 6, color: orange, in: "s6", draw_ms: 240, ease: draw, ring: {r: 12, alpha: 0.5, width: 1}, recolor: [{at: "s7+0.7", <<: *m_recolor_dim}], accent_group: step8, z: 61}
+
+  # ---------------------------------------------------------------- 9  THE PROOF 1 OF 3: measured on the real car
+  # VO sentences: s1 "On the car, the same gate denied a hop with a person in frame in 456 ms."  s2 "The frames
+  # stay private; they show a person."
+  - id: s09-on-the-car
+    kind: card
+    duration: auto
+    min: 9.5
+    vo_offset: 0.3
+    vo: "On the car, the same gate denied a hop with a person in frame in four hundred fifty six milliseconds. The frames stay private; they show a person."
+    transition: {kind: push_left, duration: 0.72, ease: camera, inside: true}
+    text:
+      - {<<: *lt_bar_static}
+      - {<<: *kicker, text: "THE PROOF  .  1 OF 3"}
+      - {kind: title, <<: *t_title, text: "Measured on the real car", color: ink, pos: [96, 104], z: 92}
+      # the withheld frame: 480 x 360, outlined from frame 0, hatched and labelled at s2
+      - {kind: panel, box: [96, 300, 576, 660], color: surface, alpha: 1.0, radius: 8, border: {color: ink, alpha: 0.12}, z: 40}
+      - {kind: panel, box: [96, 300, 576, 660], color: surface, alpha: 0.0, radius: 8, hatch: {spacing: 24, color: ink, alpha: 0.06}, in: "s2", anim_ms: 480, ease: enter, z: 41}
+      - {kind: mono, <<: *t_mono_s, color: ink-dim, text: "WITHHELD", pos: [336, 480], anchor: mc, in: "s2", anim_ms: 480, ease: enter, z: 42}
+      - {kind: label, <<: *t_heading, color: ink, pos: [672, 300], spans: [{text: "On the car: a person in frame was denied", in: "s1", <<: *m_enter}, {text: "in 456 ms", in: "s1%78", <<: *m_enter}], z: 50}
+      - {kind: mono, <<: *t_mono, color: ink, text: "person_in_frame   p = 0.9485", pos: [672, 380], in: "s1%45", <<: *m_enter, z: 50}
+      - {kind: label, <<: *t_body_s, color: ink-dim, text: "whole gate 681 to 727 ms per hop; no motion event after the deny", pos: [672, 450], nowrap: true, in: "s2", <<: *m_enter, z: 50}
+      - {kind: mono, <<: *t_mono_s, color: ink-dim, text: "Source: docs/results/beats-car-2026-10-15-person-gate", pos: [672, 510], in: "s2+1.2", <<: *m_enter, z: 50}
+      - {kind: label, <<: *t_lt, color: ink, pos: [116, 878], text: "On the car, 2026-10-15", z: 93}
+      - {<<: *pill, text: "MEASURED ON THE CAR 2026-10-15, REAL DECIDER"}
+      - {<<: *pill2, text: "FRAMES WITHHELD: THEY SHOW A PERSON"}
+      - *badge
+      - *rail
+
+  # ---------------------------------------------------------------- 10 THE PROOF 2 OF 3: the Deny in the simulator
+  # VO sentences: s1 "In the simulator, a figure in the frame is row three, a Deny, and the rover says why."
+  # s2 "Physics stops the car."  s3 "The decider explains."  Full-bleed product screen, coordinates 1:1.
+  - id: s10-sim-deny
+    kind: still
+    src: docs/article/img/fig-portal-stage.png
+    place: [0, 0, 1920, 1080]      # native, no push-in
+    dim: {at: "s2", to: 0.3, over: 0.48, ease: move}
+    duration: auto
+    min: 10.0
+    vo_offset: 0.3
+    vo: "In the simulator, a figure in the frame is row three, a Deny, and the rover says why. Physics stops the car. The decider explains."
+    text:
+      - {<<: *lt_bar_static}
+      - kind: spotlight
+        dim: 0.6
+        feather: 48
+        radius: 8
+        out: "s2"
+        out_ms: 480
+        regions:
+          - {at: "s1%15", shape: ellipse, center: [620, 520], rx: 240, ry: 330, fade_ms: 480, ease: enter}
+          - {at: "s1%35", box: [1234, 314, 1700, 388], fade_ms: 480, ease: enter}
+          - {at: "s1%55", box: [1232, 158, 1540, 262], fade_ms: 480, ease: enter}
+          - {at: "s1%80", box: [150, 300, 1110, 376], fade_ms: 480, ease: enter}
+        z: 40
+      - {kind: caption, font: sans_medium_italic, size: 44, leading: 52, color: ink, text: "\"Someone is in front of me. I stopped.\"", pos: [176, 314], in: "s1%80", out: "s2", <<: *m_enter, <<: *m_exit, plate: {box: [150, 300, 1110, 376], color: bg, alpha: 0.72, radius: 8, bar: {color: orange, width: 3, x: 150}}, z: 50}
+      - {kind: caption, <<: *t_label_l, color: ink, text: "Row 3: person in frame -> Deny", pos: [770, 18], in: 0.3, anim_ms: 480, ease: enter, safe: false, plate: {box: [754, 8, 1313, 62], color: bg, alpha: 0.72, radius: 8}, z: 55}
+      - {kind: title, <<: *t_display_m, color: ink, pos: [960, 492], anchor: tc, spans: [{text: "Physics stops the car.", in: "s2", <<: *m_enter}, {text: "The decider explains.", in: "s3", <<: *m_enter}], z: 60}
+      - {kind: panel, <<: *plate_over_footage, box: [80, 860, 529, 920], z: 92}
+      - {kind: label, <<: *t_lt, color: ink, pos: [116, 878], text: "Pit Wall, the simulated car", z: 93}
+      - {<<: *pill, text: "SIM, FAKE DECIDER, DRAWN FIGURE", pos: [1866, 590], plate: {<<: *pill_plate, alpha: 1.0, y: [580, 620]}, safe: false}
+      - *rail
+    pointers:
+      - {kind: box, from: [1234, 314], to: [1700, 388], color: cyan, width: 2, radius: 8, in: "s1%35", draw_ms: 480, ease: draw, z: 45}
+      - {kind: box, from: [1232, 158], to: [1540, 262], color: red, width: 2, radius: 8, in: "s1%55", draw_ms: 480, ease: draw, z: 45}
+
+  # ---------------------------------------------------------------- 11 THE PROOF 3 OF 3: the numbers
+  # VO sentences: s1 "The local decider: 462 ms median, zero of seventy two over budget."  s2 "Nova Pro on
+  # Bedrock: thirty one of seventy two over budget, thirteen cents per thousand decisions."
+  - id: s11-numbers
+    kind: card
+    duration: auto
+    min: 10.0
+    vo_offset: 0.3
+    vo: "The local decider: four hundred sixty two milliseconds median, zero of seventy two over budget. Nova Pro on Bedrock: thirty one of seventy two over budget, thirteen cents per thousand decisions."
+    text:
+      - {<<: *kicker, text: "THE PROOF  .  3 OF 3"}
+      - {kind: title, <<: *t_title, text: "Measured on the booth laptop: 72 timed calls", color: ink, pos: [96, 104], in: "s1", <<: *m_enter, z: 92}
+      - {kind: panel, box: [960, 200, 961, 848], color: ink, alpha: 0.12, radius: 0, z: 30}
+      # headers
+      - {kind: panel, box: [96, 208, 108, 220], color: orange, alpha: 1.0, radius: 6, in: "s1", anim_ms: 480, ease: enter, z: 40}
+      - {kind: label, <<: *t_lt, color: ink, text: "Strands Decider 2B, local", pos: [120, 200], in: "s1", <<: *m_enter_left, z: 40}
+      - {kind: panel, box: [972, 208, 984, 220], color: ink-dim, alpha: 1.0, radius: 6, in: "s2", anim_ms: 480, ease: enter, z: 40}
+      - {kind: label, <<: *t_lt, color: ink, text: "Amazon Nova Pro on Bedrock", pos: [996, 200], in: "s2", <<: *m_enter_left, z: 40}
+      # row 1: latency against its budget; cost
+      - {kind: counter, <<: *t_display, color: ink, text: "{n}", pos: [330, 250], anchor: tr, in: "s1%19", count: {from: 0, to: 462, over: 0.6}, ease: count, count_alpha: 0.55, z: 50}
+      - {kind: label, <<: *t_body, color: ink-dim, text: "ms", pos: [344, 302], in: "s1%19", <<: *m_enter, z: 50}
+      - {kind: label, <<: *t_body_xs, color: ink-dim, text: "median, three questions in one request", pos: [96, 366], in: "s1%19", <<: *m_enter, z: 55}
+      - {kind: panel, box: [96, 410, 726, 422], color: ink, alpha: 0.08, radius: 4, in: "s1%19", anim_ms: 480, ease: enter, z: 60}
+      - {kind: panel, box: [724, 404, 728, 428], color: ink-dim, alpha: 1.0, radius: 0, in: "s1%19", anim_ms: 480, ease: enter, z: 60}
+      - {kind: mono, <<: *t_mono_xs, color: ink-dim, text: "1.5 s budget", pos: [726, 432], anchor: tr, in: "s1%19", <<: *m_enter, z: 60}
+      - {kind: counter, <<: *t_display, color: ink, text: "{n}", pos: [1190, 250], anchor: tr, in: "s2%73", count: {from: 0, to: 0.13, over: 0.6, decimals: 2}, ease: count, count_alpha: 0.55, z: 50}
+      - {kind: label, <<: *t_body, color: ink-dim, text: "USD", pos: [1204, 302], in: "s2%73", <<: *m_enter, z: 50}
+      - {kind: label, <<: *t_body_xs, color: ink-dim, text: "per 1000 decisions", pos: [972, 366], in: "s2%73", <<: *m_enter, z: 55}
+      # row 2: the one comparison on a shared scale (630 px = 72 calls)
+      - {kind: title, <<: *t_display, color: ink, text: "0", pos: [170, 520], anchor: tr, in: "s1%56", <<: *m_enter, z: 50}
+      - {kind: label, <<: *t_body, color: ink-dim, text: "of 72", pos: [184, 572], in: "s1%56", <<: *m_enter, z: 50}
+      - {kind: label, <<: *t_body_xs, color: ink-dim, text: "over the 1.5 s budget", pos: [96, 636], in: "s1%56", <<: *m_enter, z: 55}
+      - {kind: panel, box: [96, 680, 726, 692], color: ink, alpha: 0.08, radius: 4, in: "s1%56", anim_ms: 480, ease: enter, z: 60}
+      - {kind: panel, box: [96, 676, 98, 696], color: green, alpha: 1.0, radius: 0, in: "s1%56+0.3", <<: *m_draw_bar, z: 61}
+      - {kind: counter, <<: *t_display, color: ink, text: "{n}", pos: [1080, 520], anchor: tr, in: "s2%27", count: {from: 0, to: 31, over: 0.6}, ease: count, count_alpha: 0.55, z: 50}
+      - {kind: label, <<: *t_body, color: ink-dim, text: "of 72", pos: [1094, 572], in: "s2%27", <<: *m_enter, z: 50}
+      - {kind: label, <<: *t_body_xs, color: ink-dim, text: "over the 1.5 s budget", pos: [972, 636], in: "s2%27", <<: *m_enter, z: 55}
+      - {kind: panel, box: [972, 680, 1602, 692], color: ink, alpha: 0.08, radius: 4, in: "s2%27", anim_ms: 480, ease: enter, z: 60}
+      - {<<: *pill, text: "MEASURED 2026-10-22"}
+      - *badge
+      - *rail
+    pointers:
+      - {kind: bar, from: [96, 410], to: [290, 422], color: green, grow: 0.6, ease: draw, radius: 4, in: "s1%19+0.3", z: 61}
+      - {kind: bar, from: [972, 680], to: [1243, 692], color: amber, grow: 0.6, ease: draw, radius: 4, in: "s2%27+0.3", z: 61}
+
+  # ---------------------------------------------------------------- 12 THE PATTERN: the reusable pattern, as a code editor
+  # VO sentences: s1 "The pattern is a drop-in."  s2 "Three files with the upstream names, three lines of wiring,
+  # and make pattern demo runs it offline against a fake decider."
+  - id: s12-pattern
+    kind: terminal
+    chrome: false
+    src: docs/video/build/clips/pattern-demo.txt
+    line_range: [7, 9]             # the three gate-log rows of `make pattern-demo`, verbatim
+    wrap: 118
+    wrap_indent: "  "
+    panel: {box: [96, 588, 1824, 920], color: surface, radius: 12, header: {h: 36, color: surface2, dots: true, title: "make pattern-demo, against the fake decider (a script, not the model)", title_size: 20, title_color: ink-dim, title_x: 76}, shadow: {blur: 40, alpha: 0.5, dy: 12}, border: {color: ink, alpha: 0.12}, inner_shadow: true}
+    pos: [120, 640]
+    width: 1680
+    bottom: 920                    # ten rows; the tenth (the deny row's error tail) fades under the panel edge
+    fade_bottom: 24
+    size: 22
+    leading: 28
+    start: "s2%62"
+    cps: 560                       # burst: the three rows in about two seconds
+    line_pause: 0
+    cursor: true
+    cursor_hold: true
+    cursor_blink_ms: 530
+    cursor_w: 13
+    cursor_h: 26
+    highlight:                     # verdicts underlined in reading order; the reasons recolour, no underline
+      - {match: '"reason": "inside', line: 0, color: ink, from: ink-dim, style: underline, width: 0, at: 7.50}
+      - {match: 'envelope p=0.95, grounded p=0.95"', line: 1, color: ink, from: ink-dim, style: underline, width: 0, at: 7.50}
+      - {match: '"reason": "outside envelope: distance_m 2 > 0.5"', line: 4, color: ink, from: ink-dim, style: underline, width: 0, at: 7.62}
+      - {match: '"reason": "decider unavailable: failing closed, no motion"', line: 6, color: ink, from: ink-dim, style: underline, width: 0, at: 7.74}
+      - {match: '"reason": "inside', line: 0, color: ink-dim}
+      - {match: 'envelope p=0.95, grounded p=0.95"', line: 1, color: ink-dim}
+      - {match: '"reason": "outside envelope: distance_m 2 > 0.5"', line: 4, color: ink-dim}
+      - {match: '"reason": "decider unavailable: failing closed, no motion"', line: 6, color: ink-dim}
+      - {match: '"verdict": "Proceed"', color: green, style: underline, at: 7.50}
+      - {match: '"verdict": "Guide"', color: amber, style: underline, at: 7.62}
+      - {match: '"verdict": "Deny"', color: red, style: underline, at: 7.74}
+    duration: auto
+    min: 9.2
+    vo_offset: 0.3
+    vo: "The pattern is a drop-in. Three files with the upstream names, three lines of wiring, and make pattern demo runs it offline against a fake decider."
+    transition: {kind: push_left, duration: 0.72, ease: camera, inside: true}
+    text:
+      - {<<: *kicker, text: "THE PATTERN"}
+      - {kind: title, <<: *t_title, text: "Drop it into your own agent", color: ink, pos: [96, 104], z: 92}
+      # the editor: panel, tab strip (as the panel's header), sidebar, gutter, code, status bar
+      - {<<: *panel_v2, box: [96, 200, 1824, 556], header: {h: 36, color: surface2, dots: false}, z: 40}
+      - {kind: panel, box: [96, 200, 520, 556], color: surface, alpha: 1.0, radius: 12, z: 42}
+      - {kind: panel, box: [300, 200, 521, 556], color: surface, alpha: 1.0, radius: 0, z: 42}
+      - {kind: panel, box: [520, 200, 521, 556], color: ink, alpha: 0.12, radius: 0, z: 43}
+      - {kind: label, <<: *t_caption, color: ink-dim, text: "three files, upstream names", pos: [120, 212], z: 44}
+      - {kind: panel, box: [97, 376, 520, 408], color: surface2, alpha: 1.0, radius: 0, in: "s1+0.24", anim_ms: 240, ease: enter, z: 43}
+      - {kind: mono, <<: *t_mono_s, leading: 32, color: ink, text: "patterns/strands/\n  _client.py\n  tool_call_intervention.py\n  frame_intervention.py\n  README.md", pos: [120, 252], in: "s1", stagger: 60, <<: *m_enter, z: 44}
+      - {kind: panel, box: [520, 200, 800, 236], color: surface, alpha: 1.0, radius: 0, z: 44}
+      - {kind: panel, box: [520, 200, 800, 202], color: ink, alpha: 0.6, radius: 0, z: 45}
+      - {kind: label, <<: *t_caption, color: ink, text: "three lines of wiring", pos: [544, 206], z: 46}
+      - {kind: mono, <<: *t_mono_xs, color: ink-dim, text: "Agent: Amazon Nova Pro on Bedrock | Judge: Strands Decider 2B, local", pos: [1800, 208], anchor: tr, z: 46}
+      - {kind: mono, <<: *t_mono_xs, leading: 38, color: ink-mute, text: "1\n2\n3\n4\n5\n6\n7", pos: [576, 263], anchor: tr, align: right, in: "s1", stagger: 60, <<: *m_enter, z: 46}
+      - {kind: mono, <<: *t_mono_code, color: ink-mute, recolor: [{at: "s2%30", color: ink, over_ms: 240, ease: move}], pos: [600, 258], in: "s1", stagger: 60, <<: *m_enter, nowrap: true, text: "decider = Decider(timeout=1.5)\nagent = Agent(\n    model=BedrockModel(model_id=\"us.amazon.nova-pro-v1:0\",\n                       region_name=\"us-east-1\"),\n    tools=[move],\n    interventions=[MotionGate(decider)],\n)", highlight: [{match: "timeout=1.5", color: cyan, style: underline, at: "s2%40", draw_ms: 240, ease: draw}, {match: "interventions=[MotionGate(decider)]", color: orange, style: underline, at: "s2%50", draw_ms: 240, ease: draw}], z: 48}
+      - {kind: panel, box: [96, 516, 1824, 556], color: surface2, alpha: 1.0, radius: 12, z: 52}
+      - {kind: panel, box: [96, 516, 1824, 536], color: surface2, alpha: 1.0, radius: 0, z: 52}
+      - {kind: mono, <<: *t_mono_s, color: cyan, text: "github.com/Vivek0712/strands-robots-deepracer/tree/main/patterns/strands", pos: [544, 525], z: 53}
+      - {<<: *pill, text: "FAKE DECIDER, STDOUT VERBATIM"}
+      - *rail
+
+  # ---------------------------------------------------------------- 13 MUMBAI (two stills, a 12-frame dissolve between them)
+  - id: s13a-mumbai-speaker
+    kind: still
+    src: docs/article/img/event-speaker-with-car.jpg
+    place: [555, 0, 1365, 1080]    # fitted to height
+    fill: blur
+    fill_blur: 24
+    fill_brightness: 0.35
+    subject_zoom: {from: 1.0, to: 1.03, ease: drift, clip: false}
+    drift: {subject: [8, 0], fill: [-4, 0], ease: drift}
+    duration: 2.0
+    vo_offset: 0.3
+    vo: "Shown at AWS Community Day Mumbai."
+    text:
+      - {<<: *lt_plate, box: [80, 860, 852, 920], in: 0.38}
+      - {<<: *lt_text, text: "AWS Community Day Mumbai, 17 October 2026", in: 0.44}
+      - *rail
+    pointers:
+      - {<<: *lt_bar, in: 0.38}
+  - id: s13b-mumbai-hall
+    kind: still
+    src: docs/article/img/event-hall.jpg
+    place: [240, 0, 1680, 1080]
+    fill: blur
+    fill_blur: 24
+    fill_brightness: 0.35
+    subject_zoom: {from: 1.03, to: 1.0, ease: drift, clip: false}
+    drift: {subject: [-8, 0], fill: [4, 0], ease: drift}
+    duration: 2.0
+    transition: {kind: dissolve, duration: 0.4, inside: true}
+    text:
+      - {kind: panel, <<: *plate_over_footage, box: [80, 860, 852, 920], z: 92}
+      - {<<: *lt_bar_static}
+      - {kind: label, <<: *t_lt, color: ink, pos: [116, 878], text: "AWS Community Day Mumbai, 17 October 2026", z: 93}
+      - *rail
+
+  # ---------------------------------------------------------------- 14 CLOSE
+  # VO sentences: s1 "Repo and article below."  s2 "Physics stops the car."  s3 "The decider explains."
+  - id: s14-close
+    kind: still
+    src: docs/article/img/cover.png
+    place: [0, 0, 1920, 1080]
+    brightness: 0.3
+    subject_zoom: {from: 1.0, to: 1.04, ease: drift, clip: true}
+    duration: auto
+    min: 8.0
+    vo_offset: 0.4
+    vo: "Repo and article below. Physics stops the car. The decider explains."
+    transition: {kind: dissolve, duration: 0.4, inside: true}
+    black_out: 0.72                # the only dip to black: 7.28 to 8.00 on the camera curve, the rail with it
+    black_ease: camera
+    text:
+      - {kind: title, <<: *t_title, color: ink, pos: [960, 372], anchor: tc, spans: [{text: "Physics stops the car.", in: "s2", <<: *m_enter}, {text: "The decider explains.", in: "s3", <<: *m_enter}], z: 60}
+      - {kind: mono, <<: *t_url, size: 36, leading: 44, color: cyan, text: "github.com/Vivek0712/strands-robots-deepracer", pos: [960, 466], anchor: tc, in: "s1", <<: *m_enter, z: 50}
+      - {kind: label, <<: *t_body_xs, color: ink, text: "Vivek Raja, AWS AI Hero  |  Article on AWS Builder Center", pos: [960, 530], anchor: tc, in: "s1+0.24", <<: *m_enter, z: 52}
+      - {kind: mono, <<: *t_mono_s, color: orange, text: "#strands-decider-2b   #guardrails", pos: [960, 588], anchor: tc, in: "s3+0.8", <<: *m_enter, z: 65}
+      - *rail

@@ -17,7 +17,8 @@ def _settings(args: argparse.Namespace, cli_set: set[str]) -> compose.Settings:
         s.width, s.height, s.fps = 960, 540, 15
     s.ffmpeg = args.ffmpeg or compose.find_ffmpeg("ffmpeg")
     s.ffprobe = args.ffprobe or str(Path(s.ffmpeg).with_name("ffprobe"))
-    s.fonts = draw.Fonts.resolve(args.font_sans, args.font_sans_bold, args.font_mono)
+    s.text_engine = getattr(args, "text_engine", None) or "auto"
+    s.fonts = draw.Fonts.resolve(args.font_sans, args.font_sans_bold, args.font_mono, engine=s.text_engine)
     s.build_dir = Path(args.build_dir)
     s.vo_cache = Path(args.vo_cache) if args.vo_cache else Path("docs/video/build/vo")
     s.voice = args.voice
@@ -64,6 +65,12 @@ def _common(p: argparse.ArgumentParser) -> None:
     p.add_argument("--font-sans", default=None, help="path[:index] of the regular sans font")
     p.add_argument("--font-sans-bold", default=None)
     p.add_argument("--font-mono", default=None)
+    p.add_argument(
+        "--text-engine",
+        default=None,
+        choices=["auto", "basic", "raqm"],
+        help="Pillow layout engine (default auto)",
+    )
     p.add_argument("--quiet", action="store_true")
 
 

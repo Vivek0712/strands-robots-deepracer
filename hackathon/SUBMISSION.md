@@ -105,7 +105,7 @@ network), about 0.13 USD per 1000 decisions at list price via the AWS Price List
 |---|---|
 | Repo | https://github.com/Vivek0712/strands-robots-deepracer |
 | Article | [ARTICLE URL: pending], source `docs/article/article.md` |
-| Video | [VIDEO URL: pending, under 3 minutes], runtime to be stated here |
+| Video | https://youtu.be/oMHml_LT_tY (2:57, under the 3 minute limit) |
 
 ## Originality
 

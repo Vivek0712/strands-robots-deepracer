@@ -8,5 +8,5 @@ the macOS ``say`` voice for quick iteration. See README.md for the schema.
 
 from .compose import Settings, build, check, contact_sheet, load_shot_list
 
-__version__ = "0.1.0"
+__version__ = "0.4.0"
 __all__ = ["Settings", "__version__", "build", "check", "contact_sheet", "load_shot_list"]

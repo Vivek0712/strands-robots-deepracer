@@ -143,48 +143,49 @@ shots:
       - {kind: lower_third, text: "Vivek Raja, AWS AI Hero", in: 0.4}
       - {kind: mono, text: "Agent: Amazon Nova Pro on Bedrock\nJudge: Strands Decider 2B, local", size: 24, leading: 30, color: ink-dim, pos: [1300, 936], in: 3.0, plate: {box: [1284, 926, 1840, 1008]}}
 
-  # ---------------------------------------------------------------- 4  ARCHITECTURE (v3: three groups keyed to the three sentences)
+  # ---------------------------------------------------------------- 4  ARCHITECTURE (guided zoom keyed to the three sentences)
+  # Source: docs/article/img/svg/fig-architecture.svg rendered at 3840x2160 with headless Chrome
+  # (docs/video/build/clips/figs/fig-architecture-3840.png). Views are [cx, cy, scale] of the figure, scale 1 = the
+  # whole figure fitted to the frame. Stops: full (0.0-0.8), Bedrock at 2.0x from +0.8 (body text about 30 px),
+  # Strands Agents + strands-robots at 1.8x from s2 (about 27 px), DeciderGate + Decider 2B at 3.0x from s3
+  # (about 40 px, cropped 1:1 from the 5760-wide working image), pull-back to the full figure at +10.9.
   # VO sentences: s1 "Nova Pro proposes the move."  s2 "A Strands intervention handler asks the decider before
-  # the tool runs."  s3 "The on-car deadman needs none of it."  Group 1 is on screen from frame 0 (hard cut).
+  # the tool runs."  s3 "The on-car deadman needs none of it."
   - id: s04-architecture
     kind: still
-    src: docs/article/img/fig-architecture.png
-    place: [96, 200, 1376, 920]    # 0.8x
-    base_brightness: 0.35
-    regions:                       # lit to 100 percent over 0.4 s, earlier groups settle at 80
-      - {box: [128, 224, 752, 324], at: 0.0, settle_to: 0.8}     # R1 Bedrock
-      - {box: [160, 416, 384, 512], at: 0.0, settle_to: 0.8}     # R2 Strands Agents
-      - {box: [400, 416, 728, 512], at: "s2", settle_to: 0.8}    # R3 DeciderGate + Decider 2B
-      - {box: [160, 520, 728, 684], at: "s3", settle_to: 0.8}    # R4 strands-robots
-      - {box: [960, 360, 1344, 892], at: "s3", settle_to: 0.8}   # R5 DeepRacer (deadman sub-box inside)
+    src: docs/video/build/clips/figs/fig-architecture-3840.png
+    camera:
+      - {at: 0.0, view: [0.5, 0.5, 1.0]}
+      - {at: 0.8, view: [0.269, 0.25, 2.0], ease: 0.6}       # Amazon Bedrock: Nova Pro + Nova Sonic
+      - {at: "s2", view: [0.272, 0.53, 1.8], ease: 0.6}      # Strands Agents + the strands-robots layer
+      - {at: "s3", view: [0.366, 0.367, 3.0], ease: 0.6}     # DeciderGate + Decider 2B
+      - {at: 10.9, view: [0.5, 0.5, 1.0], ease: 0.5}         # pull back to the whole figure
     duration: auto
-    min: 9.5
+    min: 12.2
     vo_offset: 0.3
     vo: "Nova Pro proposes the move. A Strands intervention handler asks the decider before the tool runs. The on-car deadman needs none of it."
     text:
-      - {kind: label, text: "1 Nova Pro proposes the move", color: orange, pos: [1392, 200], recolor: [{at: "s2", color: ink-dim}]}
-      - {kind: label, text: "2 Strands Agents runs the tools", color: orange, pos: [1392, 240], recolor: [{at: "s2", color: ink-dim}]}
-      - {kind: label, text: "3 Decider 2B judges,", color: orange, pos: [1392, 280], in: "s2", recolor: [{at: "s3", color: ink-dim}]}
-      - {kind: label, text: "  before the tool runs", color: orange, pos: [1392, 320], in: "s2", recolor: [{at: "s3", color: ink-dim}]}
-      - {kind: label, text: "4 strands-robots carries it", color: orange, pos: [1392, 360], in: "s3"}
-      - {kind: label, text: "  over rosbridge", color: orange, pos: [1392, 400], in: "s3"}
-      - {kind: label, text: "5 On-car deadman: stops", color: orange, pos: [1392, 440], in: "s3"}
-      - {kind: label, text: "  without the laptop", color: orange, pos: [1392, 480], in: "s3"}
-      - {kind: mono, text: "Agent: Amazon Nova Pro on Bedrock\nJudge: Strands Decider 2B, local", size: 24, leading: 28, color: ink-dim, pos: [1360, 548], plate: {box: [1344, 540, 1840, 608]}}
+      # the label stack, bottom-left on an opaque plate below the zoomed groups, one line per stop
+      - {kind: panel, box: [80, 834, 760, 946], color: bg, alpha: 1.0, radius: 8, in: 1.4}
+      - {kind: label, text: "1 Nova Pro proposes the move", size: 28, color: orange, pos: [96, 842], in: 1.4, recolor: [{at: "s2+0.6", color: ink-dim}]}
+      - {kind: label, text: "2 Strands Agents runs the tools", size: 28, color: orange, pos: [96, 876], in: "s2+0.6", recolor: [{at: "s3+0.6", color: ink-dim}]}
+      - {kind: label, text: "3 Decider 2B judges, before the tool runs", size: 28, color: orange, pos: [96, 910], in: "s3+0.6"}
+      # Agent/Judge badge: top-middle (empty in the full figure) while the whole figure shows, bottom-right during the stops
+      - {kind: mono, text: "Agent: Amazon Nova Pro on Bedrock\nJudge: Strands Decider 2B, local", size: 24, leading: 28, color: ink-dim, pos: [1016, 80], out: 0.8, plate: {box: [1000, 72, 1496, 140]}}
+      - {kind: mono, text: "Agent: Amazon Nova Pro on Bedrock\nJudge: Strands Decider 2B, local", size: 24, leading: 28, color: ink-dim, pos: [1360, 946], in: 0.8, out: 10.9, plate: {box: [1344, 938, 1840, 1008], alpha: 1.0}}
+      - {kind: mono, text: "Agent: Amazon Nova Pro on Bedrock\nJudge: Strands Decider 2B, local", size: 24, leading: 28, color: ink-dim, pos: [1016, 80], in: 10.9, plate: {box: [1000, 72, 1496, 140]}}
       - {kind: lower_third, text: "Architecture"}
     pointers:
-      - {kind: box, from: [128, 224], to: [752, 324], color: cyan, width: 3}
-      - {kind: box, from: [160, 416], to: [384, 512], color: cyan, width: 3}
-      - {kind: box, from: [400, 416], to: [728, 512], color: orange, width: 3, in: "s2"}
-      - {kind: box, from: [160, 520], to: [728, 684], color: cyan, width: 3, in: "s3"}
-      - {kind: box, from: [960, 360], to: [1344, 892], color: cyan, width: 3, in: "s3"}
-      - {kind: box, from: [976, 552], to: [1328, 676], color: red, width: 3, in: "s3"}            # deadman sub-box
-      - {kind: badge, from: [128, 224], color: orange, label: "1"}
-      - {kind: badge, from: [160, 416], color: orange, label: "2"}
-      - {kind: badge, from: [400, 416], color: orange, label: "3", in: "s2"}
-      - {kind: badge, from: [160, 520], color: orange, label: "4", in: "s3"}
-      - {kind: badge, from: [960, 360], color: orange, label: "5", in: "s3"}
-      - {kind: arrow, from: [752, 464], to: [960, 464], color: orange, in: "s2"}                   # along "commands 20 Hz"
+      # number badges at each group's corner in the zoomed view, then all three on the full figure
+      - {kind: badge, from: [40, 90], color: orange, label: "1", in: 1.4, out: "s2"}
+      - {kind: badge, from: [173, 99], color: orange, label: "2", in: "s2+0.6", out: "s3"}
+      - {kind: box, from: [173, 99], to: [778, 345], color: cyan, width: 3, in: "s2+0.6", out: "s3"}
+      - {kind: box, from: [173, 380], to: [1706, 827], color: cyan, width: 3, in: "s2+0.6", out: "s3"}
+      - {kind: badge, from: [223, 335], color: orange, label: "3", in: "s3+0.6", out: 10.9}
+      - {kind: box, from: [223, 335], to: [1699, 745], color: orange, width: 3, in: "s3+0.6", out: 10.9}
+      - {kind: badge, from: [48, 36], color: orange, label: "1", in: 11.4}
+      - {kind: badge, from: [96, 328], color: orange, label: "2", in: 11.4}
+      - {kind: badge, from: [456, 328], color: orange, label: "3", in: 11.4}
 
   # ---------------------------------------------------------------- 5  THE DECISION, part 1 (v3: one idea at a time, keyed to the voice)
   # VO sentences: s1 "Five typed questions."  s2 "A noul is a yes or no, answered as a probability, so code can

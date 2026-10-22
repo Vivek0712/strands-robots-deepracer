@@ -201,7 +201,7 @@ benchmark, the limits and originality paragraphs.
 | Built from 14 October 2026 in a private repository | `git log --date=short` (first commits 2026-10-14; no remote at the time of writing) |
 | Earlier public repos `Vivek0712/aws_deepracer_control_v2` (HTTP console client, 2021) and `Vivek0712/strands-agentic-deepracer` (Strands + Nova planner, March 2026); measured motion constants, plan validator and MJPEG parser carried over; neither has strands-robots, the Decider gate, Bidi or Harness | `docs/context/07-prior-github-use-case-work.md` (table: dates 2021-02-21 to 2021-11-01 and 2026-03-10 to 2026-03-17; sections 2.1 constants, plan validator, `camera_stream.py`); `CLAUDE.md` Read first |
 | Hackathon window opened 16 October 2026; runs to 23 October; three winners, $5,000 AWS credits each | notes 05 lines 91-103 |
-| Demo video placeholder, under three minutes | hackathon brief, requirement 4 |
+| Demo video https://youtu.be/oMHml_LT_tY, 2:57 (177.3 s by ffprobe on docs/video/build/deepracer-decider-demo-v2.mp4), published 2026-10-23 | hackathon brief, requirement 4; YouTube |
 | The rule sits in the module docstrings of the repo | `src/deepracer_agent/driver.py` lines 9-10, `gate.py` lines 18-19, `camera.py` lines 11-12, `connect.py` line 17, `look.py` line 9, `voice.py` line 9, `showtools.py` line 9, `portal/backend/narrator.py` lines 7-8 |
 
 ## Needed but not in the sources, therefore left out

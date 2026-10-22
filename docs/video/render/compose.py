@@ -29,9 +29,9 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter
 
 from . import audio as audio_mod
-from . import draw
+from . import draw, fx, widgets
 
-RENDER_VERSION = "2"
+RENDER_VERSION = "4"
 XFADE_NAMES = {
     "fade": "fade",
     "dip_to_black": "fadeblack",
@@ -42,10 +42,10 @@ XFADE_NAMES = {
     "slideright": "slideright",
     "fadegrays": "fadegrays",
 }
-KINDS = {"clip", "still", "card", "terminal", "table", "json", "split"}
+KINDS = {"clip", "still", "card", "terminal", "table", "json", "split", "code"}
 COMMON_KEYS = {
     "id", "kind", "duration", "min", "vo", "vo_offset", "text", "pointers", "transition", "notes",
-    "black_in", "black_out",
+    "black_in", "black_out", "black_ease",
 }  # fmt: skip
 KIND_KEYS: dict[str, set[str]] = {
     "clip": {
@@ -65,6 +65,8 @@ KIND_KEYS: dict[str, set[str]] = {
         "fill_brightness",
         "blend",
         "brightness",
+        "subject_zoom",
+        "drift",
     },
     "still": {
         "src",
@@ -81,6 +83,9 @@ KIND_KEYS: dict[str, set[str]] = {
         "regions",
         "layers",
         "base_brightness",
+        "camera",
+        "subject_zoom",
+        "drift",
     },
     "card": {"bg", "logo"},
     "terminal": {
@@ -109,14 +114,70 @@ KIND_KEYS: dict[str, set[str]] = {
         "cursor",
         "color",
         "font",
+        "jitter",
+        "seed",
+        "pauses",
+        "syntax",
+        "cursor_hz",
+        "cursor_style",
+        "scanlines",
+        "panel",
+        "bottom",
+        "cursor_hold",
+        "cursor_hide_fast",
+        "cursor_blink_ms",
+        "cursor_w",
+        "cursor_h",
+        "fade_bottom",
     },
-    "table": {"rows", "header", "row_every", "start", "highlight", "title", "size", "frame", "bg"},
+    "table": {
+        "rows",
+        "header",
+        "row_every",
+        "start",
+        "highlight",
+        "title",
+        "size",
+        "frame",
+        "bg",
+        "anim",
+        "stagger",
+        "ease",
+        "row_ms",
+    },
     "json": {"src", "data", "text", "cps", "start", "reveal", "title", "size", "frame", "bg", "line_pause"},
     "split": {"main", "pip", "left", "right", "gap"},
+    "code": {
+        "src",
+        "lines",
+        "text",
+        "title",
+        "size",
+        "frame",
+        "bg",
+        "start_line",
+        "numbers",
+        "lang",
+        "start",
+        "stagger",
+        "anim",
+        "line_ms",
+        "ease",
+        "accent",
+        "highlight",
+        "font",
+        "leading",
+        "line_range",
+    },
 }
-TEXT_KINDS = set(draw.OVERLAY_STYLE) | {"chips", "panel", "image"}
-POINTER_KINDS = {"arrow", "box", "circle", "underline", "highlight", "bracket", "bar", "dotted", "badge"}
-ANIMS = {"fade", "slide_up", "slide_left", "typewriter", "none"}
+TEXT_KINDS = set(draw.OVERLAY_STYLE) | {"chips", "panel", "image"} | draw.WIDGET_KINDS
+POINTER_KINDS = {
+    "arrow", "box", "circle", "underline", "highlight", "bracket", "bar", "dotted", "badge", "line", "leader",
+    "path", "node",
+}  # fmt: skip
+PANEL_ANIMS = {"grow_down", "grow_right", "rise", "fade", "slide_left"}
+ANIMS = draw.ANIMS
+TRANSITIONS = set(XFADE_NAMES) | fx.CUSTOM_TRANSITIONS
 VIDEO_EXT = {".mp4", ".webm", ".mov", ".gif", ".mkv", ".m4v"}
 POS_CODES = {"tl", "tc", "tr", "ml", "mc", "mr", "bl", "bc", "br"}
 IMAGE_EXT = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff", ".svg"}
@@ -156,12 +217,40 @@ class Settings:
     draft_vo: str = "say"  # "say" or "polly": which voice a --draft build uses
     burn_captions: bool = False
     fade_out: float = 0.6
+    fade_in: float = 0.0  # global fade from black; the first shot's `transition: fade` still works
     auto_pad: float = 0.4
+    ease: str | None = None  # default curve for every element; None keeps pre-v3 elements on smoothstep
+    vignette: float = 0.0  # 0..1 edge darkening applied to every composed frame
+    vignette_inner: float = 0.38  # radius (of the half-diagonal) inside which the vignette is zero
+    rules: dict[str, Any] = field(default_factory=dict)  # v4 `check` rules: caption_zone, one_accent
+    grain: float = 0.0  # luminance grain standard deviation as a fraction of full scale (0.04 is film-like)
+    grain_seed: int = 7
+    grain_size: float = 2.0  # px per grain clump (1 = per-pixel noise, costs many bits to encode)
+    grain_cap: float = 16.0  # final-file rate cap in Mbit/s at 1080p while grain is on (0 = none)
+    letterbox: float = 0.0  # 0 = no bars; an aspect ratio (2.39) or a bar height in px
+    text_engine: str = "auto"  # raqm when Pillow has libraqm, else basic
     verbose: bool = True
+    _post: Any = field(default=None, repr=False, compare=False)
 
     @property
     def canvas(self) -> draw.Canvas:
-        return draw.Canvas(self.width, self.height, self.fonts or draw.Fonts.resolve())
+        return draw.Canvas(self.width, self.height, self.fonts or draw.Fonts.resolve(), self.ease)
+
+    @property
+    def segment_cap(self) -> float:
+        """Segment rate cap (Mbit/s at 1080p): 3x the final cap while grain is on, else none."""
+        return 3.0 * self.grain_cap if self.grain > 0 and self.grain_cap > 0 else 0.0
+
+    @property
+    def post(self) -> fx.Post:
+        """The post pass for this output size (built once; the grain bank is a few MB)."""
+        want = (
+            self.width, self.height, self.vignette, self.grain, self.grain_seed, self.grain_size,
+            self.vignette_inner,
+        )  # fmt: skip
+        if self._post is None or self._post[0] != want:
+            self._post = (want, fx.Post(*want))
+        return self._post[1]
 
     def log(self, msg: str) -> None:
         if self.verbose:
@@ -278,12 +367,22 @@ def normalize_shot(
     transition = merged.get("transition", {"kind": "cut"})
     if isinstance(transition, str):
         transition = {"kind": transition}
+    tkind = str(transition.get("kind", "cut"))
     transition = {
-        "kind": str(transition.get("kind", "cut")),
-        "duration": float(transition.get("duration", 0.5)),
+        "kind": tkind,
+        "duration": float(transition.get("duration", 0.25 if tkind == "whip" else 0.5)),
+        "ease": transition.get("ease"),
+        "direction": str(transition.get("direction", "left")),
+        # v4: run inside the incoming shot's first frames over a frozen plate of the outgoing
+        # shot's last frame, so the timeline does not shorten
+        "inside": bool(transition.get("inside", False)),
     }
-    if transition["kind"] != "cut" and transition["kind"] not in XFADE_NAMES:
-        errors.append(f"{tag} unknown transition {transition['kind']!r}")
+    if transition["inside"] and tkind not in ("push_left", "push_right", "dissolve", "fade"):
+        errors.append(f"{tag} inside transitions must be push_left, push_right, dissolve or fade")
+    if tkind != "cut" and tkind not in TRANSITIONS:
+        errors.append(f"{tag} unknown transition {tkind!r}")
+    if transition["ease"] is not None and not fx.is_ease(transition["ease"]):
+        errors.append(f"{tag} transition ease must be one of {sorted(fx.EASES)}")
     texts = list(raw.get("text", []) or [])
     pointers = list(raw.get("pointers", []) or [])
     for ti, t in enumerate(texts):
@@ -311,19 +410,45 @@ def _check_overlay(t: Any, tag: str, errors: list[str], warnings: list[str]) -> 
     if t.get("kind", "caption") not in TEXT_KINDS:
         errors.append(f"{tag} unknown text kind {t.get('kind')!r}")
     kind = t.get("kind", "caption")
-    needs = {"chips": "items", "panel": "box", "image": "src"}.get(kind, "text")
-    if needs not in t:
+    needs = {
+        "chips": "items", "panel": "box", "image": "src", "bar": "box", "rail": "n", "ticker": "to",
+        "bloom": "center", "progress_rail": "segments",
+    }.get(kind, "text")  # fmt: skip
+    if kind == "spotlight":
+        if "box" not in t and "center" not in t and not t.get("regions"):
+            errors.append(f"{tag} spotlight needs `box`, `center` or `regions`")
+    elif needs == "text" and t.get("spans"):
+        pass
+    elif needs not in t:
         errors.append(f"{tag} needs `{needs}`")
     pos = t.get("pos")
-    ok_pos = (isinstance(pos, str) and pos in POS_CODES) or (isinstance(pos, (list, tuple)) and len(pos) == 2)
-    if pos is not None and not ok_pos:
-        errors.append(f"{tag} pos must be one of {sorted(POS_CODES)} or [x, y]")
-    if t.get("anim", "fade") not in ANIMS:
-        errors.append(f"{tag} anim must be one of {sorted(ANIMS)}")
+    if kind == "rail":
+        if pos is not None and pos not in ("top", "bottom"):
+            errors.append(f"{tag} rail pos must be top or bottom")
+    else:
+        ok_pos = (isinstance(pos, str) and pos in POS_CODES) or (
+            isinstance(pos, (list, tuple)) and len(pos) == 2
+        )
+        if pos is not None and not ok_pos:
+            errors.append(f"{tag} pos must be one of {sorted(POS_CODES)} or [x, y]")
+    allowed_anims = ANIMS | PANEL_ANIMS if kind == "panel" else ANIMS
+    if t.get("anim", "fade") not in allowed_anims:
+        errors.append(f"{tag} anim must be one of {sorted(allowed_anims)}")
+    if t.get("out_anim") is not None and t["out_anim"] not in ANIMS:
+        errors.append(f"{tag} out_anim must be one of {sorted(ANIMS)}")
+    if t.get("ease") is not None and not fx.is_ease(t["ease"]):
+        errors.append(f"{tag} ease must be one of {sorted(fx.EASES)}")
+    glow = t.get("glow")
+    if glow is not None and kind not in ("rail",):
+        if not isinstance(glow, dict):
+            errors.append(f"{tag} glow must be a mapping {{color, radius, strength}}")
+        elif "color" in glow and not draw.is_color(glow["color"]):
+            errors.append(f"{tag} bad glow colour {glow['color']!r}")
     if "color" in t and not draw.is_color(t["color"]):
         errors.append(f"{tag} bad colour {t['color']!r}")
-    if "in" in t and "out" in t and float(t["out"]) <= float(t["in"]):
-        errors.append(f"{tag} out must be after in")
+    if "in" in t and "out" in t and not (isinstance(t["in"], str) or isinstance(t["out"], str)):
+        if float(t["out"]) <= float(t["in"]):
+            errors.append(f"{tag} out must be after in")
 
 
 def _check_pointer(p: Any, tag: str, errors: list[str], warnings: list[str]) -> None:
@@ -332,9 +457,14 @@ def _check_pointer(p: Any, tag: str, errors: list[str], warnings: list[str]) -> 
         return
     if p.get("kind", "arrow") not in POINTER_KINDS:
         errors.append(f"{tag} unknown pointer kind {p.get('kind')!r}")
+    if p.get("kind") == "path":
+        pts = p.get("points")
+        if not isinstance(pts, list) or len(pts) < 2:
+            errors.append(f"{tag} path needs `points` (two or more [x, y])")
+        return
     for key in ("from", "to"):
         v = p.get(key)
-        if key == "to" and p.get("kind") == "badge" and v is None:
+        if key == "to" and p.get("kind") in ("badge", "node") and v is None:
             continue
         if not (isinstance(v, (list, tuple)) and len(v) == 2):
             errors.append(f"{tag} `{key}` must be [x, y]")
@@ -342,6 +472,8 @@ def _check_pointer(p: Any, tag: str, errors: list[str], warnings: list[str]) -> 
             warnings.append(f"{tag} `{key}` {v} is outside the 1920x1080 frame")
     if "color" in p and not draw.is_color(p["color"]):
         errors.append(f"{tag} bad colour {p['color']!r}")
+    if p.get("ease") is not None and not fx.is_ease(p["ease"]):
+        errors.append(f"{tag} ease must be one of {sorted(fx.EASES)}")
 
 
 def _check_params(
@@ -363,6 +495,26 @@ def _check_params(
                 errors.append(f"{tag} zoom must be {{from: [cx, cy, scale], to: [cx, cy, scale]}}")
             elif min(float(z["from"][2]), float(z["to"][2])) < 1.0:
                 errors.append(f"{tag} zoom scale must be >= 1.0")
+            elif isinstance(z.get("ease"), str) and not fx.is_ease(z["ease"]):
+                errors.append(f"{tag} zoom ease must be true/false or one of {sorted(fx.EASES)}")
+        cam = params.get("camera")
+        if cam is not None:
+            keys = cam.get("keys", []) if isinstance(cam, dict) else cam
+            if not isinstance(keys, list) or not keys:
+                errors.append(f"{tag} camera must be a list of keyframes or {{keys: [...], settle, ease}}")
+            else:
+                for ki, k in enumerate(keys):
+                    if not isinstance(k, dict) or "at" not in k:
+                        errors.append(f"{tag} camera[{ki}] needs `at`")
+                        continue
+                    if not k.get("hold") and not (
+                        isinstance(k.get("view"), (list, tuple)) and len(k["view"]) == 3
+                    ):
+                        errors.append(f"{tag} camera[{ki}] needs `view: [cx, cy, scale]` or `hold: true`")
+                    if isinstance(k.get("ease"), str) and not fx.is_ease(k["ease"]):
+                        errors.append(f"{tag} camera[{ki}] ease must be seconds or one of {sorted(fx.EASES)}")
+                if isinstance(keys[0], dict) and keys[0].get("hold"):
+                    errors.append(f"{tag} the first camera keyframe cannot be a hold")
         if kind == "clip" and float(params.get("speed", 1.0) or 1.0) <= 0:
             errors.append(f"{tag} speed must be > 0")
     elif kind == "card":
@@ -386,6 +538,16 @@ def _check_params(
         rows = params.get("rows")
         if not isinstance(rows, list) or not rows or not all(isinstance(r, list) for r in rows):
             errors.append(f"{tag} table needs `rows` as a list of lists")
+    elif kind == "code":
+        if not any(k in params for k in ("src", "lines", "text")):
+            errors.append(f"{tag} code needs `src`, `lines` or `text`")
+        elif "src" in params and not _resolve(str(params["src"]), base_dir).exists():
+            errors.append(f"{tag} code src not found: {params['src']}")
+        for h in params.get("highlight", []) or []:
+            if not isinstance(h, dict) or not (
+                isinstance(h.get("lines"), (list, tuple)) and len(h["lines"]) == 2
+            ):
+                errors.append(f"{tag} code highlight entries need `lines: [first, last]`")
     elif kind == "json":
         if not any(k in params for k in ("src", "data", "text")):
             errors.append(f"{tag} json needs `src`, `data` or `text`")
@@ -454,15 +616,25 @@ def fit_image(img: Image.Image, w: int, h: int, fit: str, bg: Any = "bg") -> Ima
 
 
 class KenBurns:
-    """Linear (eased) move from (cx, cy, scale) to (cx, cy, scale) over the shot."""
+    """Eased move from (cx, cy, scale) to (cx, cy, scale) over the shot.
 
-    def __init__(self, spec: dict[str, Any] | None, duration: float):
+    ``ease`` is ``true`` (smoothstep, the pre-v3 default), ``false`` (linear) or a curve name;
+    without an ``ease`` key the shot list's default curve applies when one is set.
+    """
+
+    def __init__(self, spec: dict[str, Any] | None, duration: float, default_curve: str | None = None):
         self.spec = spec
         self.duration = max(1e-6, duration)
         if spec:
             self.a = [float(v) for v in spec["from"]]
             self.b = [float(v) for v in spec["to"]]
-            self.ease = bool(spec.get("ease", True))
+            e = spec.get("ease", True)
+            if isinstance(e, str):
+                self.curve = e
+            elif "ease" not in spec and default_curve:
+                self.curve = default_curve
+            else:
+                self.curve = "smooth" if e else "linear"
             self.k = max(1.0, self.a[2], self.b[2])
         else:
             self.k = 1.0
@@ -472,10 +644,18 @@ class KenBurns:
         return self.spec is not None
 
     def params(self, t: float) -> tuple[float, float, float]:
-        u = draw.clamp01(t / self.duration)
-        if self.ease:
-            u = draw.smoothstep(u)
+        u = fx.ease(self.curve, draw.clamp01(t / self.duration))
         return tuple(self.a[i] + (self.b[i] - self.a[i]) * u for i in range(3))  # type: ignore[return-value]
+
+    def params_depth(self, t: float, depth: float) -> tuple[float, float, float]:
+        """The view a layer at ``depth`` sees: its motion relative to the start is scaled by 1 + depth."""
+        cx, cy, s = self.params(t)
+        k = 1.0 + depth
+        return (
+            self.a[0] + (cx - self.a[0]) * k,
+            self.a[1] + (cy - self.a[1]) * k,
+            max(1e-3, self.a[2] + (s - self.a[2]) * k),
+        )
 
     def apply(self, big: Image.Image, t: float, w: int, h: int) -> Image.Image:
         cx, cy, s = self.params(t)
@@ -485,6 +665,20 @@ class KenBurns:
         y0 = min(max(0.0, cy * bh - ch / 2), bh - ch)
         box = (round(x0), round(y0), round(x0 + cw), round(y0 + ch))
         return big.resize((w, h), Image.Resampling.BILINEAR, box=box)
+
+    def apply_layer(
+        self, padded: Image.Image, margin: int, t: float, depth: float, w: int, h: int
+    ) -> Image.Image:
+        """Crop a parallax layer (an RGBA image padded by ``margin`` px) with the depth-adjusted view."""
+        cx, cy, s = self.params_depth(t, depth)
+        bw, bh = padded.width - 2 * margin, padded.height - 2 * margin
+        cw, ch = bw / s, bh / s
+        x0 = cx * bw - cw / 2 + margin
+        y0 = cy * bh - ch / 2 + margin
+        x0 = min(max(0.0, x0), padded.width - cw)
+        y0 = min(max(0.0, y0), padded.height - ch)
+        box = (round(x0), round(y0), round(x0 + cw), round(y0 + ch))
+        return padded.resize((w, h), Image.Resampling.BILINEAR, box=box)
 
 
 def grab_frame(ffmpeg: str, src: Path, at: float) -> Image.Image:
@@ -499,11 +693,115 @@ def grab_frame(ffmpeg: str, src: Path, at: float) -> Image.Image:
     return Image.open(io.BytesIO(proc.stdout)).convert("RGB")
 
 
+def fit_rgba(img: Image.Image, w: int, h: int, fit: str) -> Image.Image:
+    """``fit_image`` for RGBA layers: contain or cover into w x h on a transparent canvas."""
+    sw, sh = img.size
+    r = max(w / sw, h / sh) if fit == "cover" else min(w / sw, h / sh)
+    nw, nh = max(1, round(sw * r)), max(1, round(sh * r))
+    resized = img.resize((nw, nh), Image.Resampling.LANCZOS)
+    canvas = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    canvas.alpha_composite(resized, ((w - nw) // 2, (h - nh) // 2))
+    return canvas
+
+
 def blur_fill(img: Image.Image, w: int, h: int, radius: int, brightness: float) -> Image.Image:
     """The image scaled to cover w x h, blurred and darkened: the fill behind a narrow clip."""
     cover = fit_image(img, w, h, "cover")
     cover = cover.filter(ImageFilter.GaussianBlur(max(1, radius)))
     return ImageEnhance.Brightness(cover).enhance(brightness)
+
+
+class SubjectMotion:
+    """Motion of a placed picture after the crop (DESIGN section 6): a push-in about a centre
+    and a two-layer drift (the subject one way, the blur fill the other).
+
+    ``subject_zoom: {from: 1.0, to: 1.03, start: 0.0, end: <shot end>, center: [x, y], ease: drift,
+    clip: true}`` and ``drift: {subject: [dx, dy], fill: [dx, dy], start, end, ease: drift}``.
+    ``map_point`` carries attached overlays (leaders, dots) with the picture.
+    """
+
+    def __init__(
+        self,
+        zoom: dict[str, Any] | None,
+        drift: dict[str, Any] | None,
+        duration: float,
+        geom: tuple[int, int, int, int],
+        canvas: draw.Canvas,
+    ):
+        self.zoom = dict(zoom) if zoom else None
+        self.drift = dict(drift) if drift else None
+        self.duration = duration
+        self.geom = geom
+        self.canvas = canvas
+        px0, py0, pw, ph = geom
+        if self.zoom and self.zoom.get("center"):
+            self.center = canvas.pt(self.zoom["center"])
+        else:
+            self.center = (px0 + pw / 2, py0 + ph / 2)
+        self.clip = bool(self.zoom.get("clip", True)) if self.zoom else True
+
+    @property
+    def active(self) -> bool:
+        return bool(self.zoom or self.drift)
+
+    def _u(self, spec: dict[str, Any], t: float) -> float:
+        start = float(spec.get("start", 0.0))
+        end = float(spec.get("end", self.duration))
+        return fx.ease(str(spec.get("ease", "drift")), (t - start) / max(1e-6, end - start))
+
+    def scale(self, t: float) -> float:
+        if not self.zoom:
+            return 1.0
+        a, b = float(self.zoom.get("from", 1.0)), float(self.zoom.get("to", 1.0))
+        return a + (b - a) * self._u(self.zoom, t)
+
+    def _off(self, key: str, t: float) -> tuple[float, float]:
+        if not self.drift or not self.drift.get(key):
+            return 0.0, 0.0
+        dx, dy = (float(v) for v in self.drift[key])
+        u = self._u(self.drift, t)
+        return self.canvas.s * dx * u, self.canvas.s * dy * u
+
+    def subject_offset(self, t: float) -> tuple[float, float]:
+        return self._off("subject", t)
+
+    def fill_offset(self, t: float) -> tuple[float, float]:
+        return self._off("fill", t)
+
+    def fill_margin(self) -> int:
+        if not self.drift or not self.drift.get("fill"):
+            return 0
+        return math.ceil(max(abs(float(v)) for v in self.drift["fill"]) * self.canvas.s) + 1
+
+    def map_point(self, t: float, x: float, y: float) -> tuple[float, float]:
+        s = self.scale(t)
+        ox, oy = self.subject_offset(t)
+        cx, cy = self.center
+        return cx + (x - cx) * s + ox, cy + (y - cy) * s + oy
+
+    def key(self, t: float) -> Any:
+        return (round(self.scale(t) * 4096), tuple(round(v * 2) for v in self.subject_offset(t)),
+                tuple(round(v * 2) for v in self.fill_offset(t)))  # fmt: skip
+
+    def place_subject(self, base: Image.Image, fg: Image.Image, t: float) -> Image.Image:
+        """``fg`` (the picture at its placed size) scaled about the centre and drifted, pasted on
+        ``base`` (clipped to the place box when ``clip``)."""
+        px0, py0, pw, ph = self.geom
+        s = self.scale(t)
+        ox, oy = self.subject_offset(t)
+        cx, cy = self.center
+        if abs(s - 1.0) > 1e-4:
+            fg = fg.resize((max(1, round(pw * s)), max(1, round(ph * s))), Image.Resampling.LANCZOS)
+        nx0 = cx - (cx - px0) * s + ox
+        ny0 = cy - (cy - py0) * s + oy
+        out = base.copy()
+        if self.clip:
+            cx0, cy0 = round(px0 - nx0), round(py0 - ny0)
+            region = fg.crop((cx0, cy0, cx0 + pw, cy0 + ph))
+            out.paste(region, (px0, py0))
+        else:
+            out.paste(fg, (round(nx0), round(ny0)))
+        return out
 
 
 class StillSource(draw.FrameSource):
@@ -532,25 +830,54 @@ class StillSource(draw.FrameSource):
             img = img.crop(tuple(int(v) for v in crop))
         self.crop = crop
         place = params.get("place")
-        self.kb = KenBurns(params.get("zoom") if not place else None, duration)
+        self.camera = self._camera_keys(params.get("camera"), canvas)
+        if self.camera:
+            # keyframed views [cx, cy, scale] held between eased moves; the working image is
+            # the source fitted at the largest scale so the tightest view is cropped 1:1
+            kmax = max(float(k["view"][2]) for k in self.camera)
+            self.big = fit_image(img, round(W * kmax), round(H * kmax), str(params.get("fit", "contain")))
+            if params.get("brightness") is not None:
+                self.big = ImageEnhance.Brightness(self.big).enhance(float(params["brightness"]))
+            self.kb = KenBurns(None, duration)
+            self.geom = None
+            self.regions = []
+            self.layers = []
+            self.dim = None
+            return
+        self.kb = KenBurns(params.get("zoom") if not place else None, duration, canvas.ease)
         self.geom: tuple[int, int, int, int] | None = None
+        self.motion: SubjectMotion | None = None
+        self.fill_img: Image.Image | None = None
+        self.fg: Image.Image | None = None
         if place:
             px0, py0 = canvas.pt(place[:2])
             px1, py1 = canvas.pt(place[2:])
             pw, ph = max(1, px1 - px0), max(1, py1 - py0)
             self.geom = (px0, py0, pw, ph)
             fg = img.resize((pw, ph), Image.Resampling.LANCZOS)
+            motion = SubjectMotion(
+                params.get("subject_zoom"), params.get("drift"), duration, self.geom, canvas
+            )
+            m = motion.fill_margin()
             if params.get("fill") == "blur":
                 base = blur_fill(
                     img,
-                    W,
-                    H,
+                    W + 2 * m,
+                    H + 2 * m,
                     canvas.px(float(params.get("fill_blur", 24))),
                     float(params.get("fill_brightness", 0.35)),
                 )
             else:
-                base = canvas.blank("bg")
-            base.paste(fg, (px0, py0))
+                base = Image.new("RGB", (W + 2 * m, H + 2 * m), draw.rgb("bg"))
+            if motion.active:
+                k = params.get("brightness")
+                if k is not None:
+                    base = ImageEnhance.Brightness(base).enhance(float(k))
+                    fg = ImageEnhance.Brightness(fg).enhance(float(k))
+                self.motion, self.fill_img, self.fg, self.fill_m = motion, base, fg, m
+            base.paste(fg, (px0 + m, py0 + m))
+            if m:
+                base = base.crop((m, m, m + W, m + H))
         else:
             bw, bh = round(W * self.kb.k), round(H * self.kb.k)
             base = fit_image(img, bw, bh, str(params.get("fit", "contain")))
@@ -572,22 +899,34 @@ class StillSource(draw.FrameSource):
                 mask[y0:y1, x0:x1] = True
                 r["mask"] = mask
             self.arr = np.asarray(self.big, dtype=np.float32)
-        # timed layers sharing the crop and placement (shot 3 style)
+        # timed layers sharing the crop and placement (shot 3 style); under a Ken Burns `zoom`
+        # each layer is cropped with its own depth-adjusted view (parallax)
         self.layers: list[dict[str, Any]] = []
+        self.parallax = self.kb.active
         for spec in params.get("layers", []):
             lp = _resolve(str(spec["src"]), base_dir)
             lim = Image.open(lp).convert("RGBA")
             if crop:
                 lim = lim.crop(tuple(int(v) for v in crop))
-            full = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-            if self.geom:
-                px0, py0, pw, ph = self.geom
-                full.alpha_composite(lim.resize((pw, ph), Image.Resampling.LANCZOS), (px0, py0))
+            if self.parallax:
+                bw, bh = self.big.size
+                fitted = fit_rgba(lim, bw, bh, str(params.get("fit", "contain")))
+                margin = max(8, round(max(bw, bh) * 0.12))
+                full = Image.new("RGBA", (bw + 2 * margin, bh + 2 * margin), (0, 0, 0, 0))
+                full.alpha_composite(fitted, (margin, margin))
             else:
-                full.alpha_composite(fit_image(lim.convert("RGB"), W, H, "contain").convert("RGBA"))
+                margin = 0
+                full = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+                if self.geom:
+                    px0, py0, pw, ph = self.geom
+                    full.alpha_composite(lim.resize((pw, ph), Image.Resampling.LANCZOS), (px0, py0))
+                else:
+                    full.alpha_composite(fit_image(lim.convert("RGB"), W, H, "contain").convert("RGBA"))
             self.layers.append(
                 {
                     "img": full,
+                    "margin": margin,
+                    "depth": float(spec.get("depth", 0.0)),
                     "at": float(spec.get("at", 0.0)),
                     "fade": float(spec.get("fade", 0.4)),
                     "settle_at": spec.get("settle_at"),
@@ -595,6 +934,44 @@ class StillSource(draw.FrameSource):
                 }
             )
         self.dim = params.get("dim")
+
+    @staticmethod
+    def _camera_keys(spec: Any, canvas: draw.Canvas) -> list[dict[str, Any]]:
+        """Normalise ``camera`` (a list, or ``{keys, settle, ease}``) into sorted keyframes with
+        ``view``, ``over`` (seconds), ``curve``, ``hold`` and ``settle``."""
+        if not spec:
+            return []
+        if isinstance(spec, dict):
+            keys = [dict(k) for k in spec.get("keys", [])]
+            settle = float(spec.get("settle", 0.0) or 0.0)
+            cam_ease = spec.get("ease")
+        else:
+            keys = [dict(k) for k in spec]
+            settle, cam_ease = 0.0, None
+        keys.sort(key=lambda k: float(k["at"]))
+        out: list[dict[str, Any]] = []
+        for k in keys:
+            e = k.get("ease", 0.6)
+            if isinstance(e, str):
+                over, curve = float(k.get("over", 0.6)), e
+            else:
+                over, curve = float(e), (cam_ease or canvas.ease or "smooth")
+            if k.get("hold"):
+                view = list(out[-1]["view"]) if out else [0.5, 0.5, 1.0]
+                over = 0.0
+            else:
+                view = [float(v) for v in k["view"]]
+            out.append(
+                {
+                    "at": float(k["at"]),
+                    "view": view,
+                    "over": over,
+                    "curve": curve,
+                    "hold": bool(k.get("hold")),
+                    "settle": float(k.get("settle", settle) or 0.0),
+                }
+            )
+        return out
 
     def _region_levels(self, t: float) -> tuple[float, ...]:
         out = []
@@ -622,11 +999,55 @@ class StillSource(draw.FrameSource):
             float(self.dim.get("to", 0.4)),
             float(self.dim.get("over", 0.3)),
         )
-        return 1.0 - (1.0 - to) * draw.smoothstep((t - at) / over)
+        return 1.0 - (1.0 - to) * fx.ease(str(self.dim.get("ease", "smooth")), (t - at) / over)
+
+    def view(self, t: float) -> tuple[float, float, float]:
+        kfs = self.camera
+        i = 0
+        for j, k in enumerate(kfs):
+            if t >= k["at"]:
+                i = j
+        key = kfs[i]
+        cur = list(key["view"])
+        over = key["over"]
+        if i > 0 and over > 0 and t < key["at"] + over:
+            prev = kfs[i - 1]["view"]
+            u = fx.ease(key["curve"], (t - key["at"]) / over)
+            cur = [prev[n] + (cur[n] - prev[n]) * u for n in range(3)]
+            return cur[0], cur[1], cur[2]
+        if key["settle"]:
+            # a slow push over the hold: from the end of the last real move to the next real key
+            j = i
+            while j > 0 and kfs[j]["hold"]:
+                j -= 1
+            hold_start = kfs[j]["at"] + (kfs[j]["over"] if j > 0 else 0.0)
+            nxt = next((k["at"] for k in kfs[i + 1 :] if not k["hold"]), self.duration)
+            u = fx.ease("ease_in_out", (t - hold_start) / max(1e-6, nxt - hold_start))
+            cur[2] = cur[2] * (1.0 + key["settle"] * u)
+        return cur[0], cur[1], cur[2]
+
+    def map_point(self, t: float, x: float, y: float) -> tuple[float, float]:
+        """Frame coordinates at the shot's start to frame coordinates at ``t`` (attached overlays)."""
+        if self.motion is not None:
+            return self.motion.map_point(t, x, y)
+        return x, y
 
     def key(self, t: float) -> Any:
+        if self.camera:
+            return ("cam", *tuple(round(v, 4) for v in self.view(t)))
+        if self.motion is not None:
+            return (
+                "motion",
+                self.motion.key(t),
+                tuple(draw.quantize(v, 32) for v in self._layer_opacities(t)),
+                draw.quantize(self._dim(t), 64),
+            )
         if self.kb.active:
-            return ("kb", draw.quantize(t / self.kb.duration, 4096))
+            return (
+                "kb",
+                draw.quantize(t / self.kb.duration, 4096),
+                tuple(draw.quantize(v, 32) for v in self._layer_opacities(t)),
+            )
         return (
             tuple(draw.quantize(v, 32) for v in self._region_levels(t)),
             tuple(draw.quantize(v, 32) for v in self._layer_opacities(t)),
@@ -634,9 +1055,37 @@ class StillSource(draw.FrameSource):
         )
 
     def frame(self, t: float) -> Image.Image:
+        if self.camera:
+            cx, cy, sc = self.view(t)
+            bw, bh = self.big.size
+            cw, ch = bw / sc, bh / sc
+            x0 = min(max(0.0, cx * bw - cw / 2), bw - cw)
+            y0 = min(max(0.0, cy * bh - ch / 2), bh - ch)
+            box = (round(x0), round(y0), round(x0 + cw), round(y0 + ch))
+            return self.big.resize((self.canvas.width, self.canvas.height), Image.Resampling.LANCZOS, box=box)
         if self.kb.active:
-            return self.kb.apply(self.big, t, self.canvas.width, self.canvas.height)
+            W, H = self.canvas.width, self.canvas.height
+            base = self.kb.apply(self.big, t, W, H)
+            if not self.layers:
+                return base
+            out = base.convert("RGBA")
+            for ly, o in zip(self.layers, self._layer_opacities(t), strict=True):
+                if o <= 0:
+                    continue
+                layer = self.kb.apply_layer(ly["img"], ly["margin"], t, ly["depth"], W, H)
+                if o < 1:
+                    layer.putalpha(layer.getchannel("A").point(lambda v, o=o: int(v * o)))
+                out.alpha_composite(layer)
+            return out.convert("RGB")
         img = self.big
+        if self.motion is not None and self.fill_img is not None and self.fg is not None:
+            W, H = self.canvas.width, self.canvas.height
+            m = self.fill_m
+            fx_, fy_ = self.motion.fill_offset(t)
+            base = self.fill_img.crop(
+                (m - round(fx_), m - round(fy_), m - round(fx_) + W, m - round(fy_) + H)
+            )
+            img = self.motion.place_subject(base, self.fg, t)
         if self.regions:
             levels = self._region_levels(t)
             amap = np.full(self.arr.shape[:2], self.base_b, dtype=np.float32)
@@ -677,7 +1126,7 @@ class ClipSource(draw.FrameSource):
         self.fps = fps
         W, H = canvas.width, canvas.height
         place = params.get("place")
-        self.kb = KenBurns(params.get("zoom") if not place else None, duration)
+        self.kb = KenBurns(params.get("zoom") if not place else None, duration, canvas.ease)
         src = _resolve(str(params["src"]), base_dir)
         speed = float(params.get("speed", 1.0) or 1.0)
         start = params.get("start")
@@ -740,6 +1189,19 @@ class ClipSource(draw.FrameSource):
         self.last: Image.Image | None = None
         self.next_index = 0
         self.eof = False
+        self.motion: SubjectMotion | None = None
+        if place and (params.get("subject_zoom") or params.get("drift")):
+            px0, py0 = canvas.pt(place[:2])
+            px1, py1 = canvas.pt(place[2:])
+            geom = (px0, py0, max(2, px1 - px0), max(2, py1 - py0))
+            self.motion = SubjectMotion(
+                params.get("subject_zoom"), params.get("drift"), duration, geom, canvas
+            )
+
+    def map_point(self, t: float, x: float, y: float) -> tuple[float, float]:
+        if self.motion is not None:
+            return self.motion.map_point(t, x, y)
+        return x, y
 
     def _read_frame(self) -> Image.Image | None:
         assert self.proc.stdout is not None
@@ -764,6 +1226,10 @@ class ClipSource(draw.FrameSource):
             self.last = Image.new("RGB", (self.w, self.h), draw.rgb("bg"))
         if self.kb.active:
             return self.kb.apply(self.last, t, self.canvas.width, self.canvas.height)
+        if self.motion is not None and self.motion.active:
+            px0, py0, pw, ph = self.motion.geom
+            fg = self.last.crop((px0, py0, px0 + pw, py0 + ph))
+            return self.motion.place_subject(self.last, fg, t)
         return self.last
 
     def close(self) -> None:
@@ -788,10 +1254,20 @@ class ShotRenderer(draw.FrameSource):
         settings: Settings,
         base_dir: Path,
         captions: list[tuple[float, float, str]] | None = None,
+        global_start: float = 0.0,
+        chrome_skip_before: float = 0.0,
+        chrome_skip_last: bool = False,
     ):
         self.shot = shot
         self.duration = duration
         self.canvas = canvas
+        self.global_start = global_start
+        # frames that become transition plates carry no global chrome (z >= 97): the first
+        # `chrome_skip_before` seconds of a shot entered by an inside transition, and the last
+        # frame of a shot that the next one pushes out; the transition draws that chrome itself
+        self.chrome_skip_before = chrome_skip_before
+        self.chrome_skip_last = chrome_skip_last
+        self.fps = settings.fps
         p = shot.params
         kind = shot.kind
         if kind == "card":
@@ -808,12 +1284,18 @@ class ShotRenderer(draw.FrameSource):
             self.base = draw.TableSource(canvas, p, duration)
         elif kind == "json":
             self.base = draw.JsonSource(canvas, p, duration, base_dir)
+        elif kind == "code":
+            self.base = widgets.CodeSource(canvas, p, duration, base_dir)
         elif kind == "split":
             self.base = SplitSource(shot, duration, canvas, settings, base_dir)
         else:
             raise ValueError(f"unknown kind {kind}")
         loader = lambda s: load_image(_resolve(s, base_dir), settings.build_dir)  # noqa: E731
-        self.overlay = draw.OverlayRenderer(canvas, shot.text, shot.pointers, duration, captions, loader)
+        transform = getattr(self.base, "map_point", None)
+        self.overlay = draw.OverlayRenderer(
+            canvas, shot.text, shot.pointers, duration, captions, loader, transform, global_start
+        )
+        self.black_ease = shot.raw.get("black_ease")
 
     def black(self, t: float) -> float:
         """Brightness multiplier for the dip-to-black edges (black_in / black_out)."""
@@ -822,22 +1304,26 @@ class ShotRenderer(draw.FrameSource):
             hold = min(0.1, self.shot.black_in / 3)
             k = 0.0 if t < hold else draw.smoothstep((t - hold) / max(1e-6, self.shot.black_in - hold))
         if self.shot.black_out > 0 and t > self.duration - self.shot.black_out:
-            k = min(k, draw.smoothstep((self.duration - t) / self.shot.black_out))
+            u = (self.duration - t) / self.shot.black_out
+            if self.black_ease:
+                k = min(k, 1.0 - fx.ease(str(self.black_ease), 1.0 - u))
+            else:
+                k = min(k, draw.smoothstep(u))
         return k
+
+    def hi_z(self, t: float) -> bool:
+        if t < self.chrome_skip_before - 1e-6:
+            return False
+        return not (self.chrome_skip_last and t >= self.duration - 1.5 / self.fps)
 
     def key(self, t: float) -> Any:
         bk = self.base.key(t)
         if bk is None:
             return None
-        return (bk, self.overlay.key(t), draw.quantize(self.black(t), 64))
+        return (bk, self.overlay.key(t), draw.quantize(self.black(t), 64), self.hi_z(t))
 
     def frame(self, t: float) -> Image.Image:
-        img = self.base.frame(t)
-        layer = self.overlay.layer(t)
-        if layer is not None:
-            out = img.convert("RGBA")
-            out.alpha_composite(layer)
-            img = out.convert("RGB")
+        img = self.overlay.composite(self.base.frame(t), t, self.hi_z(t))
         k = self.black(t)
         if k < 1.0:
             img = ImageEnhance.Brightness(img).enhance(k)
@@ -1051,7 +1537,8 @@ def plan(shots: list[Shot], vo: dict[str, audio_mod.VoResult], settings: Setting
         tdur = float(s.transition["duration"]) if kind != "cut" else 0.0
         if i > 0 and tdur > 0:
             tdur = min(tdur, placed[-1].duration / 2, dur / 2)
-            t -= tdur
+            if not s.transition.get("inside"):
+                t -= tdur
         placed.append(Placed(s, max(0.0, t), dur, v, kind, tdur))
         t += dur
     return placed
@@ -1064,14 +1551,30 @@ def total_duration(placed: list[Placed]) -> float:
 # --------------------------------------------------------------------------- segments
 
 
+def rate_cap(w: int, h: int, mbit_at_1080p: float) -> list[str]:
+    """``-maxrate/-bufsize`` scaled by pixel area: grain is noise, and without a cap x264 at a
+    fixed crf spends 50 to 100 Mbit/s preserving it."""
+    mbit = max(2.0, mbit_at_1080p * (w * h) / (1920 * 1080))
+    return ["-maxrate", f"{mbit:.1f}M", "-bufsize", f"{2 * mbit:.1f}M"]
+
+
 class FrameWriter:
     def __init__(
-        self, ffmpeg: str, path: Path, w: int, h: int, fps: int, crf: int = 14, preset: str = "veryfast"
+        self,
+        ffmpeg: str,
+        path: Path,
+        w: int,
+        h: int,
+        fps: int,
+        crf: int = 14,
+        preset: str = "veryfast",
+        cap_mbit: float = 0.0,
     ):
+        cap = rate_cap(w, h, cap_mbit) if cap_mbit > 0 else []
         cmd = [
             ffmpeg, "-y", "-v", "error", "-nostdin",
             "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{w}x{h}", "-r", str(fps), "-i", "-",
-            "-an", "-c:v", "libx264", "-preset", preset, "-crf", str(crf), "-pix_fmt", "yuv420p",
+            "-an", "-c:v", "libx264", "-preset", preset, "-crf", str(crf), *cap, "-pix_fmt", "yuv420p",
             "-r", str(fps), "-movflags", "+faststart", str(path),
         ]  # fmt: skip
         self.proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -1100,8 +1603,18 @@ def segment_key(p: Placed, settings: Settings, captions: list[tuple[float, float
         "duration": p.duration,
         "size": [settings.width, settings.height, settings.fps],
         "captions": captions,
-        "fonts": [fonts.sans, fonts.sans_bold, fonts.mono],
+        "fonts": [fonts.sans, fonts.sans_bold, fonts.mono, fonts.engine],
+        "look": [
+            settings.ease,
+            settings.vignette,
+            settings.grain,
+            settings.grain_seed,
+            settings.grain_size,
+            settings.vignette_inner,
+        ],
     }
+    if any(isinstance(t, dict) and t.get("kind") == "progress_rail" for t in p.shot.text):
+        payload["start"] = round(p.start, 3)
     return hashlib.sha1(json.dumps(payload, sort_keys=True, default=str).encode()).hexdigest()[:12]
 
 
@@ -1112,40 +1625,73 @@ def captions_for(p: Placed) -> list[tuple[float, float, str]]:
     return [(a - p.start, b - p.start, text) for a, b, text in cues]
 
 
-def render_segment(p: Placed, settings: Settings, base_dir: Path, force: bool = False) -> Path:
+def render_segment(
+    p: Placed,
+    settings: Settings,
+    base_dir: Path,
+    force: bool = False,
+    chrome_skip_before: float = 0.0,
+    chrome_skip_last: bool = False,
+) -> Path:
     seg_dir = settings.build_dir / "segments"
     seg_dir.mkdir(parents=True, exist_ok=True)
     p = Placed(
         resolve_shot(p.shot, p.vo, settings.vo_gap_ms), p.start, p.duration, p.vo, p.trans_kind, p.trans_dur
     )
     captions = captions_for(p) if settings.burn_captions else []
-    out = seg_dir / f"{p.shot.id}-{segment_key(p, settings, captions)}.mp4"
+    key = segment_key(p, settings, captions)
+    if chrome_skip_before > 0 or chrome_skip_last:
+        key = hashlib.sha1(f"{key}|{chrome_skip_before:.4f}|{chrome_skip_last}".encode()).hexdigest()[:12]
+    out = seg_dir / f"{p.shot.id}-{key}.mp4"
     n = round(p.duration * settings.fps)
     if out.exists() and not force:
         settings.log(f"  {p.shot.id:<14} {p.shot.kind:<9} {p.duration:6.2f}s  {n:5d} frames  cached")
         return out
     t0 = time.perf_counter()
     canvas = settings.canvas
-    renderer = ShotRenderer(p.shot, p.duration, canvas, settings, base_dir, captions)
+    post = settings.post
+    renderer = ShotRenderer(
+        p.shot,
+        p.duration,
+        canvas,
+        settings,
+        base_dir,
+        captions,
+        p.start,
+        chrome_skip_before,
+        chrome_skip_last,
+    )
     tmp = out.with_suffix(".part.mp4")
-    writer = FrameWriter(settings.ffmpeg, tmp, settings.width, settings.height, settings.fps)
+    writer = FrameWriter(
+        settings.ffmpeg, tmp, settings.width, settings.height, settings.fps, cap_mbit=settings.segment_cap
+    )
     last_key: Any = object()
     last_bytes = b""
+    last_arr: np.ndarray | None = None
     drawn = 0
     try:
         for i in range(n):
             t = i / settings.fps
             k = renderer.key(t)
             if k is not None and k == last_key:
-                writer.write(last_bytes)
+                if post.per_frame and last_arr is not None:
+                    writer.write(post.grain_bytes(last_arr, i))
+                else:
+                    writer.write(last_bytes)
                 continue
             img = renderer.frame(t)
             if img.size != (settings.width, settings.height):
                 img = img.resize((settings.width, settings.height), Image.Resampling.BILINEAR)
-            last_bytes = img.tobytes()
+            if post.vig is not None:
+                img = post.static(img)
             last_key = k if k is not None else object()
             drawn += 1
-            writer.write(last_bytes)
+            if post.per_frame:
+                last_arr = np.asarray(img.convert("RGB"))
+                writer.write(post.grain_bytes(last_arr, i))
+            else:
+                last_bytes = img.tobytes()
+                writer.write(last_bytes)
     except BaseException:
         writer.close(ok=False)
         raise
@@ -1163,13 +1709,97 @@ def render_segment(p: Placed, settings: Settings, base_dir: Path, force: bool = 
 # --------------------------------------------------------------------------- assembly
 
 
+def decode_frames(ffmpeg: str, src: Path, start: float, n: int, w: int, h: int) -> np.ndarray:
+    """``n`` RGB frames of ``src`` from ``start`` seconds as (n, h, w, 3) uint8; the last frame repeats."""
+    cmd = [ffmpeg, "-v", "error", "-nostdin", "-ss", f"{max(0.0, start):.4f}", "-i", str(src),
+           "-frames:v", str(n), "-f", "rawvideo", "-pix_fmt", "rgb24", "-"]  # fmt: skip
+    proc = subprocess.run(cmd, capture_output=True, check=True)
+    frame_bytes = w * h * 3
+    got = len(proc.stdout) // frame_bytes
+    arr = np.frombuffer(proc.stdout[: got * frame_bytes], dtype=np.uint8).reshape(got, h, w, 3)
+    if got == 0:
+        return np.zeros((n, h, w, 3), dtype=np.uint8)
+    if got < n:
+        arr = np.concatenate([arr, np.repeat(arr[-1:], n - got, axis=0)], axis=0)
+    return arr
+
+
+def render_transition(prev_seg: Path, prev_dur: float, next_seg: Path, p: Placed, settings: Settings) -> Path:
+    """A ``push_left``/``push_right``/``whip`` clip over the overlap of two segments (cached)."""
+    fps, W, H = settings.fps, settings.width, settings.height
+    n = max(1, round(p.trans_dur * fps))
+    tr = p.shot.transition
+    kind = p.trans_kind
+    inside = bool(tr.get("inside"))
+    curve = tr.get("ease") or settings.ease or ("linear" if kind in ("dissolve", "fade") else "ease_in_out")
+    direction = (
+        "right"
+        if kind == "push_right"
+        else ("left" if kind == "push_left" else str(tr.get("direction", "left")))
+    )
+    key = hashlib.sha1(
+        f"{RENDER_VERSION}|{prev_seg.name}|{next_seg.name}|{kind}|{n}|{curve}|{direction}|{W}x{H}|{inside}"
+        f"|chrome|{p.start:.3f}".encode()
+    ).hexdigest()[:12]
+    out = settings.build_dir / "segments" / f"trans-{p.shot.id}-{key}.mp4"
+    if out.exists():
+        return out
+    chrome = None
+    if inside:
+        # the global chrome (the rail) is drawn here from the global clock, never pushed with a plate
+        shot = resolve_shot(p.shot, p.vo, settings.vo_gap_ms)
+        hi = [
+            t
+            for t in shot.text
+            if isinstance(t, dict) and float(t.get("z", 60)) >= draw.OverlayRenderer.GLOBAL_Z
+        ]
+        if hi:
+            chrome = draw.OverlayRenderer(settings.canvas, hi, [], p.duration, None, None, None, p.start)
+    if inside:
+        # the outgoing shot's final frame, held as a plate under the incoming shot's own first frames
+        # seek a hair before the last frame's PTS: a seek at or past it yields no frame at all
+        last = decode_frames(settings.ffmpeg, prev_seg, prev_dur - 1.0 / fps - 0.002, 1, W, H)
+        a = np.repeat(last[:1], n, axis=0)
+    else:
+        a = decode_frames(settings.ffmpeg, prev_seg, prev_dur - n / fps, n, W, H)
+    b = decode_frames(settings.ffmpeg, next_seg, 0.0, n, W, H)
+    tmp = out.with_suffix(".part.mp4")
+    writer = FrameWriter(settings.ffmpeg, tmp, W, H, fps, cap_mbit=settings.segment_cap)
+    try:
+        for i in range(n):
+            if kind == "whip":
+                frame = fx.whip(a[i], b[i], fx.ease(curve, i / n), fx.ease(curve, (i + 1) / n), direction)
+            elif kind in ("dissolve", "fade"):
+                frame = fx.dissolve(a[i], b[i], fx.ease(curve, (i + 0.5) / n))
+            else:
+                frame = fx.push(a[i], b[i], fx.ease(curve, (i + 0.5) / n), direction)
+            if chrome is not None:
+                frame = np.asarray(chrome.composite(Image.fromarray(frame, "RGB"), i / fps).convert("RGB"))
+            writer.write(frame.tobytes())
+    except BaseException:
+        writer.close(ok=False)
+        raise
+    writer.close()
+    tmp.replace(out)
+    return out
+
+
 def assemble_video(placed: list[Placed], segments: list[Path], settings: Settings, out: Path) -> None:
     fps = settings.fps
+    inputs = list(segments)
+    trans_index: dict[int, int] = {}
+    for i in range(1, len(segments)):
+        p = placed[i]
+        inside = bool(p.shot.transition.get("inside"))
+        if (p.trans_kind in fx.CUSTOM_TRANSITIONS or inside) and p.trans_dur > 0:
+            clip = render_transition(segments[i - 1], placed[i - 1].duration, segments[i], p, settings)
+            trans_index[i] = len(inputs)
+            inputs.append(clip)
     cmd = [settings.ffmpeg, "-y", "-v", "error", "-nostdin"]
-    for seg in segments:
+    for seg in inputs:
         cmd += ["-i", str(seg)]
     parts: list[str] = []
-    for i in range(len(segments)):
+    for i in range(len(inputs)):
         parts.append(f"[{i}:v]fps={fps},settb=AVTB,format=yuv420p[v{i}]")
     cur = "[v0]"
     cur_len = placed[0].duration
@@ -1179,6 +1809,17 @@ def assemble_video(placed: list[Placed], segments: list[Path], settings: Setting
         if p.trans_kind == "cut" or p.trans_dur <= 0:
             parts.append(f"{cur}[v{i}]concat=n=2:v=1:a=0,settb=AVTB{nxt}")
             cur_len += p.duration
+        elif i in trans_index and p.shot.transition.get("inside"):
+            tn = max(1, round(p.trans_dur * fps)) / fps
+            parts.append(f"[v{i}]trim=start={tn:.4f},setpts=PTS-STARTPTS[b{i}]")
+            parts.append(f"{cur}[v{trans_index[i]}][b{i}]concat=n=3:v=1:a=0,settb=AVTB{nxt}")
+            cur_len += p.duration
+        elif i in trans_index:
+            tn = max(1, round(p.trans_dur * fps)) / fps
+            parts.append(f"{cur}trim=end={max(0.0, cur_len - tn):.4f},setpts=PTS-STARTPTS[a{i}]")
+            parts.append(f"[v{i}]trim=start={tn:.4f},setpts=PTS-STARTPTS[b{i}]")
+            parts.append(f"[a{i}][v{trans_index[i]}][b{i}]concat=n=3:v=1:a=0,settb=AVTB{nxt}")
+            cur_len += p.duration - tn
         else:
             name = XFADE_NAMES.get(p.trans_kind, "fade")
             offset = max(0.0, cur_len - p.trans_dur)
@@ -1189,15 +1830,23 @@ def assemble_video(placed: list[Placed], segments: list[Path], settings: Setting
         cur = nxt
     fades = []
     first = placed[0]
-    if first.trans_kind != "cut" and float(first.shot.transition["duration"]) > 0:
-        fades.append(f"fade=t=in:st=0:d={float(first.shot.transition['duration']):.3f}:color=black")
+    fade_in = settings.fade_in
+    if first.trans_kind != "cut" and first.trans_kind not in fx.CUSTOM_TRANSITIONS:
+        fade_in = max(fade_in, float(first.shot.transition["duration"]))
+    if fade_in > 0:
+        fades.append(f"fade=t=in:st=0:d={fade_in:.3f}:color=black")
     if settings.fade_out > 0:
         fades.append(
             f"fade=t=out:st={max(0.0, cur_len - settings.fade_out):.3f}:d={settings.fade_out:.3f}:color=black"
         )
+    bar = fx.letterbox_bars(settings.width, settings.height, settings.letterbox)
+    if bar > 0:
+        fades.append(f"drawbox=x=0:y=0:w=iw:h={bar}:color=black:t=fill")
+        fades.append(f"drawbox=x=0:y={settings.height - bar}:w=iw:h={bar}:color=black:t=fill")
     tail = ",".join(fades) if fades else "null"
     parts.append(f"{cur}{tail}[vout]")
     cmd += ["-filter_complex", ";".join(parts), "-map", "[vout]"]
+    cap = rate_cap(settings.width, settings.height, settings.grain_cap) if settings.grain > 0 else []
     cmd += [
         "-c:v",
         "libx264",
@@ -1205,6 +1854,7 @@ def assemble_video(placed: list[Placed], segments: list[Path], settings: Setting
         "medium",
         "-crf",
         "18",
+        *cap,
         "-pix_fmt",
         "yuv420p",
         "-r",
@@ -1309,6 +1959,28 @@ def apply_meta(settings: Settings, meta: dict[str, Any], cli_overrides: set[str]
         settings.vo_gap_ms = int(meta["vo_gap_ms"])
     if "music" in meta and "music" not in cli_overrides and meta["music"]:
         settings.music = Path(meta["music"])
+    # v3 look: default curve, post pass, letterbox, global fade-in, text engine
+    if meta.get("ease") and "ease" not in cli_overrides:
+        if not fx.is_ease(meta["ease"]):
+            raise SystemExit(f"ease must be one of {sorted(fx.EASES)}, not {meta['ease']!r}")
+        settings.ease = str(meta["ease"])
+    for key in ("vignette", "grain", "letterbox", "fade_in"):
+        if meta.get(key) is not None and key not in cli_overrides:
+            setattr(settings, key, float(meta[key]))
+    if meta.get("vignette_inner") is not None:
+        settings.vignette_inner = float(meta["vignette_inner"])
+    if isinstance(meta.get("rules"), dict):
+        settings.rules = dict(meta["rules"])
+    if meta.get("grain_seed") is not None:
+        settings.grain_seed = int(meta["grain_seed"])
+    if meta.get("grain_size") is not None:
+        settings.grain_size = float(meta["grain_size"])
+    if meta.get("grain_cap") is not None:
+        settings.grain_cap = float(meta["grain_cap"])
+    if meta.get("text_engine") and "text_engine" not in cli_overrides:
+        settings.text_engine = str(meta["text_engine"])
+        fonts = settings.fonts or draw.Fonts.resolve()
+        settings.fonts = dataclasses.replace(fonts, engine=draw.text_engine(settings.text_engine))
 
 
 def build(shot_list: ShotList, settings: Settings, out: Path, force: bool = False) -> Path:
@@ -1346,7 +2018,12 @@ def build(shot_list: ShotList, settings: Settings, out: Path, force: bool = Fals
     size = f"{settings.width}x{settings.height}@{settings.fps}"
     settings.log(f"timeline: {len(placed)} shots, {total_duration(placed):.2f}s at {size}")
     settings.log("segments:")
-    segments = [render_segment(p, settings, base_dir, force) for p in placed]
+    segments = []
+    for i, p in enumerate(placed):
+        skip_before = p.trans_dur if (p.shot.transition.get("inside") and p.trans_dur > 0) else 0.0
+        nxt = placed[i + 1] if i + 1 < len(placed) else None
+        skip_last = bool(nxt and nxt.shot.transition.get("inside") and nxt.trans_dur > 0)
+        segments.append(render_segment(p, settings, base_dir, force, skip_before, skip_last))
     work = settings.build_dir / "work"
     work.mkdir(parents=True, exist_ok=True)
     video = work / (out.stem + ".video.mp4")
@@ -1369,7 +2046,7 @@ def build(shot_list: ShotList, settings: Settings, out: Path, force: bool = Fals
 
 def fit_check(shot_list: ShotList, settings: Settings) -> list[str]:
     """Measure every overlay with the real fonts: text must fit its plate, `max_x` and the safe frame."""
-    canvas = draw.Canvas(draw.REF_W, draw.REF_H, settings.fonts or draw.Fonts.resolve())
+    canvas = draw.Canvas(draw.REF_W, draw.REF_H, settings.fonts or draw.Fonts.resolve(), settings.ease)
     problems: list[str] = []
     safe = (draw.SAFE_X, draw.SAFE_Y, draw.REF_W - draw.SAFE_X, draw.REF_H - draw.SAFE_Y)
     base_dir = shot_list.base_dir
@@ -1398,6 +2075,15 @@ def fit_check(shot_list: ShotList, settings: Settings) -> list[str]:
             outside = tb[0] < safe[0] or tb[1] < safe[1] or tb[2] > safe[2] or tb[3] > safe[3]
             if outside and spec.get("safe", True):
                 problems.append(f"{label} runs outside the safe frame: {tb} vs {safe}")
+            zone = settings.rules.get("caption_zone")
+            if zone and spec.get("safe", True) and not spec.get("caption_zone_ok"):
+                z0, z1 = (float(v) for v in (zone if isinstance(zone, (list, tuple)) else (940, 1040)))
+                if (
+                    tb[3] > z0
+                    and tb[1] < z1
+                    and spec.get("kind") not in ("spotlight", "progress_rail", "bloom")
+                ):
+                    problems.append(f"{label} enters the caption zone {int(z0)}..{int(z1)}: {tb}")
             pb = m.get("plate")
             if pb and (tb[0] < pb[0] or tb[1] < pb[1] or tb[2] > pb[2] or tb[3] > pb[3]):
                 problems.append(f"{label} wider than its plate: text {tb} vs plate {pb}")
@@ -1412,6 +2098,91 @@ def fit_check(shot_list: ShotList, settings: Settings) -> list[str]:
             for li, width, limit in term.overflowing_lines():
                 problems.append(
                     f"[{shot.id}] terminal line {li:02d} is {width} px wide, column is {limit} px"
+                )
+        if settings.rules.get("one_accent"):
+            problems += accent_check(shot, dur, str(settings.rules.get("accent", "orange")))
+    return problems
+
+
+def accent_intervals(shot: Shot, dur: float, accent: str) -> list[tuple[float, float, str]]:
+    """(from, to, label) stretches during which a content element is in the accent colour.
+
+    Chrome (``chrome: true``) is exempt and parts sharing an ``accent_group`` count as one element;
+    a ``recolor`` away from the accent ends a stretch, a recolour into it starts one; text
+    ``highlight`` cues in the accent count from their ``at``.
+    """
+    out: list[tuple[float, float, str]] = []
+
+    def is_acc(c: Any) -> bool:
+        return c is not None and str(c) == accent
+
+    def add(color: Any, recolor: list[dict[str, Any]], t_in: float, t_out: float, label: str) -> None:
+        cur = is_acc(color)
+        start = t_in if cur else None
+        for r in sorted(recolor, key=lambda r: float(r["at"])):
+            at = float(r["at"])
+            nxt = is_acc(r.get("color"))
+            if cur and not nxt and start is not None:
+                out.append((start, min(at, t_out), label))
+                start = None
+            elif not cur and nxt:
+                start = at
+            cur = nxt
+        if start is not None:
+            out.append((start, t_out, label))
+
+    def walk(spec: dict[str, Any], label: str) -> None:
+        if spec.get("chrome"):
+            return
+        if spec.get("accent_group"):
+            label = f"group:{spec['accent_group']} {label}"
+        t_in = float(spec.get("in", 0.0) or 0.0)
+        t_out = float(spec.get("out", dur) or dur)
+        if spec.get("spans"):
+            for sp in spec["spans"]:
+                walk({**spec, **sp, "spans": None}, f"{label} span {str(sp.get('text', ''))[:24]!r}")
+            return
+        add(spec.get("color"), list(spec.get("recolor", []) or []), t_in, t_out, label)
+        for h in spec.get("highlight", []) or []:
+            if is_acc(h.get("color")):
+                out.append(
+                    (float(h.get("at", t_in)), t_out, f"{label} highlight {str(h.get('match'))[:24]!r}")
+                )
+        if spec.get("kind") == "panel" and spec.get("bar") and is_acc(spec["bar"].get("color")):
+            out.append((t_in, t_out, f"{label} bar"))
+        plate = spec.get("plate")
+        if isinstance(plate, dict) and plate.get("bar") and is_acc(plate["bar"].get("color")):
+            out.append((t_in, t_out, f"{label} plate bar"))
+
+    for i, spec in enumerate(shot.text):
+        walk(spec, f"text[{i}] {str(spec.get('text', spec.get('kind')))[:30]!r}")
+    for i, spec in enumerate(shot.pointers):
+        walk({**spec, "color": spec.get("color", "orange")}, f"pointers[{i}] {spec.get('kind')}")
+    if shot.kind == "terminal":
+        for h in shot.params.get("highlight", []) or []:
+            if is_acc(h.get("color")):
+                out.append((float(h.get("at", 0.0)), dur, f"terminal highlight {str(h.get('match'))[:24]!r}"))
+    return out
+
+
+def accent_check(shot: Shot, dur: float, accent: str, slack: float = 0.25) -> list[str]:
+    """The one-accent rule: two content elements in the accent colour must not overlap in time
+    by more than ``slack`` seconds (the 240 ms recolour crossfade)."""
+    ivs = accent_intervals(shot, dur, accent)
+    problems: list[str] = []
+    for i in range(len(ivs)):
+        for j in range(i + 1, len(ivs)):
+            a0, a1, la = ivs[i]
+            b0, b1, lb = ivs[j]
+            ga = la.split(" ", 1)[0] if la.startswith("group:") else None
+            gb = lb.split(" ", 1)[0] if lb.startswith("group:") else None
+            if ga is not None and ga == gb:
+                continue  # one element in several parts (a callout's dot, leader and label)
+            ov = min(a1, b1) - max(a0, b0)
+            if ov > slack:
+                problems.append(
+                    f"[{shot.id}] two {accent} content elements overlap for {ov:.2f}s "
+                    f"({max(a0, b0):.2f}..{min(a1, b1):.2f}): {la} and {lb}"
                 )
     return problems
 
@@ -1445,6 +2216,11 @@ def gap_report(placed: list[Placed], settings: Settings, verbose: bool = False) 
 
 def check(shot_list: ShotList, settings: Settings, max_total: float = 180.0, max_wpm: float = 170.0) -> int:
     print(f"shot list: {shot_list.path}  ({len(shot_list.shots)} shots)")
+    fonts = settings.fonts or draw.Fonts.resolve()
+    why = "libraqm present" if fonts.engine == "raqm" else "this Pillow has no libraqm"
+    curve = settings.ease or "legacy smooth / ease_out"
+    look = f"ease {curve}, vignette {settings.vignette:g}, grain {settings.grain:g}"
+    print(f"  text engine: {fonts.engine} ({why}); {look}")
     for w in shot_list.warnings:
         print(f"  warning: {w}")
     for e in shot_list.errors:
@@ -1576,6 +2352,7 @@ __all__ = [
     "load_shot_list",
     "plan",
     "render_segment",
+    "render_transition",
     "resolve_shot",
     "synth_all",
     "total_duration",

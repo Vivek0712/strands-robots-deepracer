@@ -16,7 +16,7 @@
   <a href="#hackathon-submission"><img src="https://img.shields.io/badge/Hackathon-Strands%20Decider%202B%20%2F%20%23guardrails-ffb347" alt="Hackathon: Strands Decider 2B / #guardrails"></a>
 </p>
 
-<p align="center"><a href="#quick-start"><b>Try it in 60 seconds</b></a> &nbsp;&middot;&nbsp; <a href="patterns/strands/README.md"><b>Copy the Decider pattern</b></a> &nbsp;&middot;&nbsp; <a href="docs/article/article.md"><b>Read the article</b></a> &nbsp;&middot;&nbsp; <a href="#hackathon-submission"><b>Watch the 3-minute demo (coming)</b></a></p>
+<p align="center"><a href="#quick-start"><b>Try it in 60 seconds</b></a> &nbsp;&middot;&nbsp; <a href="patterns/strands/README.md"><b>Copy the Decider pattern</b></a> &nbsp;&middot;&nbsp; <a href="docs/article/article.md"><b>Read the article</b></a> &nbsp;&middot;&nbsp; <a href="https://youtu.be/oMHml_LT_tY"><b>Watch the 3-minute demo</b></a></p>
 
 <p align="center">
   <img src="docs/media/phase3-deviation.gif" width="49%" alt="The DeepRacer camera sees a toy car ahead, the vision planner replans with turn left to avoid the car ahead, then the real car steers left past it">
@@ -336,7 +336,7 @@ Agent Experience Hackathon: Strands Decider, AWS Builder Center. Decision patter
 | Deliverable | Status |
 |---|---|
 | Article | [docs/article/article.md](docs/article/article.md); Builder Center link pending publication |
-| Demo video | under 3:00; recording pending, link to follow |
+| Demo video | [youtu.be/oMHml_LT_tY](https://youtu.be/oMHml_LT_tY) (2:57) |
 
 This agent is new: built from 14 October 2026 in a private repository and first published for
 this submission. Two earlier public repositories, `Vivek0712/aws_deepracer_control_v2` and
