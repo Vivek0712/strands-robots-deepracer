@@ -9,7 +9,7 @@ name: ci
 
 on:
   push:
-    branches: [main, strands-agentic-deepracer]
+    branches: [main, public]
   pull_request:
 
 concurrency:
@@ -50,7 +50,7 @@ jobs:
       - name: Unit (layer 0)
         run: make unit
 
-      - name: Sim (layer 1: fake car + fake console + fake decider)
+      - name: "Sim (layer 1: fake car + fake console + fake decider)"
         run: make sim
 
       - name: Keep the sim run artefacts on failure
