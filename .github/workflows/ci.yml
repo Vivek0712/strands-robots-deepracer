@@ -37,7 +37,7 @@ jobs:
 
       - name: Create the venv and install the project (strands-robots from the git pin)
         run: |
-          uv venv --python 3.12 .venv
+          uv venv --clear --python 3.12 .venv
           uv pip install --python .venv/bin/python -e ".[dev]"
 
       - name: Lint (ruff check + format --check on every team path that exists)
